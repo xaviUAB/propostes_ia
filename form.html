@@ -54,11 +54,14 @@
             text-decoration: underline;
         }
 
-        /* Estils específics per exportar bé el document a PDF / Impressora amb marges de 3 cm */
+        /* Estils específics per exportar bé el document a PDF amb marge superior ampliat a partir de la 2a pàgina */
         @media print {
             @page {
                 size: A4;
-                margin: 30mm; /* 3 cm per cada marge del document PDF */
+                margin: 45mm 30mm 30mm 30mm; /* 4.5 cm de marge superior a partir de la segona pàgina */
+            }
+            @page :first {
+                margin-top: 20mm; /* 2 cm de marge superior només a la primera pàgina */
             }
             body { background-color: white !important; }
             
@@ -80,6 +83,8 @@
                 border: 2px solid #006633 !important;
                 margin: 0 !important;
                 padding: 16px !important;
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
             }
 
             /* Amagar els botons d'acció de la cantonada (Imprimir / Tancar) */
