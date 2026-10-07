@@ -528,9 +528,9 @@
                                 ${practice.title || 'Sense Títol'}
                             </h3>
                             
-                            <p class="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">
-                                ${stripHTML(practice.summary) || 'Sense resum disponible.'}
-                            </p>
+                            <div class="text-sm text-gray-600 mb-4 max-h-28 overflow-y-auto custom-scrollbar pr-1.5 rich-content whitespace-pre-line flex-grow">
+                                ${sanitizeRichHTML(practice.summary) || 'Sense resum disponible.'}
+                            </div>
                             
                             <div class="mt-auto border-t border-gray-100 pt-3">
                                 <div class="flex items-center text-xs text-gray-500 mb-3">
