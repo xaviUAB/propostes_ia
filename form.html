@@ -24,6 +24,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* Estils específics per exportar bé el document a PDF / Impressora */
+        @media print {
+            body { background-color: white !important; }
+            
+            /* Amagar elements innecessaris per al PDF */
+            header, footer, #practiceForm, #successMessage, 
+            .bg-white.rounded-xl.shadow-lg.border.border-gray-100.overflow-hidden { 
+                display: none !important; 
+            }
+            
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+
+            /* Ajustar la targeta de previsualització */
+            #previewCard {
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 10px !important;
+            }
+
+            /* Amagar els botons d'acció de la cantonada (Imprimir / Tancar) */
+            #previewCard > div.absolute.top-4.right-4 {
+                display: none !important;
+            }
+
+            /* Forçar la impressió dels colors de fons (necessari a Chrome i Safari) */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Evitar que els títols o blocs es tallin a mitja pàgina */
+            p, div, h4, h2 {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
@@ -39,20 +81,32 @@
                     <p class="text-xs text-uab-lightgreen opacity-90">Repositori de Bones Pràctiques en l'Ús de la IA</p>
                 </div>
             </div>
-            <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30">
-                Formulari de Registre / Alta
+            <div class="flex items-center space-x-2">
+                <a href="index.html" class="text-xs bg-white text-uab-green px-3 py-1.5 rounded-full font-medium hover:bg-gray-100 transition shadow-sm">
+                    &larr; Cercador / Consultes
+                </a>
+                <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30 hidden sm:block">
+                    Formulari de Registre / Alta
+                </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100">
-                <h2 class="text-xl font-bold text-uab-darkgreen">Nova Fitxa de Bona Pràctica</h2>
-                <p class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.</p>
+            <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <div>
+                    <h2 id="formMainTitle" class="text-xl font-bold text-uab-darkgreen">Nova Fitxa de Bona Pràctica</h2>
+                    <p id="formSubtitle" class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.</p>
+                </div>
+                <span id="editBadge" class="hidden bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full border border-amber-300">
+                    Mode Edició
+                </span>
             </div>
 
             <form id="practiceForm" class="p-6 space-y-6" onsubmit="handleSubmit(event)">
+                <!-- Camp ocult per guardar el número de fila en cas d'edició -->
+                <input type="hidden" id="editRowNumber" value="">
                 
                 <div class="space-y-4">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">1. Capçalera i Identificació</h3>
@@ -139,7 +193,7 @@
                     </button>
                     <!-- Changed button text to indicate submission -->
                     <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md flex items-center">
-                        <span>Generar Fitxa i Enviar</span>
+                        <span id="submitBtnText">Generar Fitxa i Enviar</span>
                         <svg id="loadingSpinner" class="animate-spin ml-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -147,6 +201,11 @@
                     </button>
                 </div>
             </form>
+        </div>
+
+        <!-- Added error message container (sense usar alert) -->
+        <div id="errorMessage" class="hidden mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm">
+            <p class="text-sm text-red-700 font-medium">Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.</p>
         </div>
 
         <!-- Added success message container -->
@@ -220,7 +279,43 @@
 
     <script>
         // Substitueix aquesta URL per la URL que et donarà Google Apps Script quan publiquis el projecte web
-        const GOOGLE_SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
+        const GOOGLE_SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzGIi00X4f9LTjIO8iZmFNk3pTSaPFSyRyybP5olZ7TR0h2U1AX8fLID6MBKRZFdCk78Q/exec';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editDataParam = urlParams.get('editData');
+            
+            if (editDataParam) {
+                try {
+                    const practice = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(editDataParam)))));
+                    
+                    // Omplir els camps del formulari amb les dades rebudes
+                    document.getElementById('title').value = practice.title || '';
+                    document.getElementById('author').value = practice.author || '';
+                    document.getElementById('email').value = practice.email || '';
+                    if (practice.scope) document.getElementById('scope').value = practice.scope;
+                    document.getElementById('targetAudience').value = practice.targetAudience || '';
+                    document.getElementById('summary').value = practice.summary || '';
+                    document.getElementById('objective').value = practice.objective || '';
+                    document.getElementById('tools').value = practice.tools || '';
+                    if (practice.replicability) document.getElementById('replicability').value = practice.replicability;
+                    document.getElementById('workflow').value = practice.workflow || '';
+                    document.getElementById('ethics').value = practice.ethics || '';
+                    
+                    if (practice.rowNumber) {
+                        document.getElementById('editRowNumber').value = practice.rowNumber;
+                    }
+
+                    // Actualitzar interfície per reflectir que estem editant
+                    document.getElementById('formMainTitle').innerText = 'Editar Fitxa de Bona Pràctica';
+                    document.getElementById('formSubtitle').innerText = 'Modifica els camps necessaris i desa els canvis per actualitzar el registre.';
+                    document.getElementById('editBadge').classList.remove('hidden');
+                    document.getElementById('submitBtnText').innerText = 'Actualitzar Fitxa i Desar';
+                } catch (err) {
+                    console.error('Error carregant les dades per editar:', err);
+                }
+            }
+        });
 
         async function handleSubmit(event) {
             event.preventDefault();
@@ -228,9 +323,13 @@
             const submitBtn = document.getElementById('submitBtn');
             const spinner = document.getElementById('loadingSpinner');
             const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const rowNumberVal = document.getElementById('editRowNumber').value;
             
             // Recollir dades del formulari
             const formData = {
+                action: rowNumberVal ? 'edit' : 'create',
+                rowNumber: rowNumberVal ? parseInt(rowNumberVal, 10) : null,
                 title: document.getElementById('title').value,
                 author: document.getElementById('author').value,
                 email: document.getElementById('email').value,
@@ -249,21 +348,9 @@
             submitBtn.disabled = true;
             spinner.classList.remove('hidden');
             successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
 
             try {
-                /*
-                 * CODI PER ENVIAR A GOOGLE SHEETS
-                 * Aquest codi està comentat perquè requereix que configuris un Google Apps Script primer.
-                 * Per fer-ho funcionar:
-                 * 1. Crea un Google Sheet.
-                 * 2. Ves a Extensions > Apps Script.
-                 * 3. Crea una funció doPost(e) que rebi aquestes dades i les guardi al full.
-                 * 4. Desplega l'script com a Aplicació Web i posa la URL resultant a GOOGLE_SHEETS_WEBAPP_URL a dalt.
-                 * 
-                 * Un cop configurat, descomenta el bloc fetch següent:
-                 */
-                
-                
                 const response = await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
                     method: 'POST',
                     mode: 'no-cors', // IMPORTANT per evitar errors CORS en cridar a Google Scripts
@@ -274,14 +361,13 @@
                     body: JSON.stringify(formData)
                 });
                 
-                
-                // Simulació d'enviament per propòsits de demostració (Esborrar un cop tinguis la URL real)
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Simulació d'enviament per propòsits de demostració
+                await new Promise(resolve => setTimeout(resolve, 1200));
 
-                // 1. Mostrar el missatge d'èxit de l'enviament (simulat o real)
+                // 1. Mostrar el missatge d'èxit de l'enviament
                 successMessage.classList.remove('hidden');
 
-                // 2. Assignar valors al modal de previsualització (que podria servir de justificant per l'usuari)
+                // 2. Assignar valors al modal de previsualització
                 document.getElementById('resTitle').innerText = formData.title;
                 document.getElementById('resAuthor').innerText = formData.author;
                 document.getElementById('resEmail').innerText = formData.email;
@@ -299,12 +385,9 @@
                 preview.classList.remove('hidden');
                 preview.scrollIntoView({ behavior: 'smooth' });
 
-                // Opcional: Netejar el formulari després de l'enviament exitós
-                // document.getElementById('practiceForm').reset();
-
             } catch (error) {
                 console.error('Error enviant dades:', error);
-                alert('Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.');
+                errorMessage.classList.remove('hidden');
             } finally {
                 // Restaurar l'estat del botó
                 submitBtn.disabled = false;
