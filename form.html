@@ -51,19 +51,19 @@
             font-style: italic;
         }
         .rich-editor u, .rich-content u {
-        /* Estils específics per exportar bé el document a PDF / Impressora amb més marge superior */
+            text-decoration: underline;
+        }
+
+        /* Estils específics per exportar bé el document a PDF / Impressora amb marges de 3 cm */
         @media print {
             @page {
                 size: A4;
-                margin: 45mm 30mm 30mm 30mm; /* 4.5 cm de marge superior i 3 cm a la resta */
+                margin: 30mm; /* 3 cm per cada marge del document PDF */
             }
-            body { 
-                background-color: white !important; 
-                padding-top: 10mm !important; /* Espai extra de seguretat a la part superior */
-            }
+            body { background-color: white !important; }
             
             /* Amagar elements innecessaris per al PDF */
-            header, footer, #practiceForm, #successMessage, #errorMessage,
+            header, footer, #practiceForm, #successMessage, #errorMessage, #deleteModal,
             .bg-white.rounded-xl.shadow-lg.border.border-gray-100.overflow-hidden { 
                 display: none !important; 
             }
@@ -277,9 +277,335 @@
                     </div>
                 </div>
 
-                <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t">
-                    <!-- Zona inferior esquerra: Botó d'eliminar (només visible en Mode Edició) -->
-                    <div class="w-full sm:w-auto flex items-center">
-                        <button type="button" id="deleteRecordBtn" onclick="toggleDeleteConfirm(true)" class="hidden px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white transition font-medium text-sm shadow-sm flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4
+                <div class="pt-4 flex items-center justify-between border-t">
+                    <!-- Botó d'eliminar (només visible en mode edició) -->
+                    <button type="button" id="deleteBtn" onclick="openDeleteModal()" class="hidden px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white transition font-medium text-sm shadow-md">
+                        Eliminar fitxa
+                    </button>
+
+                    <div class="flex items-center space-x-4 ml-auto">
+                        <button type="reset" onclick="clearRichEditors()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
+                            Netejar formulari
+                        </button>
+                        <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md flex items-center">
+                            <span id="submitBtnText">Generar Fitxa i Enviar</span>
+                            <svg id="loadingSpinner" class="animate-spin ml-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Missatge d'error -->
+        <div id="errorMessage" class="hidden mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm">
+            <p id="errorMessageText" class="text-sm text-red-700 font-medium">Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.</p>
+        </div>
+
+        <!-- Missatge d'èxit -->
+        <div id="successMessage" class="hidden mt-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-green-700 font-medium">
+                        Fitxa enviada correctament! Les dades s'han desat al registre.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="previewCard" class="hidden mt-8 bg-white rounded-xl shadow-xl border-2 border-uab-green p-6 relative">
+            <div class="absolute top-4 right-4 flex space-x-2">
+                <button onclick="window.print()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium transition">Imprimir / Desar PDF</button>
+                <button onclick="closePreview()" class="bg-uab-green text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-uab-darkgreen transition">Tancar vista prèvia</button>
+            </div>
+            
+            <div class="flex items-center space-x-3 mb-6 pb-4 border-b">
+                <div class="bg-uab-green text-white font-bold px-3 py-1 rounded">UAB</div>
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-uab-green font-semibold">Fitxa de Bona Pràctica IA</span>
+                    <h2 id="resTitle" class="text-2xl font-bold text-gray-900"></h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm mb-6 bg-gray-50 p-4 rounded-lg">
+                <div><strong class="text-uab-green">Responsable:</strong> <span id="resAuthor"></span></div>
+                <div><strong class="text-uab-green">Correu:</strong> <span id="resEmail"></span></div>
+                <div><strong class="text-uab-green">Àmbit:</strong> <span id="resScope"></span></div>
+                <div><strong class="text-uab-green">Públic objectiu:</strong> <span id="resTarget"></span></div>
+                <div><strong class="text-uab-green">Eines IA:</strong> <span id="resTools"></span></div>
+                <div><strong class="text-uab-green">Replicabilitat:</strong> <span id="resReplicability"></span></div>
+            </div>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <h4 class="font-semibold text-uab-green mb-1">Resum Executiu</h4>
+                    <div id="resSummary" class="rich-content text-gray-700 bg-white p-3 rounded border"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-semibold text-uab-green mb-1">Objectiu Principal</h4>
+                        <div id="resObjective" class="rich-content text-gray-700 bg-white p-3 rounded border h-full"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-uab-green mb-1">Consideracions Ètiques</h4>
+                        <div id="resEthics" class="rich-content text-gray-700 bg-white p-3 rounded border h-full"></div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-uab-green mb-1">Procés / Workflow pas a pas</h4>
+                    <div id="resWorkflow" class="rich-content text-gray-700 bg-white p-3 rounded border"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmació d'eliminació -->
+        <div id="deleteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+                <h3 class="text-lg font-bold text-red-700 mb-2">Eliminar fitxa</h3>
+                <p class="text-sm text-gray-600 mb-6">Segur que vols eliminar aquesta fitxa? Se n'esborrarà el registre del Google Sheet i aquesta acció no es pot desfer.</p>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm font-medium transition">Cancel·lar</button>
+                    <button type="button" id="confirmDeleteBtn" onclick="confirmDelete()" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition flex items-center">
+                        <span>Sí, eliminar</span>
+                        <svg id="deleteSpinner" class="animate-spin ml-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 mt-12 border-t border-gray-800">
+        <div class="max-w-4xl mx-auto px-4 text-center space-y-1">
+            <p class="text-sm font-medium text-gray-300">Un desenvolupament de Xavier Ribes</p>
+            <p class="text-xs text-uab-accent tracking-wide uppercase">Departament de Comunicació Audiovisual i Publicitat de la UAB</p>
+        </div>
+    </footer>
+
+    <script>
+        // Substitueix aquesta URL per la URL que et donarà Google Apps Script quan publiquis el projecte web
+        const GOOGLE_SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
+
+        function formatDoc(editorId, command) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand(command, false, null);
+        }
+
+        function clearRichEditors() {
+            ['summary', 'objective', 'workflow', 'ethics'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+        }
+
+        function isEditorEmpty(id) {
+            const el = document.getElementById(id);
+            return el.innerText.trim() === '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editDataParam = urlParams.get('editData');
+            
+            if (editDataParam) {
+                try {
+                    const practice = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(editDataParam)))));
+                    
+                    // Omplir els camps del formulari amb les dades rebudes (incloent etiquetes HTML als editors)
+                    document.getElementById('title').value = practice.title || '';
+                    document.getElementById('author').value = practice.author || '';
+                    document.getElementById('email').value = practice.email || '';
+                    if (practice.scope) document.getElementById('scope').value = practice.scope;
+                    document.getElementById('targetAudience').value = practice.targetAudience || '';
+                    document.getElementById('summary').innerHTML = practice.summary || '';
+                    document.getElementById('objective').innerHTML = practice.objective || '';
+                    document.getElementById('tools').value = practice.tools || '';
+                    if (practice.replicability) document.getElementById('replicability').value = practice.replicability;
+                    document.getElementById('workflow').innerHTML = practice.workflow || '';
+                    document.getElementById('ethics').innerHTML = practice.ethics || '';
+                    
+                    if (practice.rowNumber) {
+                        document.getElementById('editRowNumber').value = practice.rowNumber;
+                        document.getElementById('deleteBtn').classList.remove('hidden'); // Mostrar botó d'eliminar
+                    }
+                    if (practice.editToken) {
+                        document.getElementById('editPasswordToken').value = practice.editToken;
+                    }
+
+                    // Actualitzar interfície per reflectir que estem editant
+                    document.getElementById('formMainTitle').innerText = 'Editar Fitxa de Bona Pràctica';
+                    document.getElementById('formSubtitle').innerText = 'Modifica els camps necessaris i desa els canvis per actualitzar el registre.';
+                    document.getElementById('editBadge').classList.remove('hidden');
+                    document.getElementById('submitBtnText').innerText = 'Actualitzar Fitxa i Desar';
+                } catch (err) {
+                    console.error('Error carregant les dades per editar:', err);
+                }
+            }
+        });
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorMessageText = document.getElementById('errorMessageText');
+            const rowNumberVal = document.getElementById('editRowNumber').value;
+            const passwordTokenVal = document.getElementById('editPasswordToken').value;
+
+            // Validar que els camps de text enriquit obligatoris no estiguin buits
+            if (isEditorEmpty('summary') || isEditorEmpty('objective') || isEditorEmpty('workflow') || isEditorEmpty('ethics')) {
+                errorMessageText.innerText = 'Si us plau, completa tots els camps de text obligatoris (*).';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+            
+            // Recollir dades del formulari (desant l'HTML intern dels camps enriquits al Google Sheet)
+            const formData = {
+                action: rowNumberVal ? 'edit' : 'create',
+                rowNumber: rowNumberVal ? parseInt(rowNumberVal, 10) : null,
+                password: passwordTokenVal || null,
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                email: document.getElementById('email').value,
+                scope: document.getElementById('scope').value,
+                targetAudience: document.getElementById('targetAudience').value,
+                summary: document.getElementById('summary').innerHTML.trim(),
+                objective: document.getElementById('objective').innerHTML.trim(),
+                tools: document.getElementById('tools').value,
+                replicability: document.getElementById('replicability').value,
+                workflow: document.getElementById('workflow').innerHTML.trim(),
+                ethics: document.getElementById('ethics').innerHTML.trim(),
+                timestamp: new Date().toISOString()
+            };
+
+            // Mostrar estat de càrrega
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+
+            try {
+                const response = await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // IMPORTANT per evitar errors CORS en cridar a Google Scripts
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                // Simulació d'enviament per propòsits de demostració
+                await new Promise(resolve => setTimeout(resolve, 1200));
+
+                // 1. Mostrar el missatge d'èxit de l'enviament
+                successMessage.querySelector('p').innerText = "Fitxa enviada correctament! Les dades s'han desat al registre.";
+                successMessage.classList.remove('hidden');
+
+                // 2. Assignar valors al modal de previsualització (respectant el format tipogràfic)
+                document.getElementById('resTitle').innerText = formData.title;
+                document.getElementById('resAuthor').innerText = formData.author;
+                document.getElementById('resEmail').innerText = formData.email;
+                document.getElementById('resScope').innerText = formData.scope;
+                document.getElementById('resTarget').innerText = formData.targetAudience;
+                document.getElementById('resSummary').innerHTML = formData.summary;
+                document.getElementById('resObjective').innerHTML = formData.objective;
+                document.getElementById('resTools').innerText = formData.tools;
+                document.getElementById('resReplicability').innerText = formData.replicability;
+                document.getElementById('resWorkflow').innerHTML = formData.workflow;
+                document.getElementById('resEthics').innerHTML = formData.ethics;
+
+                // 3. Mostrar previsualització i fer scroll suau
+                const preview = document.getElementById('previewCard');
+                preview.classList.remove('hidden');
+                preview.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error enviant dades:', error);
+                errorMessageText.innerText = 'Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                // Restaurar l'estat del botó
+                submitBtn.disabled = false;
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function closePreview() {
+            document.getElementById('previewCard').classList.add('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ---- Eliminació de fitxa ----
+        function openDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        async function confirmDelete() {
+            const rowNumberVal = document.getElementById('editRowNumber').value;
+            const passwordTokenVal = document.getElementById('editPasswordToken').value;
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            const spinner = document.getElementById('deleteSpinner');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorMessageText = document.getElementById('errorMessageText');
+
+            if (!rowNumberVal) return;
+
+            confirmBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+
+            try {
+                await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        rowNumber: parseInt(rowNumberVal, 10),
+                        password: passwordTokenVal || null,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                closeDeleteModal();
+                // Amagar formulari i previsualització
+                document.getElementById('practiceForm').parentElement.classList.add('hidden');
+                document.getElementById('previewCard').classList.add('hidden');
+                // Missatge d'èxit
+                successMessage.querySelector('p').innerText = 'Fitxa eliminada correctament del registre.';
+                successMessage.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error eliminant la fitxa:', error);
+                closeDeleteModal();
+                errorMessageText.innerText = "No s'ha pogut eliminar la fitxa. Si us plau, torna-ho a provar.";
+                errorMessage.classList.remove('hidden');
+            } finally {
+                confirmBtn.disabled = false;
+                spinner.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
