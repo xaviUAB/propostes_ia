@@ -40,6 +40,58 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8; 
         }
+
+        /* Estils específics per imprimir o desar en PDF des de la finestra modal */
+        @media print {
+            @page {
+                size: A4;
+                margin: 12mm;
+            }
+            html, body {
+                background-color: white !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            /* Amagar tot l'entorn excepte la finestra modal */
+            header, main, footer, .no-print, #passwordBox {
+                display: none !important;
+            }
+            #detailsModal {
+                position: static !important;
+                display: block !important;
+                background: white !important;
+                overflow: visible !important;
+                height: auto !important;
+                width: 100% !important;
+                backdrop-filter: none !important;
+            }
+            #modalContainer {
+                position: static !important;
+                top: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                box-shadow: none !important;
+                border: 2px solid #006633 !important;
+                border-radius: 8px !important;
+            }
+            #modalBody {
+                max-height: none !important;
+                overflow: visible !important;
+                background: white !important;
+                padding: 16px !important;
+            }
+            /* Forçar impressió dels colors institucionals */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            /* Evitar talls incòmodes entre pàgines */
+            .print-avoid-break {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
@@ -56,9 +108,9 @@
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30 hidden md:block">
+                <a href="index.html" class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30 hidden md:block hover:bg-white hover:text-uab-green transition shadow-sm">
                     Cercador / Consultes
-                </div>
+                </a>
             </div>
         </div>
     </header>
@@ -128,15 +180,15 @@
 
     <!-- Modal per veure detalls complets -->
     <div id="detailsModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full backdrop-blur-sm transition-opacity" onclick="closeModal(event)">
-        <div class="relative top-10 mx-auto p-0 border w-full max-w-4xl shadow-2xl rounded-xl bg-white mb-20 transform transition-all" onclick="event.stopPropagation()">
+        <div id="modalContainer" class="relative top-10 mx-auto p-0 border w-full max-w-4xl shadow-2xl rounded-xl bg-white mb-20 transform transition-all" onclick="event.stopPropagation()">
             
             <!-- Modal Header -->
             <div class="bg-uab-green text-white px-6 py-4 rounded-t-xl flex justify-between items-center sticky top-0 z-10">
                 <div class="flex items-center space-x-3">
                     <div class="bg-white text-uab-green font-bold text-sm px-2 py-1 rounded shadow">UAB</div>
-                    <h3 class="text-lg font-bold">Detall de la Pràctica</h3>
+                    <h3 class="text-lg font-bold">Fitxa de Bona Pràctica en IA</h3>
                 </div>
-                <button onclick="closeModal(true)" class="text-white hover:text-gray-200 transition focus:outline-none">
+                <button onclick="closeModal(true)" class="no-print text-white hover:text-gray-200 transition focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -144,8 +196,8 @@
             </div>
             
             <!-- Modal Body -->
-            <div class="px-6 py-6 max-h-[75vh] overflow-y-auto custom-scrollbar bg-gray-50">
-                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 mb-6">
+            <div id="modalBody" class="px-6 py-6 max-h-[75vh] overflow-y-auto custom-scrollbar bg-gray-50">
+                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 mb-6 print-avoid-break">
                     <span id="modalScope" class="inline-block text-xs uppercase tracking-widest text-uab-accent font-semibold mb-2"></span>
                     <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 mb-4"></h2>
                     
@@ -156,19 +208,19 @@
                         <div><strong class="text-gray-500 block text-xs uppercase">Replicabilitat</strong> <span id="modalReplicability" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"></span></div>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-2">
                         <strong class="text-gray-500 block text-xs uppercase mb-1">Eines IA Emprades</strong> 
                         <div id="modalTools" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
 
                 <div class="space-y-6">
-                    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-uab-accent">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-uab-accent print-avoid-break">
                         <h4 class="font-semibold text-uab-darkgreen mb-2 text-lg">Resum Executiu</h4>
                         <p id="modalSummary" class="text-gray-700 leading-relaxed"></p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 print-avoid-break">
                         <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
                             <h4 class="font-semibold text-uab-green mb-2">Objectiu Principal</h4>
                             <p id="modalObjective" class="text-gray-700"></p>
@@ -179,7 +231,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100 print-avoid-break">
                         <h4 class="font-semibold text-uab-green mb-3">Procés / Workflow</h4>
                         <div id="modalWorkflow" class="text-gray-700 whitespace-pre-line bg-gray-50 p-4 rounded border border-gray-200 text-sm font-mono"></div>
                     </div>
@@ -187,10 +239,39 @@
             </div>
             
             <!-- Modal Footer -->
-            <div class="bg-gray-100 px-6 py-4 rounded-b-xl border-t border-gray-200 flex justify-end">
-                <button onclick="closeModal(true)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition">
-                    Tancar
-                </button>
+            <div class="no-print bg-gray-100 px-6 py-4 rounded-b-xl border-t border-gray-200 flex flex-wrap justify-between items-center gap-3">
+                
+                <!-- Engranatge discret abaix a l'esquerra amb desplegable de contrasenya -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="togglePasswordBox()" title="Editar proposta (requereix contrasenya)" class="text-gray-400 hover:text-gray-600 transition p-1.5 rounded-full hover:bg-gray-200 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+
+                    <!-- Mini-formulari ocult de contrasenya -->
+                    <div id="passwordBox" class="hidden flex items-center space-x-2 bg-white px-2.5 py-1 rounded-lg border border-gray-300 shadow-sm">
+                        <input type="password" id="editPasswordInput" placeholder="Contrasenya..." class="text-xs px-2 py-1 border border-gray-200 rounded focus:outline-none focus:border-uab-green w-28" onkeydown="if(event.key === 'Enter') verifyAndEdit()">
+                        <button onclick="verifyAndEdit()" class="text-xs bg-uab-green hover:bg-uab-darkgreen text-white px-2.5 py-1 rounded font-medium transition">
+                            Editar
+                        </button>
+                        <span id="passwordError" class="hidden text-xs text-red-600 font-medium pl-1">Incorrecta</span>
+                    </div>
+                </div>
+
+                <!-- Botons d'Imprimir PDF i Tancar -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="window.print()" class="px-4 py-2 bg-uab-green hover:bg-uab-darkgreen text-white rounded-lg shadow-sm text-sm font-medium focus:outline-none transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Imprimir / Desar PDF
+                    </button>
+                    <button onclick="closeModal(true)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition">
+                        Tancar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -203,18 +284,24 @@
     </footer>
 
     <script>
-        // --- CONFIGURACIÓ DE L'API ---
+        // --- CONFIGURACIÓ DE L'API I SEGURETAT ---
         // Posa aquí la URL del teu Google Apps Script configurat per respondre a GET
         const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec'; // Deixar buit usarà dades simulades
         
+        // Contrasenya per poder editar fitxes i URL del formulari
+        const EDIT_PASSWORD = 'uab'; // Pots canviar aquesta contrasenya pel valor que vulguis
+        const FORM_PAGE_URL = 'http://xaviuab.github.io/propostes_ia/form.html'; // En entorn local pots usar 'uab-ia-form.html'
+
         // --- ESTAT GLOBAL ---
         let allPractices = [];
         let filteredPractices = [];
+        let currentModalPractice = null;
 
         // Dades simulades inicials (per si l'API no està configurada)
         const MOCK_DATA = [
             {
                 id: 1,
+                rowNumber: 2,
                 date: "2023-10-25",
                 title: "Generació de guions crossmèdia assistits per IA generativa",
                 author: "Departament de Periodisme / Dra. Anna M.",
@@ -310,6 +397,7 @@
             
             return rows.map((row, index) => ({
                 id: index,
+                rowNumber: index + 2, // Fila real al Google Sheet (1 és capçalera, per tant +2)
                 date: row[0],
                 title: row[1],
                 author: row[2],
@@ -415,6 +503,12 @@
         function openModal(id) {
             const practice = allPractices.find(p => p.id === id);
             if (!practice) return;
+            currentModalPractice = practice;
+
+            // Reset de l'estat de la capsa de contrasenya
+            document.getElementById('passwordBox').classList.add('hidden');
+            document.getElementById('editPasswordInput').value = '';
+            document.getElementById('passwordError').classList.add('hidden');
 
             // Omplir dades
             document.getElementById('modalTitle').textContent = practice.title;
@@ -457,6 +551,32 @@
             
             // Prevenir scroll al body
             document.body.style.overflow = 'hidden';
+        }
+
+        function togglePasswordBox() {
+            const box = document.getElementById('passwordBox');
+            const input = document.getElementById('editPasswordInput');
+            const error = document.getElementById('passwordError');
+            
+            box.classList.toggle('hidden');
+            error.classList.add('hidden');
+            if (!box.classList.contains('hidden')) {
+                input.focus();
+            }
+        }
+
+        function verifyAndEdit() {
+            const input = document.getElementById('editPasswordInput').value;
+            const error = document.getElementById('passwordError');
+            
+            if (input === EDIT_PASSWORD && currentModalPractice) {
+                error.classList.add('hidden');
+                // Codifiquem les dades de la pràctica actual en format Base64 segur per passar-les per la URL
+                const encodedData = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(currentModalPractice)))));
+                window.location.href = `${FORM_PAGE_URL}?editData=${encodedData}`;
+            } else {
+                error.classList.remove('hidden');
+            }
         }
 
         function closeModal(event) {
