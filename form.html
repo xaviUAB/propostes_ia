@@ -25,12 +25,45 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* Estils específics per exportar bé el document a PDF / Impressora */
+        /* Estils per als camps d'edició de text enriquit (Rich Text) i la seva visualització */
+        .rich-editor:empty:before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+            pointer-events: none;
+            display: block;
+        }
+        .rich-editor ul, .rich-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-editor ol, .rich-content ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-editor b, .rich-editor strong, .rich-content b, .rich-content strong {
+            font-weight: 700;
+        }
+        .rich-editor i, .rich-editor em, .rich-content i, .rich-content em {
+            font-style: italic;
+        }
+        .rich-editor u, .rich-content u {
+            text-decoration: underline;
+        }
+
+        /* Estils específics per exportar bé el document a PDF / Impressora amb marges de 3 cm */
         @media print {
+            @page {
+                size: A4;
+                margin: 30mm; /* 3 cm per cada marge del document PDF */
+            }
             body { background-color: white !important; }
             
             /* Amagar elements innecessaris per al PDF */
-            header, footer, #practiceForm, #successMessage, 
+            header, footer, #practiceForm, #successMessage, #errorMessage,
             .bg-white.rounded-xl.shadow-lg.border.border-gray-100.overflow-hidden { 
                 display: none !important; 
             }
@@ -44,9 +77,9 @@
             /* Ajustar la targeta de previsualització */
             #previewCard {
                 box-shadow: none !important;
-                border: none !important;
+                border: 2px solid #006633 !important;
                 margin: 0 !important;
-                padding: 10px !important;
+                padding: 16px !important;
             }
 
             /* Amagar els botons d'acció de la cantonada (Imprimir / Tancar) */
@@ -105,8 +138,9 @@
             </div>
 
             <form id="practiceForm" class="p-6 space-y-6" onsubmit="handleSubmit(event)">
-                <!-- Camp ocult per guardar el número de fila en cas d'edició -->
+                <!-- Camps ocults per guardar el número de fila i el token de contrasenya en cas d'edició -->
                 <input type="hidden" id="editRowNumber" value="">
+                <input type="hidden" id="editPasswordToken" value="">
                 
                 <div class="space-y-4">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">1. Capçalera i Identificació</h3>
@@ -149,8 +183,120 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Resum executiu (màx. 5 línies) *</label>
-                        <textarea id="summary" rows="3" required placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('summary', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('summary', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('summary', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('summary', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                </button>
+                                <button type="button" onclick="formatDoc('summary', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('summary', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
+                            </div>
+                            <div id="summary" contenteditable="true" data-placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="rich-editor w-full px-4 py-2 min-h-[85px] outline-none text-sm text-gray-800"></div>
+                        </div>
                     </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Objectiu principal *</label>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('objective', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('objective', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('objective', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('objective', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                </button>
+                                <button type="button" onclick="formatDoc('objective', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('objective', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
+                            </div>
+                            <div id="objective" contenteditable="true" data-placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="rich-editor w-full px-4 py-2 min-h-[60px] outline-none text-sm text-gray-800"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-2">
+                    <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">3. Especificacions Tècniques i Ètiques</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Eines i tecnologies d'IA emprades *</label>
+                            <input type="text" id="tools" required placeholder="Ex. ChatGPT, Midjourney, Transcriptor local..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Grau de replicabilitat *</label>
+                            <select id="replicability" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white">
+                                <option value="Alt">Alt (Fàcilment adaptable per a qualsevol)</option>
+                                <option value="Mitjà">Mitjà (Requereix coneixements tècnics bàsics)</option>
+                                <option value="Baix">Baix (Específic o altament complex)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripció del procés / Workflow pas a pas *</label>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('workflow', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('workflow', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('workflow', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('workflow', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                </button>
+                                <button type="button" onclick="formatDoc('workflow', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('workflow', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
+                            </div>
+                            <div id="workflow" contenteditable="true" data-placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="rich-editor w-full px-4 py-2 min-h-[100px] outline-none text-sm text-gray-800"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Consideracions ètiques i de transparència *</label>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('ethics', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('ethics', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('ethics', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('ethics', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                </button>
+                                <button type="button" onclick="formatDoc('ethics', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('ethics', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
+                            </div>
+                            <div id="ethics" contenteditable="true" data-placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="rich-editor w-full px-4 py-2 min-h-[75px] outline-none text-sm text-gray-800"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex items-center justify-end space-x-4 border-t">
+                    <button type="reset" onclick="clearRichEditors()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
+                        Netejar formulari
+                    </button>
+                    <!-- Changed button text to indicate submission -->
+                    <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md flex items-center">
+                        <span id="submitBtnText">Generar Fitxa i Enviar</span>
+                        <svg id="loadingSpinner" class="animate-spin ml-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Added error message container (sense usar alert) -->
+        <div id="errorMessage" class="hidden mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm">
+            <p id="errorMessageText" class="text-sm text-red-700 font-medium">Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.</p>
+        </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Objectiu principal *</label>
@@ -250,21 +396,21 @@
             <div class="space-y-4 text-sm">
                 <div>
                     <h4 class="font-semibold text-uab-green mb-1">Resum Executiu</h4>
-                    <p id="resSummary" class="text-gray-700 bg-white p-3 rounded border"></p>
+                    <div id="resSummary" class="rich-content text-gray-700 bg-white p-3 rounded border"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <h4 class="font-semibold text-uab-green mb-1">Objectiu Principal</h4>
-                        <p id="resObjective" class="text-gray-700 bg-white p-3 rounded border h-full"></p>
+                        <div id="resObjective" class="rich-content text-gray-700 bg-white p-3 rounded border h-full"></div>
                     </div>
                     <div>
                         <h4 class="font-semibold text-uab-green mb-1">Consideracions Ètiques</h4>
-                        <p id="resEthics" class="text-gray-700 bg-white p-3 rounded border h-full"></p>
+                        <div id="resEthics" class="rich-content text-gray-700 bg-white p-3 rounded border h-full"></div>
                     </div>
                 </div>
                 <div>
                     <h4 class="font-semibold text-uab-green mb-1">Procés / Workflow pas a pas</h4>
-                    <p id="resWorkflow" class="text-gray-700 bg-white p-3 rounded border whitespace-pre-line"></p>
+                    <div id="resWorkflow" class="rich-content text-gray-700 bg-white p-3 rounded border"></div>
                 </div>
             </div>
         </div>
@@ -281,6 +427,23 @@
         // Substitueix aquesta URL per la URL que et donarà Google Apps Script quan publiquis el projecte web
         const GOOGLE_SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzGIi00X4f9LTjIO8iZmFNk3pTSaPFSyRyybP5olZ7TR0h2U1AX8fLID6MBKRZFdCk78Q/exec';
 
+        function formatDoc(editorId, command) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand(command, false, null);
+        }
+
+        function clearRichEditors() {
+            ['summary', 'objective', 'workflow', 'ethics'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+        }
+
+        function isEditorEmpty(id) {
+            const el = document.getElementById(id);
+            return el.innerText.trim() === '';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const editDataParam = urlParams.get('editData');
@@ -289,21 +452,24 @@
                 try {
                     const practice = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(editDataParam)))));
                     
-                    // Omplir els camps del formulari amb les dades rebudes
+                    // Omplir els camps del formulari amb les dades rebudes (incloent etiquetes HTML als editors)
                     document.getElementById('title').value = practice.title || '';
                     document.getElementById('author').value = practice.author || '';
                     document.getElementById('email').value = practice.email || '';
                     if (practice.scope) document.getElementById('scope').value = practice.scope;
                     document.getElementById('targetAudience').value = practice.targetAudience || '';
-                    document.getElementById('summary').value = practice.summary || '';
-                    document.getElementById('objective').value = practice.objective || '';
+                    document.getElementById('summary').innerHTML = practice.summary || '';
+                    document.getElementById('objective').innerHTML = practice.objective || '';
                     document.getElementById('tools').value = practice.tools || '';
                     if (practice.replicability) document.getElementById('replicability').value = practice.replicability;
-                    document.getElementById('workflow').value = practice.workflow || '';
-                    document.getElementById('ethics').value = practice.ethics || '';
+                    document.getElementById('workflow').innerHTML = practice.workflow || '';
+                    document.getElementById('ethics').innerHTML = practice.ethics || '';
                     
                     if (practice.rowNumber) {
                         document.getElementById('editRowNumber').value = practice.rowNumber;
+                    }
+                    if (practice.editToken) {
+                        document.getElementById('editPasswordToken').value = practice.editToken;
                     }
 
                     // Actualitzar interfície per reflectir que estem editant
@@ -324,23 +490,33 @@
             const spinner = document.getElementById('loadingSpinner');
             const successMessage = document.getElementById('successMessage');
             const errorMessage = document.getElementById('errorMessage');
+            const errorMessageText = document.getElementById('errorMessageText');
             const rowNumberVal = document.getElementById('editRowNumber').value;
+            const passwordTokenVal = document.getElementById('editPasswordToken').value;
+
+            // Validar que els camps de text enriquit obligatoris no estiguin buits
+            if (isEditorEmpty('summary') || isEditorEmpty('objective') || isEditorEmpty('workflow') || isEditorEmpty('ethics')) {
+                errorMessageText.innerText = 'Si us plau, completa tots els camps de text obligatoris (*).';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
             
-            // Recollir dades del formulari
+            // Recollir dades del formulari (desant l'HTML intern dels camps enriquits al Google Sheet)
             const formData = {
                 action: rowNumberVal ? 'edit' : 'create',
                 rowNumber: rowNumberVal ? parseInt(rowNumberVal, 10) : null,
+                password: passwordTokenVal || null,
                 title: document.getElementById('title').value,
                 author: document.getElementById('author').value,
                 email: document.getElementById('email').value,
                 scope: document.getElementById('scope').value,
                 targetAudience: document.getElementById('targetAudience').value,
-                summary: document.getElementById('summary').value,
-                objective: document.getElementById('objective').value,
+                summary: document.getElementById('summary').innerHTML.trim(),
+                objective: document.getElementById('objective').innerHTML.trim(),
                 tools: document.getElementById('tools').value,
                 replicability: document.getElementById('replicability').value,
-                workflow: document.getElementById('workflow').value,
-                ethics: document.getElementById('ethics').value,
+                workflow: document.getElementById('workflow').innerHTML.trim(),
+                ethics: document.getElementById('ethics').innerHTML.trim(),
                 timestamp: new Date().toISOString()
             };
 
@@ -367,18 +543,18 @@
                 // 1. Mostrar el missatge d'èxit de l'enviament
                 successMessage.classList.remove('hidden');
 
-                // 2. Assignar valors al modal de previsualització
+                // 2. Assignar valors al modal de previsualització (respectant el format tipogràfic)
                 document.getElementById('resTitle').innerText = formData.title;
                 document.getElementById('resAuthor').innerText = formData.author;
                 document.getElementById('resEmail').innerText = formData.email;
                 document.getElementById('resScope').innerText = formData.scope;
                 document.getElementById('resTarget').innerText = formData.targetAudience;
-                document.getElementById('resSummary').innerText = formData.summary;
-                document.getElementById('resObjective').innerText = formData.objective;
+                document.getElementById('resSummary').innerHTML = formData.summary;
+                document.getElementById('resObjective').innerHTML = formData.objective;
                 document.getElementById('resTools').innerText = formData.tools;
                 document.getElementById('resReplicability').innerText = formData.replicability;
-                document.getElementById('resWorkflow').innerText = formData.workflow;
-                document.getElementById('resEthics').innerText = formData.ethics;
+                document.getElementById('resWorkflow').innerHTML = formData.workflow;
+                document.getElementById('resEthics').innerHTML = formData.ethics;
 
                 // 3. Mostrar previsualització i fer scroll suau
                 const preview = document.getElementById('previewCard');
@@ -387,6 +563,7 @@
 
             } catch (error) {
                 console.error('Error enviant dades:', error);
+                errorMessageText.innerText = 'Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.';
                 errorMessage.classList.remove('hidden');
             } finally {
                 // Restaurar l'estat del botó
