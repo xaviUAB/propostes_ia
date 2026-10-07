@@ -63,17 +63,17 @@
         .rich-content u {
             text-decoration: underline;
         }
-
-        /* Estils específics per imprimir o desar en PDF des de la finestra modal amb 3 cm de marge */
+        /* Estils específics per imprimir o desar en PDF des de la finestra modal amb més marge superior */
         @media print {
             @page {
                 size: A4;
-                margin: 30mm; /* 3 cm aproximadament per cada marge */
+                margin: 45mm 30mm 30mm 30mm; /* 4.5 cm de marge superior i 3 cm a la resta */
             }
             html, body {
                 background-color: white !important;
                 height: auto !important;
                 overflow: visible !important;
+                padding-top: 10mm !important; /* Espai extra de seguretat a la part superior */
             }
             /* Amagar tot l'entorn excepte la finestra modal */
             header, main, footer, .no-print, #passwordBox {
