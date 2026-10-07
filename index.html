@@ -63,17 +63,20 @@
         .rich-content u {
             text-decoration: underline;
         }
-        /* Estils específics per imprimir o desar en PDF des de la finestra modal amb més marge superior */
+        /* Estils específics per imprimir o desar en PDF amb marge superior extra NOMÉS a partir de la 2a pàgina */
         @media print {
             @page {
                 size: A4;
-                margin: 45mm 30mm 30mm 30mm; /* 4.5 cm de marge superior i 3 cm a la resta */
+                margin: 45mm 30mm 30mm 30mm; /* 4.5 cm de marge superior per defecte (pàgina 2 i següents) */
+            }
+            @page :first {
+                margin-top: 20mm; /* Marge superior normal/reduït (2 cm) només a la primera pàgina */
             }
             html, body {
                 background-color: white !important;
                 height: auto !important;
                 overflow: visible !important;
-                padding-top: 10mm !important; /* Espai extra de seguretat a la part superior */
+                padding-top: 0 !important;
             }
             /* Amagar tot l'entorn excepte la finestra modal */
             header, main, footer, .no-print, #passwordBox {
@@ -97,6 +100,8 @@
                 box-shadow: none !important;
                 border: 2px solid #006633 !important;
                 border-radius: 8px !important;
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
             }
             #modalBody {
                 max-height: none !important;
