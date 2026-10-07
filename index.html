@@ -41,11 +41,34 @@
             background: #a8a8a8; 
         }
 
-        /* Estils específics per imprimir o desar en PDF des de la finestra modal */
+        /* Estils per renderitzar correctament negretes, cursives i llistes desades al Google Sheet */
+        .rich-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-content ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-content b, .rich-content strong {
+            font-weight: 700;
+        }
+        .rich-content i, .rich-content em {
+            font-style: italic;
+        }
+        .rich-content u {
+            text-decoration: underline;
+        }
+
+        /* Estils específics per imprimir o desar en PDF des de la finestra modal amb 3 cm de marge */
         @media print {
             @page {
                 size: A4;
-                margin: 12mm;
+                margin: 30mm; /* 3 cm aproximadament per cada marge */
             }
             html, body {
                 background-color: white !important;
@@ -217,23 +240,23 @@
                 <div class="space-y-6">
                     <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-uab-accent print-avoid-break">
                         <h4 class="font-semibold text-uab-darkgreen mb-2 text-lg">Resum Executiu</h4>
-                        <p id="modalSummary" class="text-gray-700 leading-relaxed"></p>
+                        <div id="modalSummary" class="rich-content text-gray-700 leading-relaxed"></div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 print-avoid-break">
                         <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
                             <h4 class="font-semibold text-uab-green mb-2">Objectiu Principal</h4>
-                            <p id="modalObjective" class="text-gray-700"></p>
+                            <div id="modalObjective" class="rich-content text-gray-700"></div>
                         </div>
                         <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
                             <h4 class="font-semibold text-uab-green mb-2">Consideracions Ètiques</h4>
-                            <p id="modalEthics" class="text-gray-700"></p>
+                            <div id="modalEthics" class="rich-content text-gray-700"></div>
                         </div>
                     </div>
 
                     <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100 print-avoid-break">
                         <h4 class="font-semibold text-uab-green mb-3">Procés / Workflow</h4>
-                        <div id="modalWorkflow" class="text-gray-700 whitespace-pre-line bg-gray-50 p-4 rounded border border-gray-200 text-sm font-mono"></div>
+                        <div id="modalWorkflow" class="rich-content text-gray-700 whitespace-pre-line bg-gray-50 p-4 rounded border border-gray-200 text-sm"></div>
                     </div>
                 </div>
             </div>
@@ -241,7 +264,7 @@
             <!-- Modal Footer -->
             <div class="no-print bg-gray-100 px-6 py-4 rounded-b-xl border-t border-gray-200 flex flex-wrap justify-between items-center gap-3">
                 
-                <!-- Engranatge discret abaix a l'esquerra amb desplegable de contrasenya -->
+                <!-- Engranatge discret abaix a l'esquerra amb desplegable de contrasenya validada al servidor -->
                 <div class="flex items-center space-x-2">
                     <button onclick="togglePasswordBox()" title="Editar proposta (requereix contrasenya)" class="text-gray-400 hover:text-gray-600 transition p-1.5 rounded-full hover:bg-gray-200 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -253,7 +276,7 @@
                     <!-- Mini-formulari ocult de contrasenya -->
                     <div id="passwordBox" class="hidden flex items-center space-x-2 bg-white px-2.5 py-1 rounded-lg border border-gray-300 shadow-sm">
                         <input type="password" id="editPasswordInput" placeholder="Contrasenya..." class="text-xs px-2 py-1 border border-gray-200 rounded focus:outline-none focus:border-uab-green w-28" onkeydown="if(event.key === 'Enter') verifyAndEdit()">
-                        <button onclick="verifyAndEdit()" class="text-xs bg-uab-green hover:bg-uab-darkgreen text-white px-2.5 py-1 rounded font-medium transition">
+                        <button id="verifyEditBtn" onclick="verifyAndEdit()" class="text-xs bg-uab-green hover:bg-uab-darkgreen text-white px-2.5 py-1 rounded font-medium transition">
                             Editar
                         </button>
                         <span id="passwordError" class="hidden text-xs text-red-600 font-medium pl-1">Incorrecta</span>
@@ -288,14 +311,38 @@
         // Posa aquí la URL del teu Google Apps Script configurat per respondre a GET
         const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec'; // Deixar buit usarà dades simulades
         
-        // Contrasenya per poder editar fitxes i URL del formulari
-        const EDIT_PASSWORD = 'uab'; // Pots canviar aquesta contrasenya pel valor que vulguis
+        // NOTA DE SEGURETAT: La contrasenya ja NO es desa en el codi HTML públic.
+        // Es valida de manera segura contra el servidor de Google Apps Script (variable ADMIN_PASSWORD al fitxer .gs).
         const FORM_PAGE_URL = 'http://xaviuab.github.io/propostes_ia/form.html'; // En entorn local pots usar 'uab-ia-form.html'
 
         // --- ESTAT GLOBAL ---
         let allPractices = [];
         let filteredPractices = [];
         let currentModalPractice = null;
+
+        // Funció per netejar etiquetes HTML perilloses però conservar negretes, cursives i llistes
+        function sanitizeRichHTML(html) {
+            if (!html) return '';
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            temp.querySelectorAll('script, iframe, object, embed, style, link').forEach(el => el.remove());
+            temp.querySelectorAll('*').forEach(el => {
+                Array.from(el.attributes).forEach(attr => {
+                    if (attr.name.toLowerCase().startsWith('on')) {
+                        el.removeAttribute(attr.name);
+                    }
+                });
+            });
+            return temp.innerHTML;
+        }
+
+        // Funció per extreure només el text pla per a les targetes de previsualització i el cercador
+        function stripHTML(html) {
+            if (!html) return '';
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            return temp.textContent || temp.innerText || '';
+        }
 
         // Dades simulades inicials (per si l'API no està configurada)
         const MOCK_DATA = [
@@ -308,11 +355,11 @@
                 email: "anna.m@uab.cat",
                 scope: "Docència (Grau / Màster)",
                 targetAudience: "Estudiants de 3r de Periodisme",
-                summary: "S'utilitzen eines d'IA per generar esbossos inicials de guions que l'estudiant ha de verificar, contrastar i expandir per a diferents plataformes, fomentant l'edició crítica.",
-                objective: "Optimitzar la fase de pluja d'idees i centrar l'esforç docent en l'edició crítica i la verificació.",
+                summary: "S'utilitzen eines d'IA per generar <b>esbossos inicials de guions</b> que l'estudiant ha de verificar, contrastar i expandir per a diferents plataformes, fomentant l'<i>edició crítica</i>.",
+                objective: "Optimitzar la fase de pluja d'idees i centrar l'esforç docent en l'<b>edició crítica</b> i la verificació.",
                 tools: "ChatGPT Plus, Claude 2",
                 replicability: "Alt",
-                workflow: "1. Prompt inicial de context.\n2. Generació d'escaleta bàsica per IA.\n3. Edició manual (human-in-the-loop).\n4. Adaptació a format podcast/video per l'alumne.",
+                workflow: "<ol><li><b>Prompt inicial</b> de context.</li><li>Generació d'escaleta bàsica per IA.</li><li>Edició manual (<i>human-in-the-loop</i>).</li><li>Adaptació a format podcast/vídeo per l'alumne.</li></ol>",
                 ethics: "L'estudiant ha de declarar el prompt utilitzat i marcar clarament quines parts del guió han estat generades i quines humanes."
             },
             {
@@ -422,8 +469,8 @@
                 // Filtre per àmbit
                 const matchScope = scopeTerm === 'Tots' || (practice.scope && practice.scope.includes(scopeTerm));
                 
-                // Filtre de cerca lliure (busca en títol, resum, eines, autor)
-                const searchString = `${practice.title} ${practice.summary} ${practice.tools} ${practice.author}`.toLowerCase();
+                // Filtre de cerca lliure (busca en títol, resum net d'HTML, eines, autor)
+                const searchString = `${practice.title} ${stripHTML(practice.summary)} ${practice.tools} ${practice.author}`.toLowerCase();
                 const matchSearch = searchString.includes(searchTerm);
 
                 return matchScope && matchSearch;
@@ -477,7 +524,7 @@
                             </h3>
                             
                             <p class="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">
-                                ${practice.summary || 'Sense resum disponible.'}
+                                ${stripHTML(practice.summary) || 'Sense resum disponible.'}
                             </p>
                             
                             <div class="mt-auto border-t border-gray-100 pt-3">
@@ -536,10 +583,11 @@
                 `<span class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-medium border border-gray-300 shadow-sm">${t}</span>`
             ).join('');
 
-            document.getElementById('modalSummary').textContent = practice.summary;
-            document.getElementById('modalObjective').textContent = practice.objective;
-            document.getElementById('modalEthics').textContent = practice.ethics;
-            document.getElementById('modalWorkflow').textContent = practice.workflow;
+            // Renderitzar el contingut amb format tipogràfic (negretes, cursives, llistes) de forma segura
+            document.getElementById('modalSummary').innerHTML = sanitizeRichHTML(practice.summary);
+            document.getElementById('modalObjective').innerHTML = sanitizeRichHTML(practice.objective);
+            document.getElementById('modalEthics').innerHTML = sanitizeRichHTML(practice.ethics);
+            document.getElementById('modalWorkflow').innerHTML = sanitizeRichHTML(practice.workflow);
 
             // Mostrar modal
             const modal = document.getElementById('detailsModal');
@@ -565,17 +613,47 @@
             }
         }
 
-        function verifyAndEdit() {
+        async function verifyAndEdit() {
             const input = document.getElementById('editPasswordInput').value;
             const error = document.getElementById('passwordError');
+            const btn = document.getElementById('verifyEditBtn');
             
-            if (input === EDIT_PASSWORD && currentModalPractice) {
-                error.classList.add('hidden');
-                // Codifiquem les dades de la pràctica actual en format Base64 segur per passar-les per la URL
-                const encodedData = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(currentModalPractice)))));
-                window.location.href = `${FORM_PAGE_URL}?editData=${encodedData}`;
-            } else {
+            if (!input || !currentModalPractice) return;
+
+            error.classList.add('hidden');
+            const originalText = btn.innerText;
+            btn.innerText = '...';
+            btn.disabled = true;
+
+            try {
+                let isValid = false;
+
+                if (GOOGLE_SHEETS_API_URL) {
+                    // Validem la contrasenya preguntant al servidor de Google Apps Script (on està amagada)
+                    const verifyUrl = `${GOOGLE_SHEETS_API_URL}?action=verifyPassword&password=${encodeURIComponent(input)}`;
+                    const response = await fetch(verifyUrl);
+                    const result = await response.json();
+                    isValid = result && result.valid === true;
+                }
+
+                if (isValid) {
+                    const practiceToEdit = {
+                        ...currentModalPractice,
+                        editToken: input
+                    };
+                    const encodedData = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(practiceToEdit)))));
+                    window.location.href = `${FORM_PAGE_URL}?editData=${encodedData}`;
+                } else {
+                    error.innerText = 'Incorrecta';
+                    error.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error('Error verificant contrasenya:', err);
+                error.innerText = 'Error servidor';
                 error.classList.remove('hidden');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
         }
 
