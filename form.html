@@ -284,54 +284,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Secció del Sheet (Registre de dades + Enllaços i URLs de la sessió) -->
-        <div class="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div class="bg-uab-darkgreen text-white px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h3 class="text-lg font-bold flex items-center gap-2">
-                        <span>📊</span> Registre de Bones Pràctiques (Sheet)
-                    </h3>
-                    <p class="text-xs text-uab-lightgreen opacity-90">Les fitxes generades o editades, juntament amb els enllaços i les URLs extretes, s'envien al Google Sheet i es mostren aquí.</p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="copyTSVForSheets()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1.5 rounded-lg text-xs font-medium transition">
-                        📋 Copiar per a Google Sheets
-                    </button>
-                    <button type="button" onclick="exportToCSV()" class="bg-uab-accent hover:bg-uab-green text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">
-                        ⬇️ Descarregar CSV / Excel
-                    </button>
-                </div>
-            </div>
-
-            <div id="sheetCopyFeedback" class="hidden bg-uab-lightgreen text-uab-darkgreen text-xs font-medium px-6 py-2 border-b border-uab-accent/30">
-                Dades copiades al porta-retalls! Ja pots enganxar-les (Ctrl+V) directament a Google Sheets o Excel.
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="bg-gray-100 text-gray-700 uppercase border-b border-gray-200">
-                            <th class="py-3 px-4 font-semibold">Data</th>
-                            <th class="py-3 px-4 font-semibold">Títol</th>
-                            <th class="py-3 px-4 font-semibold">Responsable</th>
-                            <th class="py-3 px-4 font-semibold">Àmbit</th>
-                            <th class="py-3 px-4 font-semibold">Eines IA</th>
-                            <th class="py-3 px-4 font-semibold">Enllaços (Text + URL)</th>
-                            <th class="py-3 px-4 font-semibold">URLs Registrades</th>
-                            <th class="py-3 px-4 font-semibold text-center">Accions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sheetTableBody" class="divide-y divide-gray-200 text-gray-700">
-                        <tr id="emptySheetRow">
-                            <td colspan="8" class="py-6 text-center text-gray-400 italic">
-                                Encara no s'ha registrat o editat cap pràctica en aquesta sessió.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </main>
 
     <footer class="bg-gray-900 text-gray-400 py-6 mt-12 border-t border-gray-800">
@@ -476,7 +428,6 @@
 
             sheetRecords.push(initialRecord);
             editingIndex = 0;
-            renderSheetTable();
 
             // Actualitzar la UI del mode edició
             document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
@@ -799,18 +750,29 @@
                 targetIndex = sheetRecords.length - 1;
             }
 
-            renderSheetTable();
             showPreviewForRecord(record, targetIndex);
         }
+
+        let deleteConfirmationPending = false;
 
         // Eliminar fitxa del Google Sheet cridant l'acció "delete" de Code.gs
         async function handleDeleteFromSheet() {
             if (!activeSheetEdit.isSheetEdit || !activeSheetEdit.rowNumber) return;
 
-            const confirmDelete = confirm("Estàs segur que vols eliminar definitivament aquesta fitxa del Google Sheet?");
-            if (!confirmDelete) return;
-
             const deleteBtn = document.getElementById('deleteSheetBtn');
+            if (!deleteConfirmationPending) {
+                deleteConfirmationPending = true;
+                deleteBtn.innerText = '⚠️ Fes clic de nou per confirmar l\'eliminació';
+                setTimeout(() => {
+                    if (deleteConfirmationPending && !deleteBtn.disabled) {
+                        deleteConfirmationPending = false;
+                        deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
+                    }
+                }, 4000);
+                return;
+            }
+
+            deleteConfirmationPending = false;
             deleteBtn.disabled = true;
             deleteBtn.innerText = 'Eliminant...';
 
@@ -887,127 +849,19 @@
 
         function exitEditModeUI() {
             editingIndex = null;
+            deleteConfirmationPending = false;
             activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
             document.getElementById('formHeaderTitle').innerText = 'Nova Fitxa de Bona Pràctica';
             document.getElementById('formHeaderSubtitle').innerText = 'Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.';
             document.getElementById('editingBadge').classList.add('hidden');
-            document.getElementById('deleteSheetBtn').classList.add('hidden');
+            const deleteBtn = document.getElementById('deleteSheetBtn');
+            deleteBtn.classList.add('hidden');
+            deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
             document.getElementById('submitBtn').innerText = 'Generar Fitxa i Registrar al Sheet';
             document.getElementById('cancelEditBtn').innerText = 'Netejar formulari';
             if (window.history && window.history.replaceState) {
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
-        }
-
-        // Actualitza la taula del Sheet amb enllaços clicables, URLs registrades i botons per obrir/editar
-        function renderSheetTable() {
-            const tbody = document.getElementById('sheetTableBody');
-            tbody.innerHTML = '';
-
-            if (sheetRecords.length === 0) {
-                tbody.innerHTML = `
-                    <tr id="emptySheetRow">
-                        <td colspan="8" class="py-6 text-center text-gray-400 italic">
-                            Encara no s'ha registrat o editat cap pràctica en aquesta sessió.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            sheetRecords.forEach((rec, index) => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-uab-lightgreen/20 transition align-top';
-
-                const linksHtml = rec.linksArray && rec.linksArray.length > 0
-                    ? rec.linksArray.map(l => `<div class="mb-1"><a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(l.text)}</a></div>`).join('')
-                    : '<span class="text-gray-400 italic">Sense enllaços</span>';
-
-                const urlsHtml = rec.linksArray && rec.linksArray.length > 0
-                    ? rec.linksArray.map(l => `<div class="mb-1"><a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline hover:text-blue-800 break-all">${escapeHtml(l.url)}</a></div>`).join('')
-                    : '<span class="text-gray-400 italic">-</span>';
-
-                tr.innerHTML = `
-                    <td class="py-3 px-4 whitespace-nowrap text-gray-500">${escapeHtml(rec.timestamp)}</td>
-                    <td class="py-3 px-4 font-semibold text-gray-900">${escapeHtml(rec.title)}</td>
-                    <td class="py-3 px-4">${escapeHtml(rec.author)}<br><span class="text-gray-400">${escapeHtml(rec.email)}</span></td>
-                    <td class="py-3 px-4">${escapeHtml(rec.scope)}</td>
-                    <td class="py-3 px-4">${escapeHtml(rec.tools)}</td>
-                    <td class="py-3 px-4">${linksHtml}</td>
-                    <td class="py-3 px-4">${urlsHtml}</td>
-                    <td class="py-3 px-4 whitespace-nowrap text-center">
-                        <div class="flex flex-col gap-1.5 items-center">
-                            <button type="button" onclick="loadRecordIntoEditor(${index})" class="w-full px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded text-xs font-medium transition shadow-sm">
-                                ✏️ Editar a l'editor
-                            </button>
-                            <button type="button" onclick="showPreviewForRecord(sheetRecords[${index}], ${index})" class="w-full px-2.5 py-1 bg-uab-lightgreen hover:bg-uab-accent text-uab-darkgreen hover:text-white rounded text-xs font-medium transition">
-                                👁️ Veure fitxa
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Copiar el registre en format tabulat (TSV) per enganxar directament a Google Sheets
-        function copyTSVForSheets() {
-            if (sheetRecords.length === 0) return;
-
-            const headers = [
-                'Data i Hora', 'Títol', 'Autor/a', 'Correu', 'Àmbit', 'Públic Objectiu',
-                'Resum', 'Objectiu', 'Eines IA', 'Replicabilitat',
-                'Workflow', 'Consideracions Ètiques', 'Enllaços (Text i URL)', 'URLs'
-            ];
-
-            const rows = sheetRecords.map(r => [
-                r.timestamp, r.title, r.author, r.email, r.scope, r.targetAudience,
-                r.summary, r.objective, r.tools, r.replicability,
-                r.workflow, r.ethics, r.linksFormatted, r.urlsOnly
-            ].map(val => String(val || '').replace(/[\t\r\n]+/g, ' ')).join('\t'));
-
-            const tsvContent = [headers.join('\t'), ...rows].join('\n');
-            const tempArea = document.createElement('textarea');
-            tempArea.value = tsvContent;
-            document.body.appendChild(tempArea);
-            tempArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempArea);
-
-            const feedback = document.getElementById('sheetCopyFeedback');
-            feedback.classList.remove('hidden');
-            setTimeout(() => feedback.classList.add('hidden'), 4000);
-        }
-
-        // Exportar el Sheet a fitxer CSV compatible amb Excel i Google Sheets
-        function exportToCSV() {
-            if (sheetRecords.length === 0) return;
-
-            const headers = [
-                'Data i Hora', 'Títol', 'Autor/a', 'Correu', 'Àmbit', 'Públic Objectiu',
-                'Resum', 'Objectiu', 'Eines IA', 'Replicabilitat',
-                'Workflow', 'Consideracions Ètiques', 'Enllaços (Text i URL)', 'URLs'
-            ];
-
-            const csvRows = [headers.join(',')];
-            sheetRecords.forEach(r => {
-                const values = [
-                    r.timestamp, r.title, r.author, r.email, r.scope, r.targetAudience,
-                    r.summary, r.objective, r.tools, r.replicability,
-                    r.workflow, r.ethics, r.linksFormatted, r.urlsOnly
-                ].map(v => `"${String(v || '').replace(/"/g, '""')}"`);
-                csvRows.push(values.join(','));
-            });
-
-            const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'repositori_bones_practiques_ia_uab.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
         }
 
         function resetForm() {
