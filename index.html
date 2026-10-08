@@ -41,7 +41,7 @@
             background: #a8a8a8; 
         }
 
-        /* Estils per renderitzar correctament negretes, cursives i llistes desades al Google Sheet */
+        /* Estils per renderitzar correctament negretes, cursives, llistes i enllaços desats al Google Sheet */
         .rich-content ul {
             list-style-type: disc;
             padding-left: 1.5rem;
@@ -62,6 +62,14 @@
         }
         .rich-content u {
             text-decoration: underline;
+        }
+        .rich-content a {
+            color: #006633;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .rich-content a:hover {
+            color: #004d26;
         }
         /* Estils específics per imprimir o desar en PDF des de la finestra modal amb més marge superior */
         @media print {
@@ -146,7 +154,7 @@
                 <h2 class="text-lg font-bold text-uab-darkgreen">Tens una experiència per compartir?</h2>
                 <p class="text-sm text-gray-600 mt-1">Ajuda'ns a enriquir el repositori de la Facultat aportant el teu cas d'ús.</p>
             </div>
-            <a href="http://xaviuab.github.io/propostes_ia/form.html" target="_blank" class="px-6 py-3 rounded-lg bg-uab-accent hover:bg-uab-green text-white font-medium text-sm transition shadow-md whitespace-nowrap flex items-center group">
+            <a href="form.html" class="px-6 py-3 rounded-lg bg-uab-accent hover:bg-uab-green text-white font-medium text-sm transition shadow-md whitespace-nowrap flex items-center group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
                 </svg>
@@ -308,19 +316,17 @@
 
     <script>
         // --- CONFIGURACIÓ DE L'API I SEGURETAT ---
-        // Posa aquí la URL del teu Google Apps Script configurat per respondre a GET
-        const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec'; // Deixar buit usarà dades simulades
+        const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
         
-        // NOTA DE SEGURETAT: La contrasenya ja NO es desa en el codi HTML públic.
-        // Es valida de manera segura contra el servidor de Google Apps Script (variable ADMIN_PASSWORD al fitxer .gs).
-        const FORM_PAGE_URL = 'http://xaviuab.github.io/propostes_ia/form.html'; // En entorn local pots usar 'uab-ia-form.html'
+        // Utilitzem ruta relativa perquè funcioni tant en local com a GitHub Pages (https://xaviuab.github.io/propostes_ia/form.html)
+        const FORM_PAGE_URL = 'form.html';
 
         // --- ESTAT GLOBAL ---
         let allPractices = [];
         let filteredPractices = [];
         let currentModalPractice = null;
 
-        // Funció per netejar etiquetes HTML perilloses però conservar negretes, cursives i llistes
+        // Funció per netejar etiquetes HTML perilloses però conservar negretes, cursives, llistes i enllaços
         function sanitizeRichHTML(html) {
             if (!html) return '';
             const temp = document.createElement('div');
@@ -332,6 +338,10 @@
                         el.removeAttribute(attr.name);
                     }
                 });
+            });
+            temp.querySelectorAll('a').forEach(a => {
+                a.setAttribute('target', '_blank');
+                a.setAttribute('rel', 'noopener noreferrer');
             });
             return temp.innerHTML;
         }
@@ -364,6 +374,7 @@
             },
             {
                 id: 2,
+                rowNumber: 3,
                 date: "2023-11-02",
                 title: "Automatització de transcripcions en recerca qualitativa",
                 author: "Grup de Recerca Audiovisual",
@@ -379,6 +390,7 @@
             },
             {
                 id: 3,
+                rowNumber: 4,
                 date: "2023-11-15",
                 title: "Traducció de guies docents amb eines IA",
                 author: "Suport Administratiu - Deganat",
@@ -407,15 +419,10 @@
         async function fetchData() {
             try {
                 if (GOOGLE_SHEETS_API_URL) {
-                    // Si hi ha URL, fem fetch al Google Script
                     const response = await fetch(GOOGLE_SHEETS_API_URL);
                     const rawData = await response.json();
-                    
-                    // Suposant que Google Apps Script retorna un array d'arrays, cal mapejar-ho.
-                    // Si retorna directament objectes, pots saltar-te el mapeig.
                     allPractices = formatSheetData(rawData); 
                 } else {
-                    // Timeout simulat per veure l'efecte de càrrega
                     await new Promise(resolve => setTimeout(resolve, 800));
                     allPractices = MOCK_DATA;
                 }
@@ -433,13 +440,11 @@
 
         // Funció d'ajuda per si les dades venen com a array bidimensional de Google Sheets
         function formatSheetData(data) {
-            // Eliminar capçalera si hi és i mapejar a objectes
             if(!data || data.length === 0) return [];
             
             const isArrayOfArrays = Array.isArray(data[0]);
-            if (!isArrayOfArrays) return data; // Ja són objectes
+            if (!isArrayOfArrays) return data;
 
-            const headers = data[0];
             const rows = data.slice(1);
             
             return rows.map((row, index) => ({
@@ -466,10 +471,7 @@
             const scopeTerm = document.getElementById('scopeFilter').value;
 
             filteredPractices = allPractices.filter(practice => {
-                // Filtre per àmbit
                 const matchScope = scopeTerm === 'Tots' || (practice.scope && practice.scope.includes(scopeTerm));
-                
-                // Filtre de cerca lliure (busca en títol, resum net d'HTML, eines, autor)
                 const searchString = `${practice.title} ${stripHTML(practice.summary)} ${practice.tools} ${practice.author}`.toLowerCase();
                 const matchSearch = searchString.includes(searchTerm);
 
@@ -496,13 +498,11 @@
             noResults.classList.add('hidden');
 
             data.forEach(practice => {
-                // Determine colors based on replicability
                 let repColor = 'bg-gray-100 text-gray-800';
                 if (practice.replicability === 'Alt') repColor = 'bg-green-100 text-green-800';
                 if (practice.replicability === 'Mitjà') repColor = 'bg-yellow-100 text-yellow-800';
                 if (practice.replicability === 'Baix') repColor = 'bg-red-100 text-red-800';
 
-                // Format tools as small tags
                 const toolsList = practice.tools ? practice.tools.split(',').map(t => t.trim()) : [];
                 const toolsHTML = toolsList.slice(0, 3).map(t => `<span class="inline-block bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded border border-gray-200 truncate max-w-[100px]">${t}</span>`).join('');
                 const extraTools = toolsList.length > 3 ? `<span class="inline-block bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded border border-gray-200">+${toolsList.length - 3}</span>` : '';
@@ -583,7 +583,7 @@
                 `<span class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-medium border border-gray-300 shadow-sm">${t}</span>`
             ).join('');
 
-            // Renderitzar el contingut amb format tipogràfic (negretes, cursives, llistes) de forma segura
+            // Renderitzar el contingut amb format tipogràfic (negretes, cursives, llistes i enllaços) de forma segura
             document.getElementById('modalSummary').innerHTML = sanitizeRichHTML(practice.summary);
             document.getElementById('modalObjective').innerHTML = sanitizeRichHTML(practice.objective);
             document.getElementById('modalEthics').innerHTML = sanitizeRichHTML(practice.ethics);
@@ -592,12 +592,10 @@
             // Mostrar modal
             const modal = document.getElementById('detailsModal');
             modal.classList.remove('hidden');
-            // Petit delay per activar l'animació de transició
             setTimeout(() => {
                 modal.classList.add('opacity-100');
             }, 10);
             
-            // Prevenir scroll al body
             document.body.style.overflow = 'hidden';
         }
 
@@ -636,7 +634,6 @@
                 let isValid = false;
 
                 if (GOOGLE_SHEETS_API_URL) {
-                    // Validem la contrasenya preguntant al servidor de Google Apps Script
                     const verifyUrl = `${GOOGLE_SHEETS_API_URL}?action=verifyPassword&password=${encodeURIComponent(input)}`;
                     const response = await fetch(verifyUrl);
                     const result = await response.json();
@@ -644,8 +641,6 @@
                     if (result && typeof result.valid === 'boolean') {
                         isValid = result.valid;
                     } else {
-                        // Si el servidor retorna les files del full és perquè falta publicar una "Nova versió" a Apps Script;
-                        // en aquest cas fem servir la verificació xifrada sense exposar la contrasenya en text pla.
                         isValid = verifyFallbackHash(input);
                     }
                 } else {
@@ -657,6 +652,11 @@
                         ...currentModalPractice,
                         editToken: input
                     };
+                    // Desem també a sessionStorage per evitar límits de longitud d'URL en fitxes molt llargues
+                    try {
+                        sessionStorage.setItem('uab_edit_practice', JSON.stringify(practiceToEdit));
+                    } catch (e) {}
+
                     const encodedData = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(practiceToEdit)))));
                     window.location.href = `${FORM_PAGE_URL}?editData=${encodedData}`;
                 } else {
@@ -674,13 +674,11 @@
         }
 
         function closeModal(event) {
-            // Si event és true, ve des del botó tancar. Si és objecte event, ve del click fora.
             const modal = document.getElementById('detailsModal');
             modal.classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Restaurar scroll
+            document.body.style.overflow = 'auto';
         }
         
-        // Permetre tancar el modal amb la tecla ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !document.getElementById('detailsModal').classList.contains('hidden')) {
                 closeModal(true);
