@@ -24,6 +24,81 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* Estils per als camps d'edició de text enriquit (Rich Text) i la seva visualització */
+        .rich-editor:empty:before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+            pointer-events: none;
+            display: block;
+        }
+        .rich-editor ul, .rich-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-editor ol, .rich-content ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-editor b, .rich-editor strong, .rich-content b, .rich-content strong {
+            font-weight: 700;
+        }
+        .rich-editor i, .rich-editor em, .rich-content i, .rich-content em {
+            font-style: italic;
+        }
+        .rich-editor u, .rich-content u {
+            text-decoration: underline;
+        }
+
+        /* Estils específics per exportar bé el document a PDF / Impressora amb marges de 3 cm */
+        @media print {
+            @page {
+                size: A4;
+                margin: 30mm; /* 3 cm per cada marge del document PDF */
+            }
+            body { background-color: white !important; }
+            
+            /* Amagar elements innecessaris per al PDF */
+            header, footer, #practiceForm, #successMessage, #errorMessage, #deleteModal,
+            .bg-white.rounded-xl.shadow-lg.border.border-gray-100.overflow-hidden { 
+                display: none !important; 
+            }
+            
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+
+            /* Ajustar la targeta de previsualització */
+            #previewCard {
+                box-shadow: none !important;
+                border: 2px solid #006633 !important;
+                margin: 0 !important;
+                padding: 16px !important;
+            }
+
+            /* Amagar els botons d'acció de la cantonada (Imprimir / Tancar) */
+            #previewCard > div.absolute.top-4.right-4 {
+                display: none !important;
+            }
+
+            /* Forçar la impressió dels colors de fons (necessari a Chrome i Safari) */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Evitar que els títols o blocs es tallin a mitja pàgina */
+            p, div, h4, h2 {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
@@ -39,20 +114,33 @@
                     <p class="text-xs text-uab-lightgreen opacity-90">Repositori de Bones Pràctiques en l'Ús de la IA</p>
                 </div>
             </div>
-            <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30">
-                Formulari de Registre / Alta
+            <div class="flex items-center space-x-2">
+                <a href="index.html" class="text-xs bg-white text-uab-green px-3 py-1.5 rounded-full font-medium hover:bg-gray-100 transition shadow-sm">
+                    &larr; Cercador / Consultes
+                </a>
+                <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30 hidden sm:block">
+                    Formulari de Registre / Alta
+                </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100">
-                <h2 class="text-xl font-bold text-uab-darkgreen">Nova Fitxa de Bona Pràctica</h2>
-                <p class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.</p>
+            <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <div>
+                    <h2 id="formMainTitle" class="text-xl font-bold text-uab-darkgreen">Nova Fitxa de Bona Pràctica</h2>
+                    <p id="formSubtitle" class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.</p>
+                </div>
+                <span id="editBadge" class="hidden bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full border border-amber-300">
+                    Mode Edició
+                </span>
             </div>
 
             <form id="practiceForm" class="p-6 space-y-6" onsubmit="handleSubmit(event)">
+                <!-- Camps ocults per guardar el número de fila i el token de contrasenya en cas d'edició -->
+                <input type="hidden" id="editRowNumber" value="">
+                <input type="hidden" id="editPasswordToken" value="">
                 
                 <div class="space-y-4">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">1. Capçalera i Identificació</h3>
@@ -80,6 +168,7 @@
                                 <option value="Docència (Grau / Màster)">Docència (Grau / Màster)</option>
                                 <option value="Recerca / Pràctica Professional (Audiovisual o Periodisme)">Recerca / Pràctica Professional (Audiovisual o Periodisme)</option>
                                 <option value="Personal Tècnic, de Gestió i d'Administració i Serveis (PTGAS)">Personal Tècnic, de Gestió i d'Administració i Serveis (PTGAS)</option>
+                                <option value="Altres">Altres</option>
                             </select>
                         </div>
                         <div>
@@ -94,12 +183,40 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Resum executiu (màx. 5 línies) *</label>
-                        <textarea id="summary" rows="3" required placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('summary', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('summary', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('summary', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('summary', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                </button>
+                                <button type="button" onclick="formatDoc('summary', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('summary', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
+                            </div>
+                            <div id="summary" contenteditable="true" data-placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="rich-editor w-full px-4 py-2 min-h-[85px] outline-none text-sm text-gray-800"></div>
+                        </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Objectiu principal *</label>
-                        <input type="text" id="objective" required placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('objective', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('objective', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('objective', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('objective', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                </button>
+                                <button type="button" onclick="formatDoc('objective', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('objective', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
+                            </div>
+                            <div id="objective" contenteditable="true" data-placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="rich-editor w-full px-4 py-2 min-h-[60px] outline-none text-sm text-gray-800"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -123,67 +240,84 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Descripció del procés / Workflow pas a pas *</label>
-                        <textarea id="workflow" rows="3" required placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('workflow', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('workflow', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('workflow', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('workflow', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                </button>
+                                <button type="button" onclick="formatDoc('workflow', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('workflow', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
+                            </div>
+                            <div id="workflow" contenteditable="true" data-placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="rich-editor w-full px-4 py-2 min-h-[100px] outline-none text-sm text-gray-800"></div>
+                        </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Consideracions ètiques i de transparència *</label>
-                        <textarea id="ethics" rows="2" required placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
-                    </div>
-                </div>
-
-                <div class="space-y-4 pt-2">
-                    <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">4. Recursos, Enllaços i Text Enriquit</h3>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Materials complementaris, exemples i enllaços (Text enriquit)</label>
-                        <p class="text-xs text-gray-500 mb-2">Pots donar format al text, afegir enllaços amb el botó o enganxar directament qualsevol URL (es convertirà automàticament en enllaç i s'obrirà en una pestanya nova).</p>
-                        
                         <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
-                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onclick="formatDoc('bold')" title="Negreta" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onclick="formatDoc('italic')" title="Cursiva" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onclick="formatDoc('underline')" title="Subratllat" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                                <button type="button" onclick="formatDoc('insertUnorderedList')" title="Llista" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                            <div class="bg-gray-50 border-b border-gray-200 px-2 py-1.5 flex items-center space-x-1">
+                                <button type="button" onclick="formatDoc('ethics', 'bold')" title="Negreta" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 font-bold text-xs w-7 h-7 flex items-center justify-center transition">B</button>
+                                <button type="button" onclick="formatDoc('ethics', 'italic')" title="Cursiva" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 italic font-serif text-xs w-7 h-7 flex items-center justify-center transition">I</button>
+                                <button type="button" onclick="formatDoc('ethics', 'underline')" title="Subratllat" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 underline text-xs w-7 h-7 flex items-center justify-center transition">U</button>
                                 <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                                <button type="button" onclick="toggleLinkPanel()" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">
-                                    <span>🔗</span> Inserir Enllaç / URL
+                                <button type="button" onclick="formatDoc('ethics', 'insertUnorderedList')" title="Llista de punts" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                                 </button>
+                                <button type="button" onclick="formatDoc('ethics', 'insertOrderedList')" title="Llista numerada" class="p-1.5 rounded hover:bg-gray-200 text-gray-700 text-xs flex items-center justify-center transition font-semibold">1.</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onclick="formatDoc('ethics', 'removeFormat')" title="Netejar format" class="p-1.5 rounded hover:bg-gray-200 text-gray-500 text-xs flex items-center justify-center transition">Tx</button>
                             </div>
-
-                            <!-- Panell desplegable per inserir URL i Text de l'enllaç sense utilitzar prompt() -->
-                            <div id="linkInputPanel" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç (opcional)</label>
-                                        <input type="text" id="linkText" placeholder="Ex. Guia d'ús de prompts UAB" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label>
-                                        <input type="url" id="linkUrl" placeholder="https://www.uab.cat/..." class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                                    </div>
-                                </div>
-                                <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="toggleLinkPanel()" class="px-2.5 py-1 text-xs text-gray-600 hover:text-gray-800">Cancel·lar</button>
-                                    <button type="button" onclick="insertCustomLink()" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded hover:bg-uab-darkgreen transition">Afegir al text</button>
-                                </div>
-                            </div>
-
-                            <!-- Àrea editable de text enriquit -->
-                            <div id="richResources" contenteditable="true" class="w-full px-4 py-3 min-h-[110px] outline-none text-sm text-gray-800 space-y-1" placeholder="Escriu aquí recursos addicionals, enganxa URLs (ex. https://ia.uab.cat) o insereix enllaços..."></div>
+                            <div id="ethics" contenteditable="true" data-placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="rich-editor w-full px-4 py-2 min-h-[75px] outline-none text-sm text-gray-800"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4 flex items-center justify-end space-x-4 border-t">
-                    <button type="button" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
-                        Netejar formulari
+                <div class="pt-4 flex items-center justify-between border-t">
+                    <!-- Botó d'eliminar (només visible en mode edició) -->
+                    <button type="button" id="deleteBtn" onclick="openDeleteModal()" class="hidden px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white transition font-medium text-sm shadow-md">
+                        Eliminar fitxa
                     </button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">
-                        Generar Fitxa i Registrar al Sheet
-                    </button>
+
+                    <div class="flex items-center space-x-4 ml-auto">
+                        <button type="reset" onclick="clearRichEditors()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
+                            Netejar formulari
+                        </button>
+                        <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md flex items-center">
+                            <span id="submitBtnText">Generar Fitxa i Enviar</span>
+                            <svg id="loadingSpinner" class="animate-spin ml-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </form>
+        </div>
+
+        <!-- Missatge d'error -->
+        <div id="errorMessage" class="hidden mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm">
+            <p id="errorMessageText" class="text-sm text-red-700 font-medium">Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.</p>
+        </div>
+
+        <!-- Missatge d'èxit -->
+        <div id="successMessage" class="hidden mt-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-green-700 font-medium">
+                        Fitxa enviada correctament! Les dades s'han desat al registre.
+                    </p>
+                </div>
+            </div>
         </div>
 
         <div id="previewCard" class="hidden mt-8 bg-white rounded-xl shadow-xl border-2 border-uab-green p-6 relative">
@@ -212,73 +346,40 @@
             <div class="space-y-4 text-sm">
                 <div>
                     <h4 class="font-semibold text-uab-green mb-1">Resum Executiu</h4>
-                    <div id="resSummary" class="text-gray-700 bg-white p-3 rounded border leading-relaxed"></div>
+                    <div id="resSummary" class="rich-content text-gray-700 bg-white p-3 rounded border"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <h4 class="font-semibold text-uab-green mb-1">Objectiu Principal</h4>
-                        <div id="resObjective" class="text-gray-700 bg-white p-3 rounded border h-full leading-relaxed"></div>
+                        <div id="resObjective" class="rich-content text-gray-700 bg-white p-3 rounded border h-full"></div>
                     </div>
                     <div>
                         <h4 class="font-semibold text-uab-green mb-1">Consideracions Ètiques</h4>
-                        <div id="resEthics" class="text-gray-700 bg-white p-3 rounded border h-full leading-relaxed"></div>
+                        <div id="resEthics" class="rich-content text-gray-700 bg-white p-3 rounded border h-full"></div>
                     </div>
                 </div>
                 <div>
                     <h4 class="font-semibold text-uab-green mb-1">Procés / Workflow pas a pas</h4>
-                    <div id="resWorkflow" class="text-gray-700 bg-white p-3 rounded border whitespace-pre-line leading-relaxed"></div>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-uab-green mb-1">Recursos, Enllaços i Materials Complementaris</h4>
-                    <div id="resResources" class="text-gray-700 bg-white p-3 rounded border leading-relaxed space-y-1"></div>
+                    <div id="resWorkflow" class="rich-content text-gray-700 bg-white p-3 rounded border"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Secció del Sheet (Registre de dades + Enllaços i URLs) -->
-        <div class="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div class="bg-uab-darkgreen text-white px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h3 class="text-lg font-bold flex items-center gap-2">
-                        <span>📊</span> Registre de Bones Pràctiques (Sheet)
-                    </h3>
-                    <p class="text-xs text-uab-lightgreen opacity-90">Les fitxes generades, juntament amb els enllaços i les URLs extretes, es registren automàticament en aquest full.</p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="copyTSVForSheets()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1.5 rounded-lg text-xs font-medium transition">
-                        📋 Copiar per a Google Sheets
-                    </button>
-                    <button type="button" onclick="exportToCSV()" class="bg-uab-accent hover:bg-uab-green text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">
-                        ⬇️ Descarregar CSV / Excel
+        <!-- Modal de confirmació d'eliminació -->
+        <div id="deleteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+                <h3 class="text-lg font-bold text-red-700 mb-2">Eliminar fitxa</h3>
+                <p class="text-sm text-gray-600 mb-6">Segur que vols eliminar aquesta fitxa? Se n'esborrarà el registre del Google Sheet i aquesta acció no es pot desfer.</p>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm font-medium transition">Cancel·lar</button>
+                    <button type="button" id="confirmDeleteBtn" onclick="confirmDelete()" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition flex items-center">
+                        <span>Sí, eliminar</span>
+                        <svg id="deleteSpinner" class="animate-spin ml-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                     </button>
                 </div>
-            </div>
-
-            <div id="sheetCopyFeedback" class="hidden bg-uab-lightgreen text-uab-darkgreen text-xs font-medium px-6 py-2 border-b border-uab-accent/30">
-                Dades copiades al porta-retalls! Ja pots enganxar-les (Ctrl+V) directament a Google Sheets o Excel.
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="bg-gray-100 text-gray-700 uppercase border-b border-gray-200">
-                            <th class="py-3 px-4 font-semibold">Data</th>
-                            <th class="py-3 px-4 font-semibold">Títol</th>
-                            <th class="py-3 px-4 font-semibold">Responsable</th>
-                            <th class="py-3 px-4 font-semibold">Àmbit</th>
-                            <th class="py-3 px-4 font-semibold">Eines IA</th>
-                            <th class="py-3 px-4 font-semibold">Enllaços (Text + URL)</th>
-                            <th class="py-3 px-4 font-semibold">URLs Registrades</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sheetTableBody" class="divide-y divide-gray-200 text-gray-700">
-                        <tr id="emptySheetRow">
-                            <td colspan="7" class="py-6 text-center text-gray-400 italic">
-                                Encara no s'ha registrat cap pràctica al Sheet. Completa el formulari o fes una prova per veure les dades registrades.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </main>
@@ -291,324 +392,219 @@
     </footer>
 
     <script>
-        // Emmagatzematge de files per al Sheet i exportació
-        const sheetRecords = [];
+        // Substitueix aquesta URL per la URL que et donarà Google Apps Script quan publiquis el projecte web
+        const GOOGLE_SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
 
-        // Aplicar format a l'editor de text enriquit
-        function formatDoc(cmd, value = null) {
-            const editor = document.getElementById('richResources');
+        function formatDoc(editorId, command) {
+            const editor = document.getElementById(editorId);
             editor.focus();
-            document.execCommand(cmd, false, value);
+            document.execCommand(command, false, null);
         }
 
-        // Mostrar o amagar el panell d'inserció d'enllaços
-        function toggleLinkPanel() {
-            const panel = document.getElementById('linkInputPanel');
-            panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) {
-                const selection = window.getSelection().toString().trim();
-                const linkTextInput = document.getElementById('linkText');
-                if (selection && !linkTextInput.value) {
-                    linkTextInput.value = selection;
-                }
-                document.getElementById('linkUrl').focus();
-            }
-        }
-
-        // Inserir un enllaç amb text i URL a l'editor enriquit
-        function insertCustomLink() {
-            const textInput = document.getElementById('linkText');
-            const urlInput = document.getElementById('linkUrl');
-            let rawUrl = urlInput.value.trim();
-            let label = textInput.value.trim();
-
-            if (!rawUrl) {
-                urlInput.focus();
-                return;
-            }
-
-            if (!/^https?:\/\//i.test(rawUrl)) {
-                rawUrl = 'https://' + rawUrl;
-            }
-
-            const displayLabel = label || rawUrl;
-            const editor = document.getElementById('richResources');
-            editor.focus();
-
-            const anchorHtml = `<a href="${escapeAttr(rawUrl)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(displayLabel)}</a>&nbsp;`;
-            document.execCommand('insertHTML', false, anchorHtml);
-
-            textInput.value = '';
-            urlInput.value = '';
-            document.getElementById('linkInputPanel').classList.add('hidden');
-        }
-
-        function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        function escapeAttr(str) {
-            return String(str).replace(/"/g, '&quot;');
-        }
-
-        // Converteix qualsevol URL en text pla en un enllaç clicable que s'obre en una pestanya nova
-        function linkifyPlainText(text) {
-            const escaped = escapeHtml(text || '');
-            const urlPattern = /((?:https?:\/\/|www\.)[^\s<]+)/gi;
-            return escaped.replace(urlPattern, function(match) {
-                let cleanUrl = match.replace(/[.,;:!?)]+$/, '');
-                let trailing = match.slice(cleanUrl.length);
-                let href = /^https?:\/\//i.test(cleanUrl) ? cleanUrl : 'https://' + cleanUrl;
-                return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen break-all">${cleanUrl}</a>${trailing}`;
+        function clearRichEditors() {
+            ['summary', 'objective', 'workflow', 'ethics'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
             });
         }
 
-        // Processa l'HTML enriquit perquè totes les URLs (tant <a> com URLs escrites directament) tinguin enllaç i s'obrin en pestanya nova
-        function processRichHtmlAndExtractLinks(rawHtml, extraPlainTexts = []) {
-            const container = document.createElement('div');
-            container.innerHTML = rawHtml || '';
+        function isEditorEmpty(id) {
+            const el = document.getElementById(id);
+            return el.innerText.trim() === '';
+        }
 
-            // 1. Convertir URLs en nodes de text (fora d'etiquetes <a>) en enllaços clicables
-            const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
-            const textNodes = [];
-            let currentNode;
-            while ((currentNode = walker.nextNode())) {
-                if (!currentNode.parentElement || !currentNode.parentElement.closest('a')) {
-                    textNodes.push(currentNode);
-                }
-            }
-
-            const urlRegex = /((?:https?:\/\/|www\.)[^\s<]+)/gi;
-            textNodes.forEach(node => {
-                const val = node.nodeValue;
-                if (urlRegex.test(val)) {
-                    const tempSpan = document.createElement('span');
-                    tempSpan.innerHTML = linkifyPlainText(val);
-                    node.parentNode.replaceChild(tempSpan, node);
-                }
-            });
-
-            // 2. Assegurar que totes les etiquetes <a> tinguin target="_blank" i rel="noopener noreferrer"
-            const extractedLinks = [];
-            const seenPairs = new Set();
-
-            container.querySelectorAll('a').forEach(a => {
-                let href = (a.getAttribute('href') || '').trim();
-                if (href && !/^https?:\/\//i.test(href) && !href.startsWith('mailto:')) {
-                    href = 'https://' + href;
-                }
-                a.setAttribute('href', href);
-                a.setAttribute('target', '_blank');
-                a.setAttribute('rel', 'noopener noreferrer');
-                a.className = 'text-uab-green underline font-medium hover:text-uab-darkgreen break-all';
-
-                const text = (a.textContent || href).trim();
-                const key = `${text}|${href}`;
-                if (href && !seenPairs.has(key)) {
-                    seenPairs.add(key);
-                    extractedLinks.push({ text, url: href });
-                }
-            });
-
-            // 3. Extreure també qualsevol URL que s'hagi escrit als altres camps de text (resum, workflow, etc.)
-            extraPlainTexts.forEach(txt => {
-                if (!txt) return;
-                const matches = txt.match(/((?:https?:\/\/|www\.)[^\s<]+)/gi) || [];
-                matches.forEach(m => {
-                    let cleanUrl = m.replace(/[.,;:!?)]+$/, '');
-                    let href = /^https?:\/\//i.test(cleanUrl) ? cleanUrl : 'https://' + cleanUrl;
-                    const key = `${cleanUrl}|${href}`;
-                    if (!seenPairs.has(key)) {
-                        seenPairs.add(key);
-                        extractedLinks.push({ text: cleanUrl, url: href });
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editDataParam = urlParams.get('editData');
+            
+            if (editDataParam) {
+                try {
+                    const practice = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(editDataParam)))));
+                    
+                    // Omplir els camps del formulari amb les dades rebudes (incloent etiquetes HTML als editors)
+                    document.getElementById('title').value = practice.title || '';
+                    document.getElementById('author').value = practice.author || '';
+                    document.getElementById('email').value = practice.email || '';
+                    if (practice.scope) document.getElementById('scope').value = practice.scope;
+                    document.getElementById('targetAudience').value = practice.targetAudience || '';
+                    document.getElementById('summary').innerHTML = practice.summary || '';
+                    document.getElementById('objective').innerHTML = practice.objective || '';
+                    document.getElementById('tools').value = practice.tools || '';
+                    if (practice.replicability) document.getElementById('replicability').value = practice.replicability;
+                    document.getElementById('workflow').innerHTML = practice.workflow || '';
+                    document.getElementById('ethics').innerHTML = practice.ethics || '';
+                    
+                    if (practice.rowNumber) {
+                        document.getElementById('editRowNumber').value = practice.rowNumber;
+                        document.getElementById('deleteBtn').classList.remove('hidden'); // Mostrar botó d'eliminar
                     }
-                });
-            });
+                    if (practice.editToken) {
+                        document.getElementById('editPasswordToken').value = practice.editToken;
+                    }
 
-            return {
-                enrichedHtml: container.innerHTML.trim() || '<span class="text-gray-400 italic">Cap recurs o enllaç especificat</span>',
-                plainText: container.innerText.trim(),
-                links: extractedLinks
-            };
-        }
+                    // Actualitzar interfície per reflectir que estem editant
+                    document.getElementById('formMainTitle').innerText = 'Editar Fitxa de Bona Pràctica';
+                    document.getElementById('formSubtitle').innerText = 'Modifica els camps necessaris i desa els canvis per actualitzar el registre.';
+                    document.getElementById('editBadge').classList.remove('hidden');
+                    document.getElementById('submitBtnText').innerText = 'Actualitzar Fitxa i Desar';
+                } catch (err) {
+                    console.error('Error carregant les dades per editar:', err);
+                }
+            }
+        });
 
-        function handleSubmit(event) {
+        async function handleSubmit(event) {
             event.preventDefault();
             
-            const title = document.getElementById('title').value.trim();
-            const author = document.getElementById('author').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const scope = document.getElementById('scope').value;
-            const targetAudience = document.getElementById('targetAudience').value.trim();
-            const summary = document.getElementById('summary').value.trim();
-            const objective = document.getElementById('objective').value.trim();
-            const tools = document.getElementById('tools').value.trim();
-            const replicability = document.getElementById('replicability').value;
-            const workflow = document.getElementById('workflow').value.trim();
-            const ethics = document.getElementById('ethics').value.trim();
-            const richResourcesHtml = document.getElementById('richResources').innerHTML;
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorMessageText = document.getElementById('errorMessageText');
+            const rowNumberVal = document.getElementById('editRowNumber').value;
+            const passwordTokenVal = document.getElementById('editPasswordToken').value;
 
-            // Processar text enriquit i detectar URLs en tots els camps
-            const processed = processRichHtmlAndExtractLinks(richResourcesHtml, [summary, objective, workflow, ethics, tools]);
-
-            // Assignar valors a la vista prèvia (amb URLs convertides en enllaços que s'obren en pestanya nova)
-            document.getElementById('resTitle').innerText = title;
-            document.getElementById('resAuthor').innerText = author;
-            document.getElementById('resEmail').innerHTML = `<a href="mailto:${escapeAttr(email)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline hover:text-uab-darkgreen">${escapeHtml(email)}</a>`;
-            document.getElementById('resScope').innerText = scope;
-            document.getElementById('resTarget').innerText = targetAudience;
-            document.getElementById('resSummary').innerHTML = linkifyPlainText(summary);
-            document.getElementById('resObjective').innerHTML = linkifyPlainText(objective);
-            document.getElementById('resTools').innerHTML = linkifyPlainText(tools);
-            document.getElementById('resReplicability').innerText = replicability;
-            document.getElementById('resWorkflow').innerHTML = linkifyPlainText(workflow);
-            document.getElementById('resEthics').innerHTML = linkifyPlainText(ethics);
-            document.getElementById('resResources').innerHTML = processed.enrichedHtml;
-
-            // Registrar la informació (incloent enllaços i URLs) al Sheet
-            const timestamp = new Date().toLocaleString('ca-ES', { dateStyle: 'short', timeStyle: 'short' });
-            const record = {
-                timestamp,
-                title,
-                author,
-                email,
-                scope,
-                targetAudience,
-                summary,
-                objective,
-                tools,
-                replicability,
-                workflow,
-                ethics,
-                resourcesPlainText: processed.plainText,
-                linksFormatted: processed.links.map(l => `${l.text} (${l.url})`).join(' | '),
-                urlsOnly: processed.links.map(l => l.url).join(' , '),
-                linksArray: processed.links
+            // Validar que els camps de text enriquit obligatoris no estiguin buits
+            if (isEditorEmpty('summary') || isEditorEmpty('objective') || isEditorEmpty('workflow') || isEditorEmpty('ethics')) {
+                errorMessageText.innerText = 'Si us plau, completa tots els camps de text obligatoris (*).';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+            
+            // Recollir dades del formulari (desant l'HTML intern dels camps enriquits al Google Sheet)
+            const formData = {
+                action: rowNumberVal ? 'edit' : 'create',
+                rowNumber: rowNumberVal ? parseInt(rowNumberVal, 10) : null,
+                password: passwordTokenVal || null,
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                email: document.getElementById('email').value,
+                scope: document.getElementById('scope').value,
+                targetAudience: document.getElementById('targetAudience').value,
+                summary: document.getElementById('summary').innerHTML.trim(),
+                objective: document.getElementById('objective').innerHTML.trim(),
+                tools: document.getElementById('tools').value,
+                replicability: document.getElementById('replicability').value,
+                workflow: document.getElementById('workflow').innerHTML.trim(),
+                ethics: document.getElementById('ethics').innerHTML.trim(),
+                timestamp: new Date().toISOString()
             };
 
-            sheetRecords.push(record);
-            renderSheetTable();
+            // Mostrar estat de càrrega
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
 
-            // Si tenim configurada una URL de Google Apps Script Web App externa (opcional), també l'envia
-            if (window.GOOGLE_SHEETS_WEBHOOK_URL) {
-                fetch(window.GOOGLE_SHEETS_WEBHOOK_URL, {
+            try {
+                const response = await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(record)
-                }).catch(() => {});
+                    mode: 'no-cors', // IMPORTANT per evitar errors CORS en cridar a Google Scripts
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                // Simulació d'enviament per propòsits de demostració
+                await new Promise(resolve => setTimeout(resolve, 1200));
+
+                // 1. Mostrar el missatge d'èxit de l'enviament
+                successMessage.querySelector('p').innerText = "Fitxa enviada correctament! Les dades s'han desat al registre.";
+                successMessage.classList.remove('hidden');
+
+                // 2. Assignar valors al modal de previsualització (respectant el format tipogràfic)
+                document.getElementById('resTitle').innerText = formData.title;
+                document.getElementById('resAuthor').innerText = formData.author;
+                document.getElementById('resEmail').innerText = formData.email;
+                document.getElementById('resScope').innerText = formData.scope;
+                document.getElementById('resTarget').innerText = formData.targetAudience;
+                document.getElementById('resSummary').innerHTML = formData.summary;
+                document.getElementById('resObjective').innerHTML = formData.objective;
+                document.getElementById('resTools').innerText = formData.tools;
+                document.getElementById('resReplicability').innerText = formData.replicability;
+                document.getElementById('resWorkflow').innerHTML = formData.workflow;
+                document.getElementById('resEthics').innerHTML = formData.ethics;
+
+                // 3. Mostrar previsualització i fer scroll suau
+                const preview = document.getElementById('previewCard');
+                preview.classList.remove('hidden');
+                preview.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error enviant dades:', error);
+                errorMessageText.innerText = 'Hi ha hagut un error en enviar les dades. Si us plau, torna-ho a provar.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                // Restaurar l'estat del botó
+                submitBtn.disabled = false;
+                spinner.classList.add('hidden');
             }
-
-            // Mostrar previsualització i fer scroll suau
-            const preview = document.getElementById('previewCard');
-            preview.classList.remove('hidden');
-            preview.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Actualitza la taula del Sheet amb enllaços clicables i URLs registrades
-        function renderSheetTable() {
-            const tbody = document.getElementById('sheetTableBody');
-            tbody.innerHTML = '';
-
-            sheetRecords.forEach(rec => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-uab-lightgreen/20 transition align-top';
-
-                const linksHtml = rec.linksArray.length > 0
-                    ? rec.linksArray.map(l => `<div class="mb-1"><a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(l.text)}</a></div>`).join('')
-                    : '<span class="text-gray-400 italic">Sense enllaços</span>';
-
-                const urlsHtml = rec.linksArray.length > 0
-                    ? rec.linksArray.map(l => `<div class="mb-1"><a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline hover:text-blue-800 break-all">${escapeHtml(l.url)}</a></div>`).join('')
-                    : '<span class="text-gray-400 italic">-</span>';
-
-                tr.innerHTML = `
-                    <td class="py-3 px-4 whitespace-nowrap text-gray-500">${escapeHtml(rec.timestamp)}</td>
-                    <td class="py-3 px-4 font-semibold text-gray-900">${escapeHtml(rec.title)}</td>
-                    <td class="py-3 px-4">${escapeHtml(rec.author)}<br><span class="text-gray-400">${escapeHtml(rec.email)}</span></td>
-                    <td class="py-3 px-4">${escapeHtml(rec.scope)}</td>
-                    <td class="py-3 px-4">${escapeHtml(rec.tools)}</td>
-                    <td class="py-3 px-4">${linksHtml}</td>
-                    <td class="py-3 px-4">${urlsHtml}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Copiar el registre en format tabulat (TSV) per enganxar directament a Google Sheets
-        function copyTSVForSheets() {
-            if (sheetRecords.length === 0) return;
-
-            const headers = [
-                'Data', 'Títol', 'Responsable', 'Correu', 'Àmbit', 'Públic Objectiu',
-                'Resum Executiu', 'Objectiu Principal', 'Eines IA', 'Replicabilitat',
-                'Workflow', 'Consideracions Ètiques', 'Text Recursos', 'Enllaços (Text i URL)', 'URLs'
-            ];
-
-            const rows = sheetRecords.map(r => [
-                r.timestamp, r.title, r.author, r.email, r.scope, r.targetAudience,
-                r.summary, r.objective, r.tools, r.replicability,
-                r.workflow, r.ethics, r.resourcesPlainText, r.linksFormatted, r.urlsOnly
-            ].map(val => String(val || '').replace(/[\t\r\n]+/g, ' ')).join('\t'));
-
-            const tsvContent = [headers.join('\t'), ...rows].join('\n');
-            const tempArea = document.createElement('textarea');
-            tempArea.value = tsvContent;
-            document.body.appendChild(tempArea);
-            tempArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempArea);
-
-            const feedback = document.getElementById('sheetCopyFeedback');
-            feedback.classList.remove('hidden');
-            setTimeout(() => feedback.classList.add('hidden'), 4000);
-        }
-
-        // Exportar el Sheet a fitxer CSV compatible amb Excel i Google Sheets
-        function exportToCSV() {
-            if (sheetRecords.length === 0) return;
-
-            const headers = [
-                'Data', 'Títol', 'Responsable', 'Correu', 'Àmbit', 'Públic Objectiu',
-                'Resum Executiu', 'Objectiu Principal', 'Eines IA', 'Replicabilitat',
-                'Workflow', 'Consideracions Ètiques', 'Text Recursos', 'Enllaços (Text i URL)', 'URLs'
-            ];
-
-            const csvRows = [headers.join(',')];
-            sheetRecords.forEach(r => {
-                const values = [
-                    r.timestamp, r.title, r.author, r.email, r.scope, r.targetAudience,
-                    r.summary, r.objective, r.tools, r.replicability,
-                    r.workflow, r.ethics, r.resourcesPlainText, r.linksFormatted, r.urlsOnly
-                ].map(v => `"${String(v || '').replace(/"/g, '""')}"`);
-                csvRows.push(values.join(','));
-            });
-
-            const blob = new Blob(['\uFEFF' + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'repositori_bones_practiques_ia_uab.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function resetForm() {
-            document.getElementById('practiceForm').reset();
-            document.getElementById('richResources').innerHTML = '';
-            document.getElementById('linkInputPanel').classList.add('hidden');
         }
 
         function closePreview() {
             document.getElementById('previewCard').classList.add('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ---- Eliminació de fitxa ----
+        function openDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        async function confirmDelete() {
+            const rowNumberVal = document.getElementById('editRowNumber').value;
+            const passwordTokenVal = document.getElementById('editPasswordToken').value;
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            const spinner = document.getElementById('deleteSpinner');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorMessageText = document.getElementById('errorMessageText');
+
+            if (!rowNumberVal) return;
+
+            confirmBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+
+            try {
+                await fetch(GOOGLE_SHEETS_WEBAPP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        rowNumber: parseInt(rowNumberVal, 10),
+                        password: passwordTokenVal || null,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                closeDeleteModal();
+                // Amagar formulari i previsualització
+                document.getElementById('practiceForm').parentElement.classList.add('hidden');
+                document.getElementById('previewCard').classList.add('hidden');
+                // Missatge d'èxit
+                successMessage.querySelector('p').innerText = 'Fitxa eliminada correctament del registre.';
+                successMessage.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error eliminant la fitxa:', error);
+                closeDeleteModal();
+                errorMessageText.innerText = "No s'ha pogut eliminar la fitxa. Si us plau, torna-ho a provar.";
+                errorMessage.classList.remove('hidden');
+            } finally {
+                confirmBtn.disabled = false;
+                spinner.classList.add('hidden');
+            }
         }
     </script>
 </body>
