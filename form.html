@@ -24,6 +24,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        /* Estils per als camps enriquits i previsualització */
+        .rich-editor ul, .rich-preview ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-editor ol, .rich-preview ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .rich-editor a, .rich-preview a {
+            color: #006633;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .rich-editor:empty:before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
@@ -39,13 +62,25 @@
                     <p class="text-xs text-uab-lightgreen opacity-90">Repositori de Bones Pràctiques en l'Ús de la IA</p>
                 </div>
             </div>
-            <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30">
-                Formulari de Registre / Alta
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="text-xs bg-white/10 hover:bg-white hover:text-uab-green px-3 py-1.5 rounded-full border border-white/20 transition">
+                    ← Tornar al Cercador
+                </a>
+                <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30">
+                    Formulari de Registre / Edició
+                </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <!-- Missatge d'estat de sincronització amb Google Sheets -->
+        <div id="statusBanner" class="hidden mb-6 p-4 rounded-xl border text-sm font-medium flex items-center justify-between shadow-sm">
+            <span id="statusBannerText"></span>
+            <a href="index.html" class="underline font-bold ml-4 whitespace-nowrap">Anar al cercador →</a>
+        </div>
+
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
             <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
                 <div>
@@ -85,6 +120,7 @@
                                 <option value="Docència (Grau / Màster)">Docència (Grau / Màster)</option>
                                 <option value="Recerca / Pràctica Professional (Audiovisual o Periodisme)">Recerca / Pràctica Professional (Audiovisual o Periodisme)</option>
                                 <option value="Personal Tècnic, de Gestió i d'Administració i Serveis (PTGAS)">Personal Tècnic, de Gestió i d'Administració i Serveis (PTGAS)</option>
+                                <option value="Altres">Altres</option>
                             </select>
                         </div>
                         <div>
@@ -94,17 +130,53 @@
                     </div>
                 </div>
 
+                <!-- Barra d'eines flotant/compartida per donar format i afegir enllaços a qualsevol camp de text -->
+                <div class="bg-uab-lightgreen/40 p-3 rounded-lg border border-uab-accent/40 space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-xs font-semibold text-uab-darkgreen">Eines de format i enllaços (aplica al camp on tinguis el cursor):</span>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('bold')" title="Negreta" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
+                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('italic')" title="Cursiva" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
+                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('underline')" title="Subratllat" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
+                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('insertUnorderedList')" title="Llista" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('insertOrderedList')" title="Llista numerada" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
+                            <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                            <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel()" class="px-3 py-1 bg-uab-green text-white rounded hover:bg-uab-darkgreen text-xs font-semibold transition flex items-center gap-1 shadow-sm">
+                                <span>🔗</span> Inserir Enllaç / URL
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panell desplegable per inserir URL i Text de l'enllaç -->
+                    <div id="linkInputPanel" class="hidden bg-white p-3 rounded border border-gray-200 mt-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç (opcional)</label>
+                                <input type="text" id="linkText" placeholder="Ex. Guia d'ús de prompts UAB" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label>
+                                <input type="url" id="linkUrl" placeholder="https://www.uab.cat/..." class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" onclick="toggleLinkPanel()" class="px-2.5 py-1 text-xs text-gray-600 hover:text-gray-800">Cancel·lar</button>
+                            <button type="button" onclick="insertCustomLink()" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded hover:bg-uab-darkgreen transition">Afegir enllaç al camp actiu</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="space-y-4 pt-2">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">2. Visió General</h3>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Resum executiu (màx. 5 línies) *</label>
-                        <textarea id="summary" rows="3" required placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div id="summary" contenteditable="true" data-placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="rich-editor w-full px-4 py-2 min-h-[80px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Objectiu principal *</label>
-                        <input type="text" id="objective" required placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                        <div id="objective" contenteditable="true" data-placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="rich-editor w-full px-4 py-2 min-h-[56px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
                     </div>
                 </div>
 
@@ -128,72 +200,48 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Descripció del procés / Workflow pas a pas *</label>
-                        <textarea id="workflow" rows="3" required placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div id="workflow" contenteditable="true" data-placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="rich-editor w-full px-4 py-2 min-h-[90px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Consideracions ètiques i de transparència *</label>
-                        <textarea id="ethics" rows="2" required placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div id="ethics" contenteditable="true" data-placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="rich-editor w-full px-4 py-2 min-h-[70px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
                     </div>
                 </div>
 
                 <div class="space-y-4 pt-2">
-                    <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">4. Recursos, Enllaços i Text Enriquit</h3>
+                    <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">4. Recursos, Enllaços i Materials Complementaris (Opcional)</h3>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Materials complementaris, exemples i enllaços (Text enriquit)</label>
-                        <p class="text-xs text-gray-500 mb-2">Pots donar format al text, afegir enllaços amb el botó o enganxar directament qualsevol URL (es convertirà automàticament en enllaç i s'obrirà en una pestanya nova).</p>
-                        
-                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
-                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onclick="formatDoc('bold')" title="Negreta" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onclick="formatDoc('italic')" title="Cursiva" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onclick="formatDoc('underline')" title="Subratllat" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                                <button type="button" onclick="formatDoc('insertUnorderedList')" title="Llista" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
-                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                                <button type="button" onclick="toggleLinkPanel()" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">
-                                    <span>🔗</span> Inserir Enllaç / URL
-                                </button>
-                            </div>
-
-                            <!-- Panell desplegable per inserir URL i Text de l'enllaç sense utilitzar prompt() -->
-                            <div id="linkInputPanel" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç (opcional)</label>
-                                        <input type="text" id="linkText" placeholder="Ex. Guia d'ús de prompts UAB" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label>
-                                        <input type="url" id="linkUrl" placeholder="https://www.uab.cat/..." class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                                    </div>
-                                </div>
-                                <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="toggleLinkPanel()" class="px-2.5 py-1 text-xs text-gray-600 hover:text-gray-800">Cancel·lar</button>
-                                    <button type="button" onclick="insertCustomLink()" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded hover:bg-uab-darkgreen transition">Afegir al text</button>
-                                </div>
-                            </div>
-
-                            <!-- Àrea editable de text enriquit -->
-                            <div id="richResources" contenteditable="true" class="w-full px-4 py-3 min-h-[110px] outline-none text-sm text-gray-800 space-y-1" placeholder="Escriu aquí recursos addicionals, enganxa URLs (ex. https://ia.uab.cat) o insereix enllaços..."></div>
-                        </div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Materials complementaris, exemples i enllaços</label>
+                        <p class="text-xs text-gray-500 mb-2">Qualsevol URL enganxada o enllaç inserit aquí s'inclourà al final del Workflow per tal que quedi registrat al Google Sheet i es pugui clicar des del cercador.</p>
+                        <div id="richResources" contenteditable="true" data-placeholder="Escriu aquí recursos addicionals, enganxa URLs (ex. https://ia.uab.cat) o insereix enllaços..." class="rich-editor w-full px-4 py-3 min-h-[85px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
                     </div>
                 </div>
 
-                <div class="pt-4 flex items-center justify-end space-x-4 border-t">
-                    <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
-                        Netejar formulari
-                    </button>
-                    <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">
-                        Generar Fitxa i Registrar al Sheet
-                    </button>
+                <div class="pt-4 flex flex-wrap items-center justify-between gap-4 border-t">
+                    <!-- Botó d'eliminar fitxa (només visible quan s'edita una fitxa del Google Sheet) -->
+                    <div>
+                        <button type="button" id="deleteSheetBtn" onclick="handleDeleteFromSheet()" class="hidden px-4 py-2.5 rounded-lg bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 transition font-medium text-sm">
+                            🗑️ Eliminar fitxa del Sheet
+                        </button>
+                    </div>
+
+                    <div class="flex items-center space-x-4 ml-auto">
+                        <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
+                            Netejar formulari
+                        </button>
+                        <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">
+                            Generar Fitxa i Registrar al Sheet
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
 
         <div id="previewCard" class="hidden mt-8 bg-white rounded-xl shadow-xl border-2 border-uab-green p-6 relative">
             <div class="absolute top-4 right-4 flex flex-wrap gap-2">
-                <button type="button" onclick="editCurrentPreview()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">✏️ Editar a l'editor</button>
+                <button type="button" onclick="editCurrentPreview()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">✏️ Tornar a editar</button>
                 <button type="button" onclick="window.print()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium transition">Imprimir / Desar PDF</button>
                 <button type="button" onclick="closePreview()" class="bg-uab-green text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-uab-darkgreen transition">Tancar vista prèvia</button>
             </div>
@@ -218,37 +266,33 @@
             <div class="space-y-4 text-sm">
                 <div>
                     <h4 class="font-semibold text-uab-green mb-1">Resum Executiu</h4>
-                    <div id="resSummary" class="text-gray-700 bg-white p-3 rounded border leading-relaxed"></div>
+                    <div id="resSummary" class="rich-preview text-gray-700 bg-white p-3 rounded border leading-relaxed"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <h4 class="font-semibold text-uab-green mb-1">Objectiu Principal</h4>
-                        <div id="resObjective" class="text-gray-700 bg-white p-3 rounded border h-full leading-relaxed"></div>
+                        <div id="resObjective" class="rich-preview text-gray-700 bg-white p-3 rounded border h-full leading-relaxed"></div>
                     </div>
                     <div>
                         <h4 class="font-semibold text-uab-green mb-1">Consideracions Ètiques</h4>
-                        <div id="resEthics" class="text-gray-700 bg-white p-3 rounded border h-full leading-relaxed"></div>
+                        <div id="resEthics" class="rich-preview text-gray-700 bg-white p-3 rounded border h-full leading-relaxed"></div>
                     </div>
                 </div>
                 <div>
                     <h4 class="font-semibold text-uab-green mb-1">Procés / Workflow pas a pas</h4>
-                    <div id="resWorkflow" class="text-gray-700 bg-white p-3 rounded border whitespace-pre-line leading-relaxed"></div>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-uab-green mb-1">Recursos, Enllaços i Materials Complementaris</h4>
-                    <div id="resResources" class="text-gray-700 bg-white p-3 rounded border leading-relaxed space-y-1"></div>
+                    <div id="resWorkflow" class="rich-preview text-gray-700 bg-white p-3 rounded border whitespace-pre-line leading-relaxed"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Secció del Sheet (Registre de dades + Enllaços i URLs) -->
+        <!-- Secció del Sheet (Registre de dades + Enllaços i URLs de la sessió) -->
         <div class="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
             <div class="bg-uab-darkgreen text-white px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h3 class="text-lg font-bold flex items-center gap-2">
                         <span>📊</span> Registre de Bones Pràctiques (Sheet)
                     </h3>
-                    <p class="text-xs text-uab-lightgreen opacity-90">Les fitxes generades, juntament amb els enllaços i les URLs extretes, es registren automàticament en aquest full.</p>
+                    <p class="text-xs text-uab-lightgreen opacity-90">Les fitxes generades o editades, juntament amb els enllaços i les URLs extretes, s'envien al Google Sheet i es mostren aquí.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" onclick="copyTSVForSheets()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3 py-1.5 rounded-lg text-xs font-medium transition">
@@ -281,7 +325,7 @@
                     <tbody id="sheetTableBody" class="divide-y divide-gray-200 text-gray-700">
                         <tr id="emptySheetRow">
                             <td colspan="8" class="py-6 text-center text-gray-400 italic">
-                                Encara no s'ha registrat cap pràctica al Sheet. Completa el formulari o fes una prova per veure les dades registrades.
+                                Encara no s'ha registrat o editat cap pràctica en aquesta sessió.
                             </td>
                         </tr>
                     </tbody>
@@ -298,16 +342,191 @@
     </footer>
 
     <script>
-        // Emmagatzematge de files per al Sheet i control d'edició
+        // URL del Google Apps Script (connectat amb doPost i doGet de Code.gs)
+        const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
+
+        // Emmagatzematge de files i control d'edició
         const sheetRecords = [];
         let editingIndex = null;
         let currentPreviewIndex = null;
 
-        // Aplicar format a l'editor de text enriquit
-        function formatDoc(cmd, value = null) {
-            const editor = document.getElementById('richResources');
-            editor.focus();
+        // Variables per recordar l'edició que ve des d'index.html (Google Sheet)
+        let activeSheetEdit = {
+            isSheetEdit: false,
+            rowNumber: null,
+            editToken: null,
+            originalTimestamp: null
+        };
+
+        // Recordar quin camp editable té el focus per aplicar negretes o inserir enllaços
+        let lastFocusedRichEditor = null;
+        let savedSelectionRange = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Registrar quin editor enriquit s'està utilitzant
+            document.querySelectorAll('.rich-editor').forEach(editor => {
+                editor.addEventListener('focus', () => {
+                    lastFocusedRichEditor = editor;
+                });
+                editor.addEventListener('keyup', saveCurrentSelection);
+                editor.addEventListener('mouseup', saveCurrentSelection);
+            });
+
+            // Verificar si venim des de index.html amb dades per editar (?editData=...)
+            checkAndLoadExternalEditData();
+        });
+
+        function saveCurrentSelection() {
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) {
+                savedSelectionRange = sel.getRangeAt(0).cloneRange();
+            }
+        }
+
+        function restoreSelection() {
+            if (savedSelectionRange) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedSelectionRange);
+            }
+        }
+
+        // Llegeix i descodifica el paràmetre ?editData=... enviat per index.html (o sessionStorage)
+        function checkAndLoadExternalEditData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('editData');
+            let practiceToEdit = null;
+
+            if (encodedData) {
+                try {
+                    const decodedJson = decodeURIComponent(escape(atob(decodeURIComponent(encodedData))));
+                    practiceToEdit = JSON.parse(decodedJson);
+                } catch (err) {
+                    try {
+                        const fallbackJson = decodeURIComponent(escape(atob(encodedData)));
+                        practiceToEdit = JSON.parse(fallbackJson);
+                    } catch (err2) {
+                        console.error("Error descodificant editData de la URL:", err2);
+                    }
+                }
+            }
+
+            // Fallback a sessionStorage si la URL s'ha truncat
+            if (!practiceToEdit && encodedData) {
+                try {
+                    const stored = sessionStorage.getItem('uab_edit_practice');
+                    if (stored) practiceToEdit = JSON.parse(stored);
+                } catch (e) {}
+            }
+
+            if (practiceToEdit) {
+                populateFormFromExternalPractice(practiceToEdit);
+            }
+        }
+
+        // Omple tots els camps del formulari amb les dades de la fitxa rebuda des d'index.html
+        function populateFormFromExternalPractice(practice) {
+            activeSheetEdit = {
+                isSheetEdit: true,
+                rowNumber: practice.rowNumber || null,
+                editToken: practice.editToken || '',
+                originalTimestamp: practice.date || new Date().toISOString()
+            };
+
+            document.getElementById('title').value = practice.title || '';
+            document.getElementById('author').value = practice.author || '';
+            document.getElementById('email').value = practice.email || '';
+            setSelectValueFlexible('scope', practice.scope || 'Docència (Grau / Màster)');
+            document.getElementById('targetAudience').value = practice.targetAudience || '';
+            document.getElementById('tools').value = practice.tools || '';
+            setSelectValueFlexible('replicability', practice.replicability || 'Alt');
+
+            // Camps amb suport de text enriquit i enllaços
+            document.getElementById('summary').innerHTML = formatIncomingRichText(practice.summary || '');
+            document.getElementById('objective').innerHTML = formatIncomingRichText(practice.objective || '');
+            document.getElementById('workflow').innerHTML = formatIncomingRichText(practice.workflow || '');
+            document.getElementById('ethics').innerHTML = formatIncomingRichText(practice.ethics || '');
+            document.getElementById('richResources').innerHTML = '';
+
+            // També afegim la fitxa a la taula inferior perquè es vegin els enllaços i es pugui previsualitzar
+            const allLinks = extractAllLinksFromHtmlFields([
+                practice.summary, practice.objective, practice.workflow, practice.ethics, practice.tools
+            ]);
+
+            const initialRecord = {
+                timestamp: practice.date || new Date().toLocaleString('ca-ES', { dateStyle: 'short', timeStyle: 'short' }),
+                title: practice.title || '',
+                author: practice.author || '',
+                email: practice.email || '',
+                scope: document.getElementById('scope').value,
+                targetAudience: practice.targetAudience || '',
+                summary: document.getElementById('summary').innerHTML,
+                objective: document.getElementById('objective').innerHTML,
+                tools: practice.tools || '',
+                replicability: document.getElementById('replicability').value,
+                workflow: document.getElementById('workflow').innerHTML,
+                ethics: document.getElementById('ethics').innerHTML,
+                resourcesRawHtml: '',
+                linksFormatted: allLinks.map(l => `${l.text} (${l.url})`).join(' | '),
+                urlsOnly: allLinks.map(l => l.url).join(' , '),
+                linksArray: allLinks,
+                rowNumber: practice.rowNumber,
+                editToken: practice.editToken
+            };
+
+            sheetRecords.push(initialRecord);
+            editingIndex = 0;
+            renderSheetTable();
+
+            // Actualitzar la UI del mode edició
+            document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
+            document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${practice.title || ''}" (Fila #${practice.rowNumber || '-'} del Google Sheet).`;
+            document.getElementById('editingBadge').classList.remove('hidden');
+            document.getElementById('submitBtn').innerText = 'Actualitzar Fitxa i Desar al Sheet';
+            document.getElementById('cancelEditBtn').innerText = 'Cancel·lar edició';
+
+            if (practice.rowNumber) {
+                document.getElementById('deleteSheetBtn').classList.remove('hidden');
+            }
+        }
+
+        // Selecciona l'opció correcta d'un <select> fins i tot si el text és lleugerament més curt (ex. "Personal Tècnic, de Gestió")
+        function setSelectValueFlexible(selectId, val) {
+            const select = document.getElementById(selectId);
+            if (!select || !val) return;
+            const cleanVal = String(val).trim();
+
+            for (let i = 0; i < select.options.length; i++) {
+                const optVal = select.options[i].value;
+                if (optVal === cleanVal || optVal.includes(cleanVal) || cleanVal.includes(optVal)) {
+                    select.selectedIndex = i;
+                    return;
+                }
+            }
+            // Si és un valor personalitzat que no existeix al desplegable, l'afegim perquè no es perdi
+            const newOpt = document.createElement('option');
+            newOpt.value = cleanVal;
+            newOpt.textContent = cleanVal;
+            select.appendChild(newOpt);
+            select.value = cleanVal;
+        }
+
+        function formatIncomingRichText(text) {
+            if (!text) return '';
+            // Si ja conté etiquetes HTML, el mantenim; si té salts de línia plans, els convertim a <br>
+            if (/<[a-z][\s\S]*>/i.test(text)) {
+                return text;
+            }
+            return escapeHtml(text).replace(/\n/g, '<br>');
+        }
+
+        // Aplicar format a l'editor de text enriquit actiu
+        function formatActiveRich(cmd, value = null) {
+            const target = lastFocusedRichEditor || document.getElementById('summary');
+            target.focus();
+            restoreSelection();
             document.execCommand(cmd, false, value);
+            saveCurrentSelection();
         }
 
         // Mostrar o amagar el panell d'inserció d'enllaços
@@ -315,6 +534,7 @@
             const panel = document.getElementById('linkInputPanel');
             panel.classList.toggle('hidden');
             if (!panel.classList.contains('hidden')) {
+                saveCurrentSelection();
                 const selection = window.getSelection().toString().trim();
                 const linkTextInput = document.getElementById('linkText');
                 if (selection && !linkTextInput.value) {
@@ -324,7 +544,7 @@
             }
         }
 
-        // Inserir un enllaç amb text i URL a l'editor enriquit
+        // Inserir un enllaç amb text i URL al camp enriquit actiu
         function insertCustomLink() {
             const textInput = document.getElementById('linkText');
             const urlInput = document.getElementById('linkUrl');
@@ -336,16 +556,18 @@
                 return;
             }
 
-            if (!/^https?:\/\//i.test(rawUrl)) {
+            if (!/^https?:\/\//i.test(rawUrl) && !rawUrl.startsWith('mailto:')) {
                 rawUrl = 'https://' + rawUrl;
             }
 
             const displayLabel = label || rawUrl;
-            const editor = document.getElementById('richResources');
-            editor.focus();
+            const target = lastFocusedRichEditor || document.getElementById('richResources');
+            target.focus();
+            restoreSelection();
 
             const anchorHtml = `<a href="${escapeAttr(rawUrl)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(displayLabel)}</a>&nbsp;`;
             document.execCommand('insertHTML', false, anchorHtml);
+            saveCurrentSelection();
 
             textInput.value = '';
             urlInput.value = '';
@@ -353,7 +575,7 @@
         }
 
         function escapeHtml(str) {
-            return String(str)
+            return String(str || '')
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
@@ -362,7 +584,7 @@
         }
 
         function escapeAttr(str) {
-            return String(str).replace(/"/g, '&quot;');
+            return String(str || '').replace(/"/g, '&quot;');
         }
 
         // Converteix qualsevol URL en text pla en un enllaç clicable que s'obre en una pestanya nova
@@ -377,12 +599,11 @@
             });
         }
 
-        // Processa l'HTML enriquit perquè totes les URLs (tant <a> com URLs escrites directament) tinguin enllaç i s'obrin en pestanya nova
-        function processRichHtmlAndExtractLinks(rawHtml, extraPlainTexts = []) {
+        // Neteja i converteix totes les URLs d'un camp d'HTML enriquit en enllaços clicables amb target="_blank"
+        function normalizeRichFieldHtml(rawHtml) {
             const container = document.createElement('div');
             container.innerHTML = rawHtml || '';
 
-            // 1. Convertir URLs en nodes de text (fora d'etiquetes <a>) en enllaços clicables
             const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
             const textNodes = [];
             let currentNode;
@@ -402,10 +623,6 @@
                 }
             });
 
-            // 2. Assegurar que totes les etiquetes <a> tinguin target="_blank" i rel="noopener noreferrer"
-            const extractedLinks = [];
-            const seenPairs = new Set();
-
             container.querySelectorAll('a').forEach(a => {
                 let href = (a.getAttribute('href') || '').trim();
                 if (href && !/^https?:\/\//i.test(href) && !href.startsWith('mailto:')) {
@@ -415,36 +632,52 @@
                 a.setAttribute('target', '_blank');
                 a.setAttribute('rel', 'noopener noreferrer');
                 a.className = 'text-uab-green underline font-medium hover:text-uab-darkgreen break-all';
-
-                const text = (a.textContent || href).trim();
-                const key = `${text}|${href}`;
-                if (href && !seenPairs.has(key)) {
-                    seenPairs.add(key);
-                    extractedLinks.push({ text, url: href });
-                }
             });
 
-            // 3. Extreure també qualsevol URL que s'hagi escrit als altres camps de text (resum, workflow, etc.)
-            extraPlainTexts.forEach(txt => {
-                if (!txt) return;
-                const matches = txt.match(/((?:https?:\/\/|www\.)[^\s<]+)/gi) || [];
-                matches.forEach(m => {
-                    let cleanUrl = m.replace(/[.,;:!?)]+$/, '');
-                    let href = /^https?:\/\//i.test(cleanUrl) ? cleanUrl : 'https://' + cleanUrl;
-                    const key = `${cleanUrl}|${href}`;
-                    if (!seenPairs.has(key)) {
+            return container.innerHTML.trim();
+        }
+
+        function extractAllLinksFromHtmlFields(htmlArray) {
+            const extractedLinks = [];
+            const seenPairs = new Set();
+
+            htmlArray.forEach(html => {
+                if (!html) return;
+                const normalized = normalizeRichFieldHtml(html);
+                const temp = document.createElement('div');
+                temp.innerHTML = normalized;
+
+                temp.querySelectorAll('a').forEach(a => {
+                    const href = (a.getAttribute('href') || '').trim();
+                    const text = (a.textContent || href).trim();
+                    const key = `${text}|${href}`;
+                    if (href && !seenPairs.has(key)) {
                         seenPairs.add(key);
-                        extractedLinks.push({ text: cleanUrl, url: href });
+                        extractedLinks.push({ text, url: href });
                     }
                 });
             });
 
-            return {
-                enrichedHtml: container.innerHTML.trim() || '<span class="text-gray-400 italic">Cap recurs o enllaç especificat</span>',
-                cleanEditorHtml: container.innerHTML.trim(),
-                plainText: container.innerText.trim(),
-                links: extractedLinks
-            };
+            return extractedLinks;
+        }
+
+        function stripHtmlToPlain(html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html || '';
+            return (temp.textContent || temp.innerText || '').trim();
+        }
+
+        function showStatusBanner(message, isError = false) {
+            const banner = document.getElementById('statusBanner');
+            const textEl = document.getElementById('statusBannerText');
+            banner.classList.remove('hidden', 'bg-green-50', 'border-green-300', 'text-green-800', 'bg-red-50', 'border-red-300', 'text-red-800');
+            if (isError) {
+                banner.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
+            } else {
+                banner.classList.add('bg-green-50', 'border-green-300', 'text-green-800');
+            }
+            textEl.innerText = message;
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function showPreviewForRecord(record, index) {
@@ -454,20 +687,19 @@
             document.getElementById('resEmail').innerHTML = `<a href="mailto:${escapeAttr(record.email)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline hover:text-uab-darkgreen">${escapeHtml(record.email)}</a>`;
             document.getElementById('resScope').innerText = record.scope;
             document.getElementById('resTarget').innerText = record.targetAudience;
-            document.getElementById('resSummary').innerHTML = linkifyPlainText(record.summary);
-            document.getElementById('resObjective').innerHTML = linkifyPlainText(record.objective);
+            document.getElementById('resSummary').innerHTML = record.summary;
+            document.getElementById('resObjective').innerHTML = record.objective;
             document.getElementById('resTools').innerHTML = linkifyPlainText(record.tools);
             document.getElementById('resReplicability').innerText = record.replicability;
-            document.getElementById('resWorkflow').innerHTML = linkifyPlainText(record.workflow);
-            document.getElementById('resEthics').innerHTML = linkifyPlainText(record.ethics);
-            document.getElementById('resResources').innerHTML = record.resourcesEnrichedHtml;
+            document.getElementById('resWorkflow').innerHTML = record.workflow;
+            document.getElementById('resEthics').innerHTML = record.ethics;
 
             const preview = document.getElementById('previewCard');
             preview.classList.remove('hidden');
             preview.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function handleSubmit(event) {
+        async function handleSubmit(event) {
             event.preventDefault();
             
             const title = document.getElementById('title').value.trim();
@@ -475,39 +707,88 @@
             const email = document.getElementById('email').value.trim();
             const scope = document.getElementById('scope').value;
             const targetAudience = document.getElementById('targetAudience').value.trim();
-            const summary = document.getElementById('summary').value.trim();
-            const objective = document.getElementById('objective').value.trim();
             const tools = document.getElementById('tools').value.trim();
             const replicability = document.getElementById('replicability').value;
-            const workflow = document.getElementById('workflow').value.trim();
-            const ethics = document.getElementById('ethics').value.trim();
-            const richResourcesHtml = document.getElementById('richResources').innerHTML;
 
-            // Processar text enriquit i detectar URLs en tots els camps
-            const processed = processRichHtmlAndExtractLinks(richResourcesHtml, [summary, objective, workflow, ethics, tools]);
+            const summaryHtml = normalizeRichFieldHtml(document.getElementById('summary').innerHTML);
+            const objectiveHtml = normalizeRichFieldHtml(document.getElementById('objective').innerHTML);
+            let workflowHtml = normalizeRichFieldHtml(document.getElementById('workflow').innerHTML);
+            const ethicsHtml = normalizeRichFieldHtml(document.getElementById('ethics').innerHTML);
+            const extraResourcesHtml = normalizeRichFieldHtml(document.getElementById('richResources').innerHTML);
 
-            // Registrar o actualitzar la informació (incloent enllaços, URLs i l'HTML per a l'editor) al Sheet
-            const timestamp = new Date().toLocaleString('ca-ES', { dateStyle: 'short', timeStyle: 'short' });
+            // Validar que els camps obligatoris enriquits no estiguin buits
+            if (!stripHtmlToPlain(summaryHtml) || !stripHtmlToPlain(objectiveHtml) || !stripHtmlToPlain(workflowHtml) || !stripHtmlToPlain(ethicsHtml)) {
+                showStatusBanner("Si us plau, completa tots els camps obligatoris marcats amb * (Resum, Objectiu, Workflow i Consideracions ètiques).", true);
+                return;
+            }
+
+            // Si s'han afegit recursos o enllaços al bloc 4, els incorporem al final del Workflow perquè quedin desats a les 12 columnes del Google Sheet
+            if (stripHtmlToPlain(extraResourcesHtml)) {
+                workflowHtml += `<br><br><b>Recursos i enllaços:</b><br>${extraResourcesHtml}`;
+            }
+
+            const allLinks = extractAllLinksFromHtmlFields([summaryHtml, objectiveHtml, workflowHtml, ethicsHtml, tools]);
+
+            const timestamp = activeSheetEdit.isSheetEdit && activeSheetEdit.originalTimestamp
+                ? activeSheetEdit.originalTimestamp
+                : new Date().toISOString();
+
             const record = {
+                action: activeSheetEdit.isSheetEdit ? "edit" : "create",
+                rowNumber: activeSheetEdit.rowNumber,
+                password: activeSheetEdit.editToken,
                 timestamp,
                 title,
                 author,
                 email,
                 scope,
                 targetAudience,
-                summary,
-                objective,
+                summary: summaryHtml,
+                objective: objectiveHtml,
                 tools,
                 replicability,
-                workflow,
-                ethics,
-                resourcesRawHtml: processed.cleanEditorHtml,
-                resourcesEnrichedHtml: processed.enrichedHtml,
-                resourcesPlainText: processed.plainText,
-                linksFormatted: processed.links.map(l => `${l.text} (${l.url})`).join(' | '),
-                urlsOnly: processed.links.map(l => l.url).join(' , '),
-                linksArray: processed.links
+                workflow: workflowHtml,
+                ethics: ethicsHtml,
+                resourcesRawHtml: '',
+                linksFormatted: allLinks.map(l => `${l.text} (${l.url})`).join(' | '),
+                urlsOnly: allLinks.map(l => l.url).join(' , '),
+                linksArray: allLinks
             };
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Desant al Google Sheet...';
+
+            // Enviar a Google Apps Script (doPost de Code.gs)
+            if (GOOGLE_SHEETS_API_URL) {
+                try {
+                    const response = await fetch(GOOGLE_SHEETS_API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(record)
+                    });
+                    const resData = await response.json();
+                    if (resData.status === 'error') {
+                        showStatusBanner(`Error del servidor: ${resData.message}`, true);
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = originalBtnText;
+                        return;
+                    } else {
+                        showStatusBanner(
+                            activeSheetEdit.isSheetEdit
+                                ? "✅ Fitxa actualitzada correctament al Google Sheet!"
+                                : "✅ Nova fitxa registrada correctament al Google Sheet!"
+                        );
+                    }
+                } catch (err) {
+                    console.error("Error enviant a Apps Script:", err);
+                    showStatusBanner("Les dades s'han processat localment, però hi ha hagut un avís de xarxa en contactar amb Google Sheets.", false);
+                }
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalBtnText;
 
             let targetIndex;
             if (editingIndex !== null && sheetRecords[editingIndex]) {
@@ -519,43 +800,76 @@
             }
 
             renderSheetTable();
-            exitEditModeUI();
-
-            // Si tenim configurada una URL de Google Apps Script Web App externa (opcional), també l'envia
-            if (window.GOOGLE_SHEETS_WEBHOOK_URL) {
-                fetch(window.GOOGLE_SHEETS_WEBHOOK_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(record)
-                }).catch(() => {});
-            }
-
-            // Mostrar previsualització de la fitxa desada/actualitzada
             showPreviewForRecord(record, targetIndex);
         }
 
-        // Carrega totes les dades d'una fitxa existent al formulari i a l'editor de text enriquit per modificar-la
+        // Eliminar fitxa del Google Sheet cridant l'acció "delete" de Code.gs
+        async function handleDeleteFromSheet() {
+            if (!activeSheetEdit.isSheetEdit || !activeSheetEdit.rowNumber) return;
+
+            const confirmDelete = confirm("Estàs segur que vols eliminar definitivament aquesta fitxa del Google Sheet?");
+            if (!confirmDelete) return;
+
+            const deleteBtn = document.getElementById('deleteSheetBtn');
+            deleteBtn.disabled = true;
+            deleteBtn.innerText = 'Eliminant...';
+
+            try {
+                const response = await fetch(GOOGLE_SHEETS_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: "delete",
+                        rowNumber: activeSheetEdit.rowNumber,
+                        password: activeSheetEdit.editToken
+                    })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    showStatusBanner("🗑️ Fitxa eliminada correctament del Google Sheet. Redirigint al cercador...");
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showStatusBanner(`No s'ha pogut eliminar: ${result.message}`, true);
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
+                }
+            } catch (err) {
+                console.error("Error eliminant la fila:", err);
+                showStatusBanner("Error de connexió en intentar eliminar la fitxa.", true);
+                deleteBtn.disabled = false;
+                deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
+            }
+        }
+
+        // Carrega totes les dades d'una fitxa de la taula inferior al formulari per modificar-la
         function loadRecordIntoEditor(index) {
             const rec = sheetRecords[index];
             if (!rec) return;
 
             editingIndex = index;
+            if (rec.rowNumber) {
+                activeSheetEdit.isSheetEdit = true;
+                activeSheetEdit.rowNumber = rec.rowNumber;
+                activeSheetEdit.editToken = rec.editToken || activeSheetEdit.editToken;
+                activeSheetEdit.originalTimestamp = rec.timestamp;
+                document.getElementById('deleteSheetBtn').classList.remove('hidden');
+            }
 
             document.getElementById('title').value = rec.title || '';
             document.getElementById('author').value = rec.author || '';
             document.getElementById('email').value = rec.email || '';
-            document.getElementById('scope').value = rec.scope || 'Docència (Grau / Màster)';
+            setSelectValueFlexible('scope', rec.scope || 'Docència (Grau / Màster)');
             document.getElementById('targetAudience').value = rec.targetAudience || '';
-            document.getElementById('summary').value = rec.summary || '';
-            document.getElementById('objective').value = rec.objective || '';
+            document.getElementById('summary').innerHTML = rec.summary || '';
+            document.getElementById('objective').innerHTML = rec.objective || '';
             document.getElementById('tools').value = rec.tools || '';
-            document.getElementById('replicability').value = rec.replicability || 'Alt';
-            document.getElementById('workflow').value = rec.workflow || '';
-            document.getElementById('ethics').value = rec.ethics || '';
+            setSelectValueFlexible('replicability', rec.replicability || 'Alt');
+            document.getElementById('workflow').innerHTML = rec.workflow || '';
+            document.getElementById('ethics').innerHTML = rec.ethics || '';
             document.getElementById('richResources').innerHTML = rec.resourcesRawHtml || '';
 
-            // Actualitzar la interfície per indicar que estem modificant una fitxa
             document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
             document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${rec.title}". Modifica els camps necessaris i desa els canvis.`;
             document.getElementById('editingBadge').classList.remove('hidden');
@@ -573,11 +887,16 @@
 
         function exitEditModeUI() {
             editingIndex = null;
+            activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
             document.getElementById('formHeaderTitle').innerText = 'Nova Fitxa de Bona Pràctica';
             document.getElementById('formHeaderSubtitle').innerText = 'Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.';
             document.getElementById('editingBadge').classList.add('hidden');
+            document.getElementById('deleteSheetBtn').classList.add('hidden');
             document.getElementById('submitBtn').innerText = 'Generar Fitxa i Registrar al Sheet';
             document.getElementById('cancelEditBtn').innerText = 'Netejar formulari';
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         }
 
         // Actualitza la taula del Sheet amb enllaços clicables, URLs registrades i botons per obrir/editar
@@ -589,7 +908,7 @@
                 tbody.innerHTML = `
                     <tr id="emptySheetRow">
                         <td colspan="8" class="py-6 text-center text-gray-400 italic">
-                            Encara no s'ha registrat cap pràctica al Sheet. Completa el formulari o fes una prova per veure les dades registrades.
+                            Encara no s'ha registrat o editat cap pràctica en aquesta sessió.
                         </td>
                     </tr>
                 `;
@@ -600,11 +919,11 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-uab-lightgreen/20 transition align-top';
 
-                const linksHtml = rec.linksArray.length > 0
+                const linksHtml = rec.linksArray && rec.linksArray.length > 0
                     ? rec.linksArray.map(l => `<div class="mb-1"><a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(l.text)}</a></div>`).join('')
                     : '<span class="text-gray-400 italic">Sense enllaços</span>';
 
-                const urlsHtml = rec.linksArray.length > 0
+                const urlsHtml = rec.linksArray && rec.linksArray.length > 0
                     ? rec.linksArray.map(l => `<div class="mb-1"><a href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline hover:text-blue-800 break-all">${escapeHtml(l.url)}</a></div>`).join('')
                     : '<span class="text-gray-400 italic">-</span>';
 
@@ -636,15 +955,15 @@
             if (sheetRecords.length === 0) return;
 
             const headers = [
-                'Data', 'Títol', 'Responsable', 'Correu', 'Àmbit', 'Públic Objectiu',
-                'Resum Executiu', 'Objectiu Principal', 'Eines IA', 'Replicabilitat',
-                'Workflow', 'Consideracions Ètiques', 'Text Recursos', 'Enllaços (Text i URL)', 'URLs'
+                'Data i Hora', 'Títol', 'Autor/a', 'Correu', 'Àmbit', 'Públic Objectiu',
+                'Resum', 'Objectiu', 'Eines IA', 'Replicabilitat',
+                'Workflow', 'Consideracions Ètiques', 'Enllaços (Text i URL)', 'URLs'
             ];
 
             const rows = sheetRecords.map(r => [
                 r.timestamp, r.title, r.author, r.email, r.scope, r.targetAudience,
                 r.summary, r.objective, r.tools, r.replicability,
-                r.workflow, r.ethics, r.resourcesPlainText, r.linksFormatted, r.urlsOnly
+                r.workflow, r.ethics, r.linksFormatted, r.urlsOnly
             ].map(val => String(val || '').replace(/[\t\r\n]+/g, ' ')).join('\t'));
 
             const tsvContent = [headers.join('\t'), ...rows].join('\n');
@@ -665,9 +984,9 @@
             if (sheetRecords.length === 0) return;
 
             const headers = [
-                'Data', 'Títol', 'Responsable', 'Correu', 'Àmbit', 'Públic Objectiu',
-                'Resum Executiu', 'Objectiu Principal', 'Eines IA', 'Replicabilitat',
-                'Workflow', 'Consideracions Ètiques', 'Text Recursos', 'Enllaços (Text i URL)', 'URLs'
+                'Data i Hora', 'Títol', 'Autor/a', 'Correu', 'Àmbit', 'Públic Objectiu',
+                'Resum', 'Objectiu', 'Eines IA', 'Replicabilitat',
+                'Workflow', 'Consideracions Ètiques', 'Enllaços (Text i URL)', 'URLs'
             ];
 
             const csvRows = [headers.join(',')];
@@ -675,7 +994,7 @@
                 const values = [
                     r.timestamp, r.title, r.author, r.email, r.scope, r.targetAudience,
                     r.summary, r.objective, r.tools, r.replicability,
-                    r.workflow, r.ethics, r.resourcesPlainText, r.linksFormatted, r.urlsOnly
+                    r.workflow, r.ethics, r.linksFormatted, r.urlsOnly
                 ].map(v => `"${String(v || '').replace(/"/g, '""')}"`);
                 csvRows.push(values.join(','));
             });
@@ -693,6 +1012,10 @@
 
         function resetForm() {
             document.getElementById('practiceForm').reset();
+            document.getElementById('summary').innerHTML = '';
+            document.getElementById('objective').innerHTML = '';
+            document.getElementById('workflow').innerHTML = '';
+            document.getElementById('ethics').innerHTML = '';
             document.getElementById('richResources').innerHTML = '';
             document.getElementById('linkInputPanel').classList.add('hidden');
             exitEditModeUI();
