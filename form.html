@@ -55,7 +55,7 @@
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
             <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
                 <div>
-                    <h2 id="formHeaderTitle" class="text-xl font-bold text-uab-darkgreen">Nova Fitxa de Bona Pràctica</h2>
+                    <h2 id="formHeaderTitle" class="text-xl font-bold text-uab-darkgreen">Fitxa de Bona Pràctica</h2>
                     <p id="formHeaderSubtitle" class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.</p>
                 </div>
                 <span id="editingBadge" class="hidden bg-amber-100 text-amber-800 border border-amber-300 text-xs font-semibold px-3 py-1 rounded-full">
@@ -98,9 +98,12 @@
                                     <span class="text-sm text-gray-700 leading-tight">Recerca / Pràctica Professional</span>
                                 </label>
                                 <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <!-- Única opció de Gestió -->
-                                    <input type="checkbox" name="scopeOption" value="Personal Tècnic, de Gestió i Administració i Serveis" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Personal Tècnic, de Gestió i Administració i Serveis</span>
+                                    <input type="checkbox" name="scopeOption" value="Gestió / Administració" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">Gestió / Administració</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" name="scopeOption" value="Transferència / Divulgació" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">Transferència / Divulgació</span>
                                 </label>
                                 <label class="flex items-start space-x-2.5 cursor-pointer">
                                     <input type="checkbox" name="scopeOption" value="Altres" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
@@ -275,21 +278,21 @@
             }
         }
 
-        // Funció flexible per omplir els Checkboxes que no trenca per comes internes
+        // Funció flexible per omplir els Checkboxes (amb retrocompatibilitat)
         function setCheckboxValuesFlexible(checkboxName, valuesString) {
             const checkboxes = document.querySelectorAll(`input[name="${checkboxName}"]`);
             checkboxes.forEach(cb => cb.checked = false); 
             
             if (!valuesString) return;
             
-            const encodedStr = valuesString.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'TEMP_SCOPE_TOKEN');
+            // Reemplaçament per si venim d'una versió anterior del formulari amb dades velles
+            const encodedStr = valuesString.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'Gestió / Administració');
             const valuesArray = encodedStr.split(',').map(v => v.trim());
             
             checkboxes.forEach(cb => {
                 const cbVal = cb.value;
                 const matchFound = valuesArray.some(val => {
-                    const checkVal = val === 'TEMP_SCOPE_TOKEN' ? 'Personal Tècnic, de Gestió i Administració i Serveis' : val;
-                    return cbVal === checkVal || cbVal.includes(checkVal) || checkVal.includes(cbVal);
+                    return cbVal === val || cbVal.includes(val) || val.includes(cbVal);
                 });
                 if (matchFound) {
                     cb.checked = true;
