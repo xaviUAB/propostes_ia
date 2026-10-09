@@ -25,95 +25,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Custom scrollbar for modal */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #c1c1c1; 
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8; 
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
 
         /* Estils per renderitzar correctament negretes, cursives i llistes desades al Google Sheet */
-        .rich-content ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-            margin-top: 0.25rem;
-            margin-bottom: 0.25rem;
-        }
-        .rich-content ol {
-            list-style-type: decimal;
-            padding-left: 1.5rem;
-            margin-top: 0.25rem;
-            margin-bottom: 0.25rem;
-        }
-        .rich-content b, .rich-content strong {
-            font-weight: 700;
-        }
-        .rich-content i, .rich-content em {
-            font-style: italic;
-        }
-        .rich-content u {
-            text-decoration: underline;
-        }
-        /* Estils específics per imprimir o desar en PDF des de la finestra modal amb més marge superior */
+        .rich-content ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.25rem; margin-bottom: 0.25rem; }
+        .rich-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-top: 0.25rem; margin-bottom: 0.25rem; }
+        .rich-content b, .rich-content strong { font-weight: 700; }
+        .rich-content i, .rich-content em { font-style: italic; }
+        .rich-content u { text-decoration: underline; }
+        .rich-content a { color: #006633; text-decoration: underline; }
+        
         @media print {
-            @page {
-                size: A4;
-                margin: 45mm 30mm 30mm 30mm; /* 4.5 cm de marge superior i 3 cm a la resta */
-            }
-            html, body {
-                background-color: white !important;
-                height: auto !important;
-                overflow: visible !important;
-                padding-top: 10mm !important; /* Espai extra de seguretat a la part superior */
-            }
-            /* Amagar tot l'entorn excepte la finestra modal */
-            header, main, footer, .no-print, #passwordBox {
-                display: none !important;
-            }
-            #detailsModal {
-                position: static !important;
-                display: block !important;
-                background: white !important;
-                overflow: visible !important;
-                height: auto !important;
-                width: 100% !important;
-                backdrop-filter: none !important;
-            }
-            #modalContainer {
-                position: static !important;
-                top: 0 !important;
-                margin: 0 !important;
-                max-width: 100% !important;
-                width: 100% !important;
-                box-shadow: none !important;
-                border: 2px solid #006633 !important;
-                border-radius: 8px !important;
-            }
-            #modalBody {
-                max-height: none !important;
-                overflow: visible !important;
-                background: white !important;
-                padding: 16px !important;
-            }
-            /* Forçar impressió dels colors institucionals */
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            /* Evitar talls incòmodes entre pàgines */
-            .print-avoid-break {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
+            @page { size: A4; }
+            html, body { background-color: white !important; height: auto !important; overflow: visible !important; }
+            header, main, footer, .no-print, #passwordBox { display: none !important; }
+            #detailsModal { position: static !important; display: block !important; background: white !important; overflow: visible !important; height: auto !important; width: 100% !important; backdrop-filter: none !important; }
+            #modalContainer { position: static !important; top: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; box-shadow: none !important; border: 2px solid #006633 !important; border-radius: 8px !important; }
+            #modalBody { max-height: none !important; overflow: visible !important; background: white !important; padding: 16px !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .print-avoid-break { break-inside: avoid; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -131,8 +64,8 @@
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <a href="index.html" class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30 hidden md:block hover:bg-white hover:text-uab-green transition shadow-sm">
-                    Cercador / Consultes
+                <a href="form.html" class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30 hidden md:block hover:bg-white hover:text-uab-green transition shadow-sm">
+                    Anar al Formulari d'Alta
                 </a>
             </div>
         </div>
@@ -150,11 +83,11 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
                 </svg>
-                Comparteix la teva proposta de bona pràctica en l'ús de IA
+                Comparteix la teva proposta
             </a>
         </div>
 
-        <!-- Search and Filters Section -->
+        <!-- Cerca i Filtres -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4">
             <div class="flex-grow relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -165,32 +98,33 @@
                 <input type="text" id="searchInput" placeholder="Cerca per títol, eines, resum..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-uab-green focus:border-uab-green sm:text-sm transition">
             </div>
             
-            <div class="w-full md:w-64">
+            <div class="w-full md:w-72">
                 <select id="scopeFilter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 border focus:outline-none focus:ring-2 focus:ring-uab-green focus:border-uab-green sm:text-sm rounded-lg bg-gray-50 transition">
                     <option value="Tots">Tots els àmbits</option>
                     <option value="Docència (Grau / Màster)">Docència (Grau / Màster)</option>
                     <option value="Recerca / Pràctica Professional">Recerca / Pràctica Professional</option>
-                    <option value="Personal Tècnic, de Gestió i Administració i Serveis">Personal Tècnic, de Gestió i Administració i Serveis</option>
+                    <option value="Gestió / Administració">Gestió / Administració</option>
+                    <option value="Transferència / Divulgació">Transferència / Divulgació</option>
                     <option value="Altres">Altres</option>
                 </select>
             </div>
         </div>
 
-        <!-- Loading State -->
+        <!-- Estat de Càrrega -->
         <div id="loadingState" class="flex flex-col items-center justify-center py-12">
             <svg class="animate-spin h-10 w-10 text-uab-green mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <p class="text-gray-500 font-medium">Carregant pràctiques...</p>
+            <p class="text-gray-500 font-medium">Carregant pràctiques des del repositori...</p>
         </div>
 
-        <!-- Results Grid -->
+        <!-- Graella de resultats -->
         <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-            <!-- Cards will be injected here via JavaScript -->
+            <!-- Les targetes s'injectaran aquí -->
         </div>
 
-        <!-- No Results Message -->
+        <!-- Missatge Sense Resultats -->
         <div id="noResultsMsg" class="hidden flex flex-col items-center justify-center py-12 text-gray-500">
             <svg class="h-12 w-12 mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -205,7 +139,6 @@
     <div id="detailsModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full backdrop-blur-sm transition-opacity" onclick="closeModal(event)">
         <div id="modalContainer" class="relative top-10 mx-auto p-0 border w-full max-w-4xl shadow-2xl rounded-xl bg-white mb-20 transform transition-all" onclick="event.stopPropagation()">
             
-            <!-- Modal Header -->
             <div class="bg-uab-green text-white px-6 py-4 rounded-t-xl flex justify-between items-center sticky top-0 z-10">
                 <div class="flex items-center space-x-3">
                     <div class="bg-white text-uab-green font-bold text-sm px-2 py-1 rounded shadow">UAB</div>
@@ -218,10 +151,10 @@
                 </button>
             </div>
             
-            <!-- Modal Body -->
             <div id="modalBody" class="px-6 py-6 max-h-[75vh] overflow-y-auto custom-scrollbar bg-gray-50">
                 <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 mb-6 print-avoid-break">
-                    <div id="modalScope" class="flex flex-wrap mb-2"></div>
+                    <!-- Contenidor d'etiquetes d'àmbit individuals -->
+                    <div id="modalScope" class="flex flex-wrap gap-2 mb-3"></div>
                     <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 mb-4"></h2>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm border-t border-b border-gray-100 py-4 mb-4">
@@ -255,15 +188,13 @@
                     </div>
 
                     <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100 print-avoid-break">
-                        <h4 class="font-semibold text-uab-green mb-3">Procés / Workflow</h4>
-                        <div id="modalWorkflow" class="rich-content text-gray-700 whitespace-pre-line bg-gray-50 p-4 rounded border border-gray-200 text-sm"></div>
+                        <h4 class="font-semibold text-uab-green mb-3">Procés / Workflow i Recursos</h4>
+                        <div id="modalWorkflow" class="rich-content text-gray-700 bg-gray-50 p-4 rounded border border-gray-200 text-sm"></div>
                     </div>
                 </div>
             </div>
             
-            <!-- Modal Footer -->
             <div class="no-print bg-gray-100 px-6 py-4 rounded-b-xl border-t border-gray-200 flex flex-wrap justify-between items-center gap-3">
-                
                 <div class="flex items-center space-x-2">
                     <button onclick="togglePasswordBox()" title="Editar proposta (requereix contrasenya)" class="text-gray-400 hover:text-gray-600 transition p-1.5 rounded-full hover:bg-gray-200 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -304,46 +235,18 @@
     </footer>
 
     <script>
-        // --- CONFIGURACIÓ DE L'API I SEGURETAT ---
         const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec'; 
-        
-        // Redirigir cap al formulari
-        const FORM_PAGE_URL = 'form.html'; 
+        const FORM_PAGE_URL = 'form.html';
 
-        // --- ESTAT GLOBAL ---
         let allPractices = [];
         let filteredPractices = [];
         let currentModalPractice = null;
 
-        // Funció intel·ligent per no tallar la coma del Personal Tècnic
-        function getScopesArray(scopeString) {
-            if (!scopeString) return ['N/A'];
-            let safeString = scopeString.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'TEMP_SCOPE_TOKEN');
-            
-            return safeString.split(',').map(s => {
-                let clean = s.trim();
-                if (clean === 'TEMP_SCOPE_TOKEN') {
-                    return 'Personal Tècnic, de Gestió i Administració i Serveis';
-                }
-                return clean;
-            }).filter(s => s !== '');
-        }
-
-        // Funció per netejar HTML però conservar negretes, cursives i salts de línia
+        // Funció per netejar etiquetes HTML perilloses però conservar format bàsic (div, br, b, i, llistes)
         function sanitizeRichHTML(html) {
             if (!html) return '';
-            
-            let processedHtml = html;
-            // Si el text només ve amb \n purs del formulari sense etiquetes de bloc, el transformem a <br>
-            if (!/<[a-z][\s\S]*>/i.test(processedHtml)) {
-                processedHtml = processedHtml.replace(/\n/g, '<br>');
-            } else {
-                // Fins i tot si té HTML, si té salts simples perduts, els protegim
-                processedHtml = processedHtml.replace(/\n/g, '<br>');
-            }
-
             const temp = document.createElement('div');
-            temp.innerHTML = processedHtml;
+            temp.innerHTML = html;
             temp.querySelectorAll('script, iframe, object, embed, style, link').forEach(el => el.remove());
             temp.querySelectorAll('*').forEach(el => {
                 Array.from(el.attributes).forEach(attr => {
@@ -355,6 +258,7 @@
             return temp.innerHTML;
         }
 
+        // Extreure text pla per filtrar i buscar
         function stripHTML(html) {
             if (!html) return '';
             const temp = document.createElement('div');
@@ -362,52 +266,28 @@
             return temp.textContent || temp.innerText || '';
         }
 
+        // Funció per separar àmbits guardats amb comes, tolerant formats antics i nous
+        function splitScopes(scopeString) {
+            if (!scopeString) return [];
+            // Si el text conté la versió vella amb comes a l'interior, la preservem substituïnt temporalment
+            let safeString = scopeString.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'Gestió / Administració');
+            safeString = safeString.replace(/PTGAS/gi, 'Gestió / Administració');
+            
+            return safeString.split(',').map(s => s.trim()).filter(s => s !== '');
+        }
+
         const MOCK_DATA = [
             {
-                id: 1,
-                rowNumber: 2,
-                date: "2023-10-25",
+                id: 1, rowNumber: 2, date: "2023-10-25",
                 title: "Generació de guions crossmèdia assistits per IA generativa",
-                author: "Departament de Periodisme / Dra. Anna M.",
-                email: "anna.m@uab.cat",
-                scope: "Docència (Grau / Màster)",
+                author: "Dra. Anna M.", email: "anna.m@uab.cat",
+                scope: "Docència (Grau / Màster), Gestió / Administració",
                 targetAudience: "Estudiants de 3r de Periodisme",
-                summary: "S'utilitzen eines d'IA per generar <b>esbossos inicials de guions</b> que l'estudiant ha de verificar, contrastar i expandir per a diferents plataformes, fomentant l'<i>edició crítica</i>.",
-                objective: "Optimitzar la fase de pluja d'idees i centrar l'esforç docent en l'<b>edició crítica</b> i la verificació.",
-                tools: "ChatGPT Plus, Claude 2",
-                replicability: "Alt",
-                workflow: "<ol><li><b>Prompt inicial</b> de context.</li><li>Generació d'escaleta bàsica per IA.</li><li>Edició manual (<i>human-in-the-loop</i>).</li><li>Adaptació a format podcast/vídeo per l'alumne.</li></ol>",
-                ethics: "L'estudiant ha de declarar el prompt utilitzat i marcar clarament quines parts del guió han estat generades i quines humanes."
-            },
-            {
-                id: 2,
-                date: "2023-11-02",
-                title: "Automatització de transcripcions en recerca qualitativa",
-                author: "Grup de Recerca Audiovisual",
-                email: "recerca.audio@uab.cat",
-                scope: "Recerca / Pràctica Professional",
-                targetAudience: "Investigadors i doctorands",
-                summary: "Implementació del model Whisper en local (ordinadors del departament) per transcriure entrevistes d'investigació sense enviar dades a servidors de tercers.",
-                objective: "Reduir dràsticament el temps de transcripció mantenint la privacitat estricta de les dades.",
-                tools: "OpenAI Whisper (Model Local)",
-                replicability: "Mitjà",
-                workflow: "1. Instal·lació de l'entorn Python/Whisper.\n2. Ingesta d'arxius d'àudio ofuscats.\n3. Transcripció.\n4. Neteja manual i anàlisi amb NVivo.",
-                ethics: "Privacitat garantida al 100% en executar-se els models offline a les màquines de la UAB."
-            },
-            {
-                id: 3,
-                date: "2023-11-15",
-                title: "Traducció de guies docents amb eines IA",
-                author: "Suport Administratiu - Deganat",
-                email: "deganat.comunicacio@uab.cat",
-                scope: "Personal Tècnic, de Gestió i Administració i Serveis",
-                targetAudience: "Personal Tècnic",
-                summary: "Ús de DeepL Pro i sistemes LLM per a la traducció inicial i revisió de guies docents de català a anglès, accelerant la preparació del curs acadèmic.",
-                objective: "Agilitzar el procés de traducció institucional assegurant certa coherència terminològica.",
-                tools: "DeepL Pro, ChatGPT",
-                replicability: "Alt",
-                workflow: "1. Exportació de guia docent.\n2. Traducció via API o interfície.\n3. Revisió per un tècnic nadiu/expert.\n4. Publicació.",
-                ethics: "Les dades no contenen informació personal, però es requereix revisió humana abans de publicar per evitar errors institucionals."
+                summary: "S'utilitzen eines d'IA per generar <b>esbossos inicials de guions</b>.<br><br>L'estudiant ha de verificar, contrastar i expandir l'escaleta.",
+                objective: "Optimitzar la fase de pluja d'idees.",
+                tools: "ChatGPT Plus, Claude 2", replicability: "Alt",
+                workflow: "<ol><li><b>Prompt inicial</b> de context.</li><li>Generació d'escaleta.</li><li>Edició manual (<i>human-in-the-loop</i>).</li></ol>",
+                ethics: "L'estudiant ha de declarar el prompt utilitzat."
             }
         ];
 
@@ -431,7 +311,6 @@
                 filteredPractices = [...allPractices];
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('resultsGrid').classList.remove('hidden');
-                
                 renderCards(filteredPractices);
             } catch (error) {
                 console.error("Error carregant dades:", error);
@@ -442,25 +321,17 @@
         function formatSheetData(data) {
             if(!data || data.length === 0) return [];
             const isArrayOfArrays = Array.isArray(data[0]);
-            if (!isArrayOfArrays) return data; 
-            
+            if (!isArrayOfArrays) return data;
+
             const rows = data.slice(1);
             return rows.map((row, index) => ({
                 id: index,
-                rowNumber: index + 2, 
-                date: row[0],
-                title: row[1],
-                author: row[2],
-                email: row[3],
-                scope: row[4],
-                targetAudience: row[5],
-                summary: row[6],
-                objective: row[7],
-                tools: row[8],
-                replicability: row[9],
-                workflow: row[10],
-                ethics: row[11]
-            })).reverse();
+                rowNumber: index + 2,
+                date: row[0], title: row[1], author: row[2], email: row[3],
+                scope: row[4], targetAudience: row[5], summary: row[6],
+                objective: row[7], tools: row[8], replicability: row[9],
+                workflow: row[10], ethics: row[11]
+            })).reverse(); 
         }
 
         function filterData() {
@@ -468,17 +339,17 @@
             const scopeTerm = document.getElementById('scopeFilter').value;
 
             filteredPractices = allPractices.filter(practice => {
-                const matchScope = scopeTerm === 'Tots' || (practice.scope && practice.scope.includes(scopeTerm));
+                const scopes = splitScopes(practice.scope);
+                const matchScope = scopeTerm === 'Tots' || scopes.some(s => s.includes(scopeTerm) || scopeTerm.includes(s));
+                
                 const searchString = `${practice.title} ${stripHTML(practice.summary)} ${practice.tools} ${practice.author}`.toLowerCase();
                 const matchSearch = searchString.includes(searchTerm);
 
                 return matchScope && matchSearch;
             });
-
             renderCards(filteredPractices);
         }
 
-        // --- STREAMING_CHUNK:Rendering Cards Logic ---
         function renderCards(data) {
             const grid = document.getElementById('resultsGrid');
             const noResults = document.getElementById('noResultsMsg');
@@ -500,13 +371,11 @@
                 if (practice.replicability === 'Mitjà') repColor = 'bg-yellow-100 text-yellow-800';
                 if (practice.replicability === 'Baix') repColor = 'bg-red-100 text-red-800';
 
-                // Gestionar múltiples àmbits d'aplicació unificant correctament Personal Tècnic
-                const scopes = getScopesArray(practice.scope);
-                const scopesHTML = scopes.map(s => `
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-uab-green bg-uab-lightgreen px-2 py-1 rounded inline-block mb-1 mr-1 shadow-sm">
-                        ${s}
-                    </span>
-                `).join('');
+                // Generar etiquetes separades per a múltiples àmbits
+                const scopes = splitScopes(practice.scope);
+                const scopesHTML = scopes.map(s => 
+                    `<span class="text-[10px] font-bold uppercase tracking-wider text-uab-green bg-uab-lightgreen px-2 py-1 rounded inline-block mb-1 mr-1">${s}</span>`
+                ).join('');
 
                 const toolsList = practice.tools ? practice.tools.split(',').map(t => t.trim()) : [];
                 const toolsHTML = toolsList.slice(0, 3).map(t => `<span class="inline-block bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded border border-gray-200 truncate max-w-[100px]">${t}</span>`).join('');
@@ -516,19 +385,18 @@
                     <div class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-200 overflow-hidden flex flex-col h-full transition-shadow duration-300">
                         <div class="p-5 flex-grow flex flex-col">
                             <div class="flex justify-between items-start mb-3 gap-2">
-                                <div class="flex-wrap">
-                                    ${scopesHTML}
-                                </div>
-                                <span class="text-[10px] px-2 py-1 rounded font-medium ${repColor} whitespace-nowrap mt-1">
+                                <div class="flex-grow">${scopesHTML || '<span class="text-[10px] font-bold uppercase text-gray-500">Sense Àmbit</span>'}</div>
+                                <span class="text-[10px] px-2 py-1 rounded font-medium ${repColor} whitespace-nowrap">
                                     Rep: ${practice.replicability || 'N/A'}
                                 </span>
                             </div>
                             
-                            <h3 class="text-lg font-bold text-gray-900 leading-tight mb-2 line-clamp-2" title="${practice.title}">
+                            <h3 class="text-lg font-bold text-gray-900 leading-tight mb-3 line-clamp-2" title="${practice.title}">
                                 ${practice.title || 'Sense Títol'}
                             </h3>
                             
-                            <div class="text-sm text-gray-600 mb-4 line-clamp-3 overflow-hidden flex-grow rich-content">
+                            <!-- Ara mantenim el format ric al resum exterior (respectarà divs, br, etc.) tallant-ho visualment amb line-clamp -->
+                            <div class="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow rich-content">
                                 ${sanitizeRichHTML(practice.summary) || 'Sense resum disponible.'}
                             </div>
                             
@@ -561,6 +429,13 @@
             document.getElementById('passwordError').classList.add('hidden');
 
             document.getElementById('modalTitle').textContent = practice.title;
+            
+            // Renderitzar àmbits separats
+            const scopes = splitScopes(practice.scope);
+            document.getElementById('modalScope').innerHTML = scopes.map(s => 
+                `<span class="text-xs uppercase tracking-widest text-uab-accent font-semibold bg-uab-lightgreen/50 px-2 py-1 rounded border border-uab-lightgreen">${s}</span>`
+            ).join('');
+            
             document.getElementById('modalAuthor').textContent = practice.author;
             
             const emailEl = document.getElementById('modalEmail');
@@ -569,17 +444,9 @@
             
             document.getElementById('modalTarget').textContent = practice.targetAudience;
             
-            // Format àmbits individuals per a la capçalera
-            const scopes = getScopesArray(practice.scope);
-            document.getElementById('modalScope').innerHTML = scopes.map(s => `
-                <span class="inline-block text-[11px] uppercase tracking-widest text-uab-accent font-bold bg-uab-lightgreen/50 border border-uab-accent/30 px-2.5 py-1 rounded-md mb-2 mr-2">
-                    ${s}
-                </span>
-            `).join('');
-            
             const repEl = document.getElementById('modalReplicability');
             repEl.textContent = practice.replicability;
-            repEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
+            repEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium';
             if(practice.replicability === 'Alt') repEl.classList.add('bg-green-100', 'text-green-800');
             else if(practice.replicability === 'Mitjà') repEl.classList.add('bg-yellow-100', 'text-yellow-800');
             else if(practice.replicability === 'Baix') repEl.classList.add('bg-red-100', 'text-red-800');
@@ -597,9 +464,7 @@
 
             const modal = document.getElementById('detailsModal');
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.add('opacity-100');
-            }, 10);
+            setTimeout(() => modal.classList.add('opacity-100'), 10);
             document.body.style.overflow = 'hidden';
         }
 
@@ -607,12 +472,9 @@
             const box = document.getElementById('passwordBox');
             const input = document.getElementById('editPasswordInput');
             const error = document.getElementById('passwordError');
-            
             box.classList.toggle('hidden');
             error.classList.add('hidden');
-            if (!box.classList.contains('hidden')) {
-                input.focus();
-            }
+            if (!box.classList.contains('hidden')) input.focus();
         }
 
         function verifyFallbackHash(str) {
@@ -635,12 +497,10 @@
 
             try {
                 let isValid = false;
-
                 if (GOOGLE_SHEETS_API_URL) {
                     const verifyUrl = `${GOOGLE_SHEETS_API_URL}?action=verifyPassword&password=${encodeURIComponent(input)}`;
                     const response = await fetch(verifyUrl);
                     const result = await response.json();
-                    
                     if (result && typeof result.valid === 'boolean') {
                         isValid = result.valid;
                     } else {
@@ -651,21 +511,20 @@
                 }
 
                 if (isValid) {
-                    const practiceToEdit = {
-                        ...currentModalPractice,
-                        editToken: input
-                    };
-                    try {
-                        sessionStorage.setItem('uab_edit_practice', JSON.stringify(practiceToEdit));
-                    } catch(e) {}
-                    const encodedData = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(practiceToEdit)))));
-                    window.location.href = `${FORM_PAGE_URL}?editData=${encodedData}`;
+                    const practiceToEdit = { ...currentModalPractice, editToken: input };
+                    
+                    // Desen a sessionStorage com a via més segura
+                    sessionStorage.setItem('uab_edit_practice', JSON.stringify(practiceToEdit));
+                    
+                    // Com a alternativa afegim un token curt a la URL
+                    const shortData = btoa(unescape(encodeURIComponent(JSON.stringify({ rowNumber: practiceToEdit.rowNumber }))));
+                    window.location.href = `${FORM_PAGE_URL}?editData=${shortData}`;
                 } else {
                     error.innerText = 'Incorrecta';
                     error.classList.remove('hidden');
                 }
             } catch (err) {
-                console.error('Error verificant contrasenya:', err);
+                console.error('Error:', err);
                 error.innerText = 'Error servidor';
                 error.classList.remove('hidden');
             } finally {
@@ -677,7 +536,7 @@
         function closeModal(event) {
             const modal = document.getElementById('detailsModal');
             modal.classList.add('hidden');
-            document.body.style.overflow = 'auto'; 
+            document.body.style.overflow = 'auto';
         }
         
         document.addEventListener('keydown', (e) => {
