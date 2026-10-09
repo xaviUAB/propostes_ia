@@ -314,7 +314,7 @@
                     </svg>
                 </div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Informació enviada correctament</h3>
-                <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament.</p>
+                <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament al repositori.</p>
                 <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen focus:outline-none transition sm:text-sm">
                     D'acord i tornar al cercador
                 </button>
@@ -349,28 +349,34 @@
         function checkAndLoadExternalEditData() {
             let practiceToEdit = null;
 
-            // 1. Mirar si ve per URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const encodedData = urlParams.get('editData');
-            if (encodedData) {
-                try {
-                    const decodedJson = decodeURIComponent(escape(atob(decodeURIComponent(encodedData))));
-                    practiceToEdit = JSON.parse(decodedJson);
-                } catch (err) {}
+            // 1. Llegir SEMPRE primer del sessionStorage (conté l'objecte complet)
+            try {
+                const stored = sessionStorage.getItem('uab_edit_practice');
+                if (stored) {
+                    practiceToEdit = JSON.parse(stored);
+                    sessionStorage.removeItem('uab_edit_practice'); // Netejar-ho un cop llegit
+                }
+            } catch (e) {
+                console.error("Error llegint de sessionStorage", e);
             }
 
-            // 2. Mirar si ve per sessionStorage (Mètode recomanat actualment)
-            if (!practiceToEdit) {
-                try {
-                    const stored = sessionStorage.getItem('uab_edit_practice');
-                    if (stored) {
-                        practiceToEdit = JSON.parse(stored);
-                        sessionStorage.removeItem('uab_edit_practice'); // Netejar-ho un cop llegit
-                    }
-                } catch (e) {}
+            // 2. Si per algun motiu no hi ha sessionStorage, mirem si ve per URL
+            if (!practiceToEdit || !practiceToEdit.title) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const encodedData = urlParams.get('editData');
+                if (encodedData) {
+                    try {
+                        const decodedJson = decodeURIComponent(escape(atob(decodeURIComponent(encodedData))));
+                        const parsedData = JSON.parse(decodedJson);
+                        // Només ho fem servir si realment té les dades de la fitxa i no només el rowNumber
+                        if (parsedData && parsedData.title) {
+                            practiceToEdit = parsedData;
+                        }
+                    } catch (err) {}
+                }
             }
 
-            if (practiceToEdit) {
+            if (practiceToEdit && practiceToEdit.title) {
                 populateFormFromExternalPractice(practiceToEdit);
             }
         }
@@ -418,9 +424,9 @@
             document.getElementById('objective').innerHTML = practice.objective || '';
             document.getElementById('workflow').innerHTML = practice.workflow || '';
             document.getElementById('ethics').innerHTML = practice.ethics || '';
-            // El camp materials ja porta el codi HTML generat prèviament per a les targetes
-            // Així que en cas d'edició utilitzem workflow que normalment emmagatzema tot de forma conjunta.
-            // (Si tenies camps separats de materials s'haurien d'afegir aquí).
+            
+            // Buidem recursos addicionals perquè ja es van integrar al workflow anteriorment
+            document.getElementById('richResources').innerHTML = ''; 
 
             document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
             document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${practice.title}".`;
@@ -573,7 +579,7 @@
                     }
                 } catch (err) {
                     console.error("Error enviant al servidor:", err);
-                    alert("S'ha produït un error de connexió, però la prova continuarà en local.");
+                    alert("S'ha produït un error de connexió, però l'acció continuarà.");
                 }
             }
 
