@@ -516,9 +516,10 @@
             document.querySelectorAll('input[name="scope"]').forEach(cb => cb.checked = false);
             const scopeVal = rec.scope || '';
             const selectedScopes = scopeVal.split(',').map(s => s.trim());
-            selectedScopes.forEach(val => {
-                const cb = document.querySelector(`input[name="scope"][value="${val}"]`);
-                if (cb) cb.checked = true;
+            document.querySelectorAll('input[name="scope"]').forEach(cb => {
+                if (selectedScopes.includes(cb.value) || selectedScopes.includes(cb.value.split(' ')[0])) {
+                    cb.checked = true;
+                }
             });
             document.getElementById('scopeError').classList.add('hidden');
 
@@ -647,6 +648,55 @@
             document.querySelectorAll('input[name="scope"]').forEach(cb => cb.checked = false);
             exitEditModeUI();
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            let externalData = null;
+
+            // 1. Buscar a sessionStorage o localStorage (Mètode recomanat si vens d'un login)
+            const storageKeys = ['fitxaEditar', 'editData', 'currentRecord', 'fitxaData', 'recordToEdit', 'data'];
+            for (const key of storageKeys) {
+                const dataStr = sessionStorage.getItem(key) || localStorage.getItem(key);
+                if (dataStr) {
+                    try {
+                        externalData = JSON.parse(dataStr);
+                        sessionStorage.removeItem(key); // Netejar per no recarregar si es refresca la pàgina
+                        break;
+                    } catch(e) {}
+                }
+            }
+
+            // 2. Buscar als paràmetres de la URL (?data=...)
+            if (!externalData) {
+                const params = new URLSearchParams(window.location.search);
+                if (params.has('data')) {
+                    try {
+                        externalData = JSON.parse(decodeURIComponent(params.get('data')));
+                    } catch(e) {
+                        try {
+                            externalData = JSON.parse(atob(params.get('data'))); // Provar base64
+                        } catch(e2) {}
+                    }
+                } else if (params.has('titol') || params.has('title')) {
+                    // Si passen els camps directament com a ?title=El+meu+titol&author=Xavi
+                    externalData = Object.fromEntries(params.entries());
+                }
+            }
+
+            // 3. Si hem trobat dades, les processem i les carreguem a l'editor
+            if (externalData) {
+                const normalized = normalizeExternalRecord(externalData);
+                if (normalized) {
+                    // Evitar duplicats si ja hi és (per ID)
+                    const existingIndex = sheetRecords.findIndex(r => r.id === normalized.id);
+                    if (existingIndex >= 0) {
+                        loadRecordIntoEditor(existingIndex);
+                    } else {
+                        sheetRecords.push(normalized);
+                        loadRecordIntoEditor(sheetRecords.length - 1);
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
