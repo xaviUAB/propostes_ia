@@ -55,7 +55,7 @@
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
             <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
                 <div>
-                    <h2 id="formHeaderTitle" class="text-xl font-bold text-uab-darkgreen">Fitxa de Bona Pràctica</h2>
+                    <h2 id="formHeaderTitle" class="text-xl font-bold text-uab-darkgreen">Nova Fitxa de Bona Pràctica</h2>
                     <p id="formHeaderSubtitle" class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.</p>
                 </div>
                 <span id="editingBadge" class="hidden bg-amber-100 text-amber-800 border border-amber-300 text-xs font-semibold px-3 py-1 rounded-full">
@@ -112,8 +112,29 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Perfil d'usuari objectiu *</label>
-                            <input type="text" id="targetAudience" required placeholder="Ex. Estudiants de 3r de Periodisme, Professorat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Perfil d'usuari objectiu (pots marcar-ne més d'un) *</label>
+                            <div id="targetGroup" class="space-y-2.5 bg-gray-50/50 px-4 py-3 border border-gray-300 rounded-lg">
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" name="targetOption" value="Estudiantat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">Estudiantat</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" name="targetOption" value="Professorat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">Professorat</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" name="targetOption" value="Personal de recerca" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">Personal de recerca</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" name="targetOption" value="PTGAS" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">PTGAS</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" name="targetOption" value="Públic en general" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">Públic en general</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -286,7 +307,11 @@
             if (!valuesString) return;
             
             // Reemplaçament per si venim d'una versió anterior del formulari amb dades velles
-            const encodedStr = valuesString.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'Gestió / Administració');
+            let encodedStr = valuesString;
+            if (checkboxName === 'scopeOption') {
+                encodedStr = encodedStr.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'Gestió / Administració');
+            }
+            
             const valuesArray = encodedStr.split(',').map(v => v.trim());
             
             checkboxes.forEach(cb => {
@@ -311,11 +336,11 @@
             document.getElementById('title').value = practice.title || '';
             document.getElementById('author').value = practice.author || '';
             document.getElementById('email').value = practice.email || '';
-            document.getElementById('targetAudience').value = practice.targetAudience || '';
             document.getElementById('objective').value = practice.objective || '';
             document.getElementById('tools').value = practice.tools || '';
             
             setCheckboxValuesFlexible('scopeOption', practice.scope);
+            setCheckboxValuesFlexible('targetOption', practice.targetAudience);
 
             const repSelect = document.getElementById('replicability');
             for (let i = 0; i < repSelect.options.length; i++) {
@@ -401,6 +426,15 @@
                 return;
             }
 
+            // Obtenir checkboxes del públic objectiu
+            const targetCheckboxes = document.querySelectorAll('input[name="targetOption"]:checked');
+            const targetAudience = Array.from(targetCheckboxes).map(cb => cb.value).join(', ');
+
+            if (!targetAudience) {
+                alert("Si us plau, selecciona almenys un perfil d'usuari objectiu.");
+                return;
+            }
+
             const submitBtn = document.getElementById('submitBtn');
             const originalBtnText = submitBtn.innerText;
             submitBtn.disabled = true;
@@ -409,7 +443,6 @@
             const title = document.getElementById('title').value.trim();
             const author = document.getElementById('author').value.trim();
             const email = document.getElementById('email').value.trim();
-            const targetAudience = document.getElementById('targetAudience').value.trim();
             const tools = document.getElementById('tools').value.trim();
             const replicability = document.getElementById('replicability').value;
             
