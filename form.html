@@ -24,6 +24,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* CSS per mostrar el 'placeholder' en elements div contenteditable buits */
+        [contenteditable]:empty::before {
+            content: attr(placeholder);
+            color: #9ca3af;
+            pointer-events: none;
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
@@ -65,6 +73,7 @@
 
             <form id="practiceForm" class="p-6 space-y-6" onsubmit="handleSubmit(event)">
                 
+                <!-- SECCIÓ 1 -->
                 <div class="space-y-4">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">1. Capçalera i Identificació</h3>
                     
@@ -87,7 +96,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Àmbit d'aplicació (pots marcar-ne més d'un) *</label>
-                            <!-- Transformem a checkboxes -->
                             <div id="scopeGroup" class="space-y-2.5 bg-gray-50/50 px-4 py-3 border border-gray-300 rounded-lg">
                                 <label class="flex items-start space-x-2.5 cursor-pointer">
                                     <input type="checkbox" name="scopeOption" value="Docència (Grau / Màster)" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
@@ -139,20 +147,58 @@
                     </div>
                 </div>
 
+                <!-- SECCIÓ 2 -->
                 <div class="space-y-4 pt-2">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">2. Visió General</h3>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Resum executiu (màx. 5 línies) *</label>
-                        <textarea id="summary" rows="3" required placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Resum executiu *</label>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('summary')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                            </div>
+                            <div id="linkPanel_summary" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_summary" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_summary" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                </div>
+                                <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('summary')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('summary')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
+                            </div>
+                            <div id="summary" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..."></div>
+                        </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Objectiu principal *</label>
-                        <input type="text" id="objective" required placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('objective')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                            </div>
+                            <div id="linkPanel_objective" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_objective" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_objective" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                </div>
+                                <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('objective')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('objective')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
+                            </div>
+                            <div id="objective" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític..."></div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- SECCIÓ 3 -->
                 <div class="space-y-4 pt-2">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">3. Especificacions Tècniques i Ètiques</h3>
                     
@@ -173,49 +219,76 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Descripció del procés / Workflow pas a pas *</label>
-                        <textarea id="workflow" rows="4" required placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('workflow')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                            </div>
+                            <div id="linkPanel_workflow" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_workflow" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_workflow" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                </div>
+                                <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('workflow')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('workflow')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
+                            </div>
+                            <div id="workflow" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..."></div>
+                        </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Consideracions ètiques i de transparència *</label>
-                        <textarea id="ethics" rows="2" required placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('ethics')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                            </div>
+                            <div id="linkPanel_ethics" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_ethics" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_ethics" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                </div>
+                                <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('ethics')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('ethics')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
+                            </div>
+                            <div id="ethics" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..."></div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- SECCIÓ 4 -->
                 <div class="space-y-4 pt-2">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">4. Recursos, Enllaços i Materials</h3>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Materials complementaris (Opcional)</label>
-                        <p class="text-xs text-gray-500 mb-2">Pots enganxar qualsevol URL al quadre (es convertirà automàticament en enllaç), o fer ús de l'editor lliure.</p>
+                        <p class="text-xs text-gray-500 mb-2">Pots donar format al text, o enganxar qualsevol URL directament (es convertirà en enllaç de forma automàtica).</p>
                         
                         <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
                             <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onmousedown="event.preventDefault(); formatDoc('bold')" title="Negreta" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onmousedown="event.preventDefault(); formatDoc('italic')" title="Cursiva" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel()" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">
-                                    <span>🔗</span> Inserir Enllaç / URL
-                                </button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                                <span class="h-4 w-px bg-gray-300 mx-1"></span>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('richResources')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
                             </div>
-
-                            <!-- Panell desplegable per inserir URL -->
-                            <div id="linkInputPanel" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                            <div id="linkPanel_richResources" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç (opcional)</label>
-                                        <input type="text" id="linkText" placeholder="Ex. Guia d'ús" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label>
-                                        <input type="url" id="linkUrl" placeholder="https://www..." class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                                    </div>
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_richResources" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
+                                    <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_richResources" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                 </div>
-                                <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="toggleLinkPanel()" class="px-2.5 py-1 text-xs text-gray-600 hover:text-gray-800">Cancel·lar</button>
-                                    <button type="button" onclick="insertCustomLink()" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded hover:bg-uab-darkgreen transition">Afegir al text</button>
-                                </div>
+                                <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('richResources')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('richResources')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
                             </div>
-
                             <div id="richResources" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Escriu aquí o enganxa URLs..."></div>
                         </div>
                     </div>
@@ -225,7 +298,6 @@
                     <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
                         Netejar formulari
                     </button>
-                    <!-- Canviat text del botó segons indicacions -->
                     <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">
                         Enviar proposta
                     </button>
@@ -233,7 +305,7 @@
             </form>
         </div>
 
-        <!-- Finestra Modal d'Èxit (Substitueix la vista prèvia) -->
+        <!-- Finestra Modal d'Èxit (Redirigeix a l'inici en tancar-se) -->
         <div id="successModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 text-center transform transition-all">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
@@ -243,7 +315,6 @@
                 </div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Informació enviada correctament</h3>
                 <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament.</p>
-                <!-- Al fer clic redirigeix directament cap a index.html -->
                 <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen focus:outline-none transition sm:text-sm">
                     D'acord i tornar al cercador
                 </button>
@@ -276,52 +347,45 @@
         });
 
         function checkAndLoadExternalEditData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const encodedData = urlParams.get('editData');
             let practiceToEdit = null;
 
+            // 1. Mirar si ve per URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('editData');
             if (encodedData) {
                 try {
                     const decodedJson = decodeURIComponent(escape(atob(decodeURIComponent(encodedData))));
                     practiceToEdit = JSON.parse(decodedJson);
                 } catch (err) {}
             }
+
+            // 2. Mirar si ve per sessionStorage (Mètode recomanat actualment)
             if (!practiceToEdit) {
                 try {
                     const stored = sessionStorage.getItem('uab_edit_practice');
-                    if (stored) practiceToEdit = JSON.parse(stored);
+                    if (stored) {
+                        practiceToEdit = JSON.parse(stored);
+                        sessionStorage.removeItem('uab_edit_practice'); // Netejar-ho un cop llegit
+                    }
                 } catch (e) {}
             }
 
             if (practiceToEdit) {
                 populateFormFromExternalPractice(practiceToEdit);
-                sessionStorage.removeItem('uab_edit_practice');
             }
         }
 
-        // Funció flexible per omplir els Checkboxes (amb retrocompatibilitat)
         function setCheckboxValuesFlexible(checkboxName, valuesString) {
             const checkboxes = document.querySelectorAll(`input[name="${checkboxName}"]`);
             checkboxes.forEach(cb => cb.checked = false); 
             
             if (!valuesString) return;
-            
-            // Reemplaçament per si venim d'una versió anterior del formulari amb dades velles
-            let encodedStr = valuesString;
-            if (checkboxName === 'scopeOption') {
-                encodedStr = encodedStr.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'Gestió / Administració');
-            }
-            
-            const valuesArray = encodedStr.split(',').map(v => v.trim());
+            const valuesArray = valuesString.split(',').map(v => v.trim());
             
             checkboxes.forEach(cb => {
                 const cbVal = cb.value;
-                const matchFound = valuesArray.some(val => {
-                    return cbVal === val || cbVal.includes(val) || val.includes(cbVal);
-                });
-                if (matchFound) {
-                    cb.checked = true;
-                }
+                const matchFound = valuesArray.some(val => cbVal === val || cbVal.includes(val) || val.includes(cbVal));
+                if (matchFound) cb.checked = true;
             });
         }
 
@@ -336,7 +400,6 @@
             document.getElementById('title').value = practice.title || '';
             document.getElementById('author').value = practice.author || '';
             document.getElementById('email').value = practice.email || '';
-            document.getElementById('objective').value = practice.objective || '';
             document.getElementById('tools').value = practice.tools || '';
             
             setCheckboxValuesFlexible('scopeOption', practice.scope);
@@ -350,11 +413,14 @@
                 }
             }
 
-            // Textareas de retorn (substituïm <br> per salts reals al textarea)
-            const cleanTextarea = (str) => (str || '').replace(/<br\s*\/?>/gi, '\n');
-            document.getElementById('summary').value = cleanTextarea(practice.summary);
-            document.getElementById('workflow').value = cleanTextarea(practice.workflow);
-            document.getElementById('ethics').value = cleanTextarea(practice.ethics);
+            // Atribuir directament el codi HTML als camps de text enriquit (contenteditable divs)
+            document.getElementById('summary').innerHTML = practice.summary || '';
+            document.getElementById('objective').innerHTML = practice.objective || '';
+            document.getElementById('workflow').innerHTML = practice.workflow || '';
+            document.getElementById('ethics').innerHTML = practice.ethics || '';
+            // El camp materials ja porta el codi HTML generat prèviament per a les targetes
+            // Així que en cas d'edició utilitzem workflow que normalment emmagatzema tot de forma conjunta.
+            // (Si tenies camps separats de materials s'haurien d'afegir aquí).
 
             document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
             document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${practice.title}".`;
@@ -363,29 +429,31 @@
             document.getElementById('cancelEditBtn').innerText = 'Cancel·lar edició';
         }
 
-        // --- FUNCIONS EDITOR RICH ---
-        function formatDoc(cmd, value = null) {
-            const editor = document.getElementById('richResources');
-            editor.focus();
-            document.execCommand(cmd, false, value);
-        }
-
-        function toggleLinkPanel() {
-            const panel = document.getElementById('linkInputPanel');
-            panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) {
+        // --- FUNCIONS DELS PANELLS D'ENLLAÇOS ---
+        function toggleLinkPanel(editorId) {
+            // Amagar tots els altres panells
+            document.querySelectorAll('.link-panel').forEach(p => p.classList.add('hidden'));
+            
+            const panel = document.getElementById('linkPanel_' + editorId);
+            if (panel) {
+                panel.classList.remove('hidden');
+                // Intentar capturar el text seleccionat
                 const selection = window.getSelection().toString().trim();
-                const linkTextInput = document.getElementById('linkText');
-                if (selection && !linkTextInput.value) {
-                    linkTextInput.value = selection;
+                const textInput = document.getElementById('linkText_' + editorId);
+                if (selection && !textInput.value) {
+                    textInput.value = selection;
                 }
-                document.getElementById('linkUrl').focus();
+                document.getElementById('linkUrl_' + editorId).focus();
             }
         }
 
-        function insertCustomLink() {
-            const textInput = document.getElementById('linkText');
-            const urlInput = document.getElementById('linkUrl');
+        function cancelLink(editorId) {
+            document.getElementById('linkPanel_' + editorId).classList.add('hidden');
+        }
+
+        function insertCustomLink(editorId) {
+            const textInput = document.getElementById('linkText_' + editorId);
+            const urlInput = document.getElementById('linkUrl_' + editorId);
             let rawUrl = urlInput.value.trim();
             let label = textInput.value.trim();
 
@@ -399,18 +467,22 @@
             }
 
             const displayLabel = label || rawUrl;
-            const editor = document.getElementById('richResources');
+            
+            // Retornar el focus al camp on estàvem
+            const editor = document.getElementById(editorId);
             editor.focus();
 
             const escapeAttr = (s) => String(s).replace(/"/g, '&quot;');
             const escapeHtml = (s) => String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
             const anchorHtml = `<a href="${escapeAttr(rawUrl)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(displayLabel)}</a>&nbsp;`;
+            
+            // Inserir el HTML on hi havia el cursor de text
             document.execCommand('insertHTML', false, anchorHtml);
 
             textInput.value = '';
             urlInput.value = '';
-            document.getElementById('linkInputPanel').classList.add('hidden');
+            document.getElementById('linkPanel_' + editorId).classList.add('hidden');
         }
 
         // --- SUBMIT DEL FORMULARI AL GOOGLE SHEET ---
@@ -435,6 +507,23 @@
                 return;
             }
 
+            // Funció per validar si un quadre de text enriquit està realment buit
+            const isRichTextEmpty = (html) => {
+                const clean = html.replace(/\s/g, '');
+                return clean === '' || clean === '<br>' || clean === '<div><br></div>' || clean === '<p><br></p>';
+            };
+
+            const summaryHTML = document.getElementById('summary').innerHTML.trim();
+            const objectiveHTML = document.getElementById('objective').innerHTML.trim();
+            const workflowHTML = document.getElementById('workflow').innerHTML.trim();
+            const ethicsHTML = document.getElementById('ethics').innerHTML.trim();
+            const richResourcesHTML = document.getElementById('richResources').innerHTML.trim();
+
+            if (isRichTextEmpty(summaryHTML)) { alert("El camp 'Resum executiu' és obligatori."); return; }
+            if (isRichTextEmpty(objectiveHTML)) { alert("El camp 'Objectiu principal' és obligatori."); return; }
+            if (isRichTextEmpty(workflowHTML)) { alert("El camp 'Descripció del procés' és obligatori."); return; }
+            if (isRichTextEmpty(ethicsHTML)) { alert("El camp 'Consideracions ètiques' és obligatori."); return; }
+
             const submitBtn = document.getElementById('submitBtn');
             const originalBtnText = submitBtn.innerText;
             submitBtn.disabled = true;
@@ -446,18 +535,10 @@
             const tools = document.getElementById('tools').value.trim();
             const replicability = document.getElementById('replicability').value;
             
-            const objective = document.getElementById('objective').value.trim();
-
-            // Desem les respostes dels textareas substituint prèviament \n per <br> 
-            // perquè a la pàgina inicial es vegi l'estil correctament formatejat.
-            const summaryHTML = document.getElementById('summary').value.trim().replace(/\n/g, '<br>');
-            const workflowHTML = document.getElementById('workflow').value.trim().replace(/\n/g, '<br>');
-            const ethicsHTML = document.getElementById('ethics').value.trim().replace(/\n/g, '<br>');
-            
-            const richResources = document.getElementById('richResources').innerHTML;
+            // Juntar el workflow normal amb els materials complementaris (si n'hi ha) per emmagatzemar al Sheet
             let fullWorkflow = workflowHTML;
-            if (richResources.trim()) {
-                fullWorkflow += `<br><br><b>Recursos addicionals:</b><br>${richResources}`;
+            if (!isRichTextEmpty(richResourcesHTML)) {
+                fullWorkflow += `<br><br><b>Recursos addicionals:</b><br>${richResourcesHTML}`;
             }
 
             const timestamp = activeSheetEdit.isSheetEdit ? activeSheetEdit.originalTimestamp : new Date().toISOString();
@@ -469,7 +550,7 @@
                 timestamp,
                 title, author, email, scope: scopeStr, targetAudience,
                 summary: summaryHTML,
-                objective: objective,
+                objective: objectiveHTML,
                 tools, replicability,
                 workflow: fullWorkflow,
                 ethics: ethicsHTML
@@ -505,8 +586,16 @@
 
         function resetForm() {
             document.getElementById('practiceForm').reset();
+            
+            // Netejar manualment els camps de text enriquit
+            document.getElementById('summary').innerHTML = '';
+            document.getElementById('objective').innerHTML = '';
+            document.getElementById('workflow').innerHTML = '';
+            document.getElementById('ethics').innerHTML = '';
             document.getElementById('richResources').innerHTML = '';
-            document.getElementById('linkInputPanel').classList.add('hidden');
+            
+            // Amagar qualsevol panell d'enllaços actiu
+            document.querySelectorAll('.link-panel').forEach(p => p.classList.add('hidden'));
             
             activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
             document.getElementById('formHeaderTitle').innerText = 'Nova Fitxa de Bona Pràctica';
