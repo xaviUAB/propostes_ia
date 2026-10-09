@@ -30,13 +30,14 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
 
-        /* Estils per renderitzar correctament negretes, cursives i llistes desades al Google Sheet */
+        /* Estils per text enriquit */
         .rich-content ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.25rem; margin-bottom: 0.25rem; }
         .rich-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-top: 0.25rem; margin-bottom: 0.25rem; }
         .rich-content b, .rich-content strong { font-weight: 700; }
         .rich-content i, .rich-content em { font-style: italic; }
         .rich-content u { text-decoration: underline; }
-        .rich-content a { color: #006633; text-decoration: underline; }
+        .rich-content a { color: #006633; text-decoration: underline; font-weight: 500; }
+        .rich-content a:hover { color: #004d26; }
         
         @media print {
             @page { size: A4; }
@@ -51,6 +52,9 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <header class="bg-uab-green text-white shadow-md relative z-10">
         <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -73,7 +77,6 @@
 
     <main class="max-w-6xl mx-auto px-4 py-8 w-full flex-grow flex flex-col">
         
-        <!-- Call To Action (Enllaç al formulari) -->
         <div class="mb-8 bg-white p-6 rounded-xl shadow-sm border border-uab-lightgreen flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
                 <h2 class="text-lg font-bold text-uab-darkgreen">Tens una experiència per compartir?</h2>
@@ -87,7 +90,6 @@
             </a>
         </div>
 
-        <!-- Cerca i Filtres -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4">
             <div class="flex-grow relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -101,16 +103,15 @@
             <div class="w-full md:w-72">
                 <select id="scopeFilter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 border focus:outline-none focus:ring-2 focus:ring-uab-green focus:border-uab-green sm:text-sm rounded-lg bg-gray-50 transition">
                     <option value="Tots">Tots els àmbits</option>
-                    <option value="Docència (Grau / Màster)">Docència (Grau / Màster)</option>
-                    <option value="Recerca / Pràctica Professional">Recerca / Pràctica Professional</option>
-                    <option value="Gestió / Administració">Gestió / Administració</option>
-                    <option value="Transferència / Divulgació">Transferència / Divulgació</option>
-                    <option value="Altres">Altres</option>
+                    <option value="Docència (Grau / Màster)">🎓 Docència</option>
+                    <option value="Recerca / Pràctica Professional">🔬 Recerca / Pràctica Prof.</option>
+                    <option value="Gestió / Administració">💼 Gestió / Administració</option>
+                    <option value="Transferència / Divulgació">📢 Transferència / Divulgació</option>
+                    <option value="Altres">💡 Altres</option>
                 </select>
             </div>
         </div>
 
-        <!-- Estat de Càrrega -->
         <div id="loadingState" class="flex flex-col items-center justify-center py-12">
             <svg class="animate-spin h-10 w-10 text-uab-green mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -119,12 +120,18 @@
             <p class="text-gray-500 font-medium">Carregant pràctiques des del repositori...</p>
         </div>
 
-        <!-- Graella de resultats -->
+        <!-- Graella -->
         <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-            <!-- Les targetes s'injectaran aquí -->
+            <!-- Les targetes s'injecten aquí -->
         </div>
 
-        <!-- Missatge Sense Resultats -->
+        <!-- Botó de paginació (Load More) -->
+        <div id="paginationContainer" class="hidden text-center mt-10 mb-4">
+            <button id="loadMoreBtn" onclick="loadMoreCards()" class="px-8 py-3 bg-white text-uab-darkgreen font-medium text-sm border border-gray-300 rounded-full hover:bg-gray-50 hover:shadow-md transition shadow-sm">
+                Carregar més pràctiques ↓
+            </button>
+        </div>
+
         <div id="noResultsMsg" class="hidden flex flex-col items-center justify-center py-12 text-gray-500">
             <svg class="h-12 w-12 mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -135,7 +142,7 @@
 
     </main>
 
-    <!-- Modal per veure detalls complets -->
+    <!-- Modal Detalles -->
     <div id="detailsModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full backdrop-blur-sm transition-opacity" onclick="closeModal(event)">
         <div id="modalContainer" class="relative top-10 mx-auto p-0 border w-full max-w-4xl shadow-2xl rounded-xl bg-white mb-20 transform transition-all" onclick="event.stopPropagation()">
             
@@ -153,7 +160,6 @@
             
             <div id="modalBody" class="px-6 py-6 max-h-[75vh] overflow-y-auto custom-scrollbar bg-gray-50">
                 <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 mb-6 print-avoid-break">
-                    <!-- Contenidor d'etiquetes d'àmbit individuals -->
                     <div id="modalScope" class="flex flex-wrap gap-2 mb-3"></div>
                     <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 mb-4"></h2>
                     
@@ -194,32 +200,43 @@
                 </div>
             </div>
             
-            <div class="no-print bg-gray-100 px-6 py-4 rounded-b-xl border-t border-gray-200 flex flex-wrap justify-between items-center gap-3">
-                <div class="flex items-center space-x-2">
-                    <button onclick="togglePasswordBox()" title="Editar proposta (requereix contrasenya)" class="text-gray-400 hover:text-gray-600 transition p-1.5 rounded-full hover:bg-gray-200 focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+            <div class="no-print bg-gray-100 px-6 py-4 rounded-b-xl border-t border-gray-200 flex flex-wrap justify-between items-center gap-4">
+                
+                <!-- Share tools (Left) -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="shareLink()" class="px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded shadow-sm text-xs font-medium focus:outline-none transition flex items-center">
+                        🔗 Copiar Enllaç
                     </button>
-
-                    <div id="passwordBox" class="hidden flex items-center space-x-2 bg-white px-2.5 py-1 rounded-lg border border-gray-300 shadow-sm">
-                        <input type="password" id="editPasswordInput" placeholder="Contrasenya..." class="text-xs px-2 py-1 border border-gray-200 rounded focus:outline-none focus:border-uab-green w-28" onkeydown="if(event.key === 'Enter') verifyAndEdit()">
-                        <button id="verifyEditBtn" onclick="verifyAndEdit()" class="text-xs bg-uab-green hover:bg-uab-darkgreen text-white px-2.5 py-1 rounded font-medium transition">
-                            Editar
-                        </button>
-                        <span id="passwordError" class="hidden text-xs text-red-600 font-medium pl-1">Incorrecta</span>
-                    </div>
+                    <button onclick="shareLinkedIn()" class="px-3 py-1.5 bg-[#0A66C2] hover:bg-[#004182] text-white border border-transparent rounded shadow-sm text-xs font-medium focus:outline-none transition flex items-center">
+                        LinkedIn
+                    </button>
+                    <button onclick="shareEmail()" class="px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded shadow-sm text-xs font-medium focus:outline-none transition flex items-center">
+                        ✉️ Correu
+                    </button>
                 </div>
 
+                <!-- Print & Edit (Right) -->
                 <div class="flex items-center space-x-3">
-                    <button onclick="window.print()" class="px-4 py-2 bg-uab-green hover:bg-uab-darkgreen text-white rounded-lg shadow-sm text-sm font-medium focus:outline-none transition flex items-center">
+                    <div class="flex items-center space-x-2 border-r border-gray-300 pr-3">
+                        <button onclick="togglePasswordBox()" title="Editar proposta" class="text-gray-400 hover:text-amber-600 transition p-1.5 rounded-full hover:bg-white focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </button>
+                        <div id="passwordBox" class="hidden flex items-center space-x-1 bg-white px-2 py-1 rounded border border-gray-300 shadow-sm">
+                            <input type="password" id="editPasswordInput" placeholder="Contrasenya" class="text-xs px-1.5 py-1 focus:outline-none w-20">
+                            <button id="verifyEditBtn" onclick="verifyAndEdit()" class="text-xs bg-uab-green hover:bg-uab-darkgreen text-white px-2 py-1 rounded transition">OK</button>
+                        </div>
+                    </div>
+
+                    <button onclick="window.print()" class="px-3 py-1.5 bg-uab-green hover:bg-uab-darkgreen text-white rounded shadow-sm text-xs font-medium focus:outline-none transition flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                         </svg>
-                        Imprimir / Desar PDF
+                        Imprimir
                     </button>
-                    <button onclick="closeModal(true)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition">
+                    <button onclick="closeModal(true)" class="px-3 py-1.5 bg-white border border-gray-300 rounded shadow-sm text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition">
                         Tancar
                     </button>
                 </div>
@@ -242,7 +259,64 @@
         let filteredPractices = [];
         let currentModalPractice = null;
 
-        // Funció per netejar etiquetes HTML perilloses però conservar format bàsic (div, br, b, i, llistes)
+        // Paginació
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 12;
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-600' : 'bg-uab-green';
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
+            toast.innerHTML = `
+                <span class="flex-grow text-sm font-medium drop-shadow-sm">${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white focus:outline-none text-lg leading-none">&times;</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function shareLink() {
+            try {
+                const tempInput = document.createElement('input');
+                tempInput.value = window.location.href;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showToast('Enllaç directe copiat al porta-retalls! 🔗');
+            } catch (err) {
+                console.error('Error copying link: ', err);
+                showToast('No s\'ha pogut copiar l\'enllaç', 'error');
+            }
+        }
+
+        function shareLinkedIn() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+        }
+
+        function shareEmail() {
+            const title = currentModalPractice ? currentModalPractice.title : "Bones Pràctiques en IA";
+            const subject = encodeURIComponent(`Interessant pràctica UAB: ${title}`);
+            const body = encodeURIComponent(`He trobat aquesta pràctica interessant al Repositori d'IA de la UAB:\n\n${window.location.href}`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function getScopeIcon(scope) {
+            const lower = scope.toLowerCase();
+            if (lower.includes('docència')) return '🎓';
+            if (lower.includes('recerca')) return '🔬';
+            if (lower.includes('gestió') || lower.includes('administració')) return '💼';
+            if (lower.includes('transferència')) return '📢';
+            return '💡';
+        }
+
         function sanitizeRichHTML(html) {
             if (!html) return '';
             const temp = document.createElement('div');
@@ -250,15 +324,12 @@
             temp.querySelectorAll('script, iframe, object, embed, style, link').forEach(el => el.remove());
             temp.querySelectorAll('*').forEach(el => {
                 Array.from(el.attributes).forEach(attr => {
-                    if (attr.name.toLowerCase().startsWith('on')) {
-                        el.removeAttribute(attr.name);
-                    }
+                    if (attr.name.toLowerCase().startsWith('on')) { el.removeAttribute(attr.name); }
                 });
             });
             return temp.innerHTML;
         }
 
-        // Extreure text pla per filtrar i buscar
         function stripHTML(html) {
             if (!html) return '';
             const temp = document.createElement('div');
@@ -266,14 +337,9 @@
             return temp.textContent || temp.innerText || '';
         }
 
-        // Funció per separar àmbits guardats amb comes, tolerant formats antics i nous
-        function splitScopes(scopeString) {
+        function getScopesArray(scopeString) {
             if (!scopeString) return [];
-            // Si el text conté la versió vella amb comes a l'interior, la preservem substituïnt temporalment
-            let safeString = scopeString.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'Gestió / Administració');
-            safeString = safeString.replace(/PTGAS/gi, 'Gestió / Administració');
-            
-            return safeString.split(',').map(s => s.trim()).filter(s => s !== '');
+            return scopeString.split(',').map(s => s.trim()).filter(s => s !== '');
         }
 
         const MOCK_DATA = [
@@ -310,8 +376,10 @@
                 
                 filteredPractices = [...allPractices];
                 document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('resultsGrid').classList.remove('hidden');
-                renderCards(filteredPractices);
+                
+                filterData(); // Renderitza els primers i aplica la paginació
+                checkDeepLink(); // Obre modal si hi ha ID a la URL
+                
             } catch (error) {
                 console.error("Error carregant dades:", error);
                 document.getElementById('loadingState').innerHTML = `<p class="text-red-500 font-medium">Error de connexió al carregar dades.</p>`;
@@ -325,8 +393,8 @@
 
             const rows = data.slice(1);
             return rows.map((row, index) => ({
-                id: index,
-                rowNumber: index + 2,
+                id: index + 1, // ID visual
+                rowNumber: index + 2, // Fila real
                 date: row[0], title: row[1], author: row[2], email: row[3],
                 scope: row[4], targetAudience: row[5], summary: row[6],
                 objective: row[7], tools: row[8], replicability: row[9],
@@ -334,30 +402,46 @@
             })).reverse(); 
         }
 
+        function checkDeepLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rowId = urlParams.get('id');
+            if (rowId) {
+                const target = allPractices.find(p => p.rowNumber == rowId);
+                if (target) openModal(target.id);
+            }
+        }
+
         function filterData() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const scopeTerm = document.getElementById('scopeFilter').value;
 
             filteredPractices = allPractices.filter(practice => {
-                const scopes = splitScopes(practice.scope);
+                const scopes = getScopesArray(practice.scope);
                 const matchScope = scopeTerm === 'Tots' || scopes.some(s => s.includes(scopeTerm) || scopeTerm.includes(s));
-                
                 const searchString = `${practice.title} ${stripHTML(practice.summary)} ${practice.tools} ${practice.author}`.toLowerCase();
                 const matchSearch = searchString.includes(searchTerm);
 
                 return matchScope && matchSearch;
             });
-            renderCards(filteredPractices);
+            
+            currentPage = 1;
+            document.getElementById('resultsGrid').innerHTML = ''; // Buidar graella
+            renderCardsChunk();
         }
 
-        function renderCards(data) {
+        function loadMoreCards() {
+            currentPage++;
+            renderCardsChunk();
+        }
+
+        function renderCardsChunk() {
             const grid = document.getElementById('resultsGrid');
             const noResults = document.getElementById('noResultsMsg');
+            const paginationContainer = document.getElementById('paginationContainer');
             
-            grid.innerHTML = '';
-            
-            if (data.length === 0) {
+            if (filteredPractices.length === 0) {
                 grid.classList.add('hidden');
+                paginationContainer.classList.add('hidden');
                 noResults.classList.remove('hidden');
                 return;
             }
@@ -365,16 +449,21 @@
             grid.classList.remove('hidden');
             noResults.classList.add('hidden');
 
-            data.forEach(practice => {
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const chunk = filteredPractices.slice(start, end);
+
+            chunk.forEach(practice => {
                 let repColor = 'bg-gray-100 text-gray-800';
                 if (practice.replicability === 'Alt') repColor = 'bg-green-100 text-green-800';
                 if (practice.replicability === 'Mitjà') repColor = 'bg-yellow-100 text-yellow-800';
                 if (practice.replicability === 'Baix') repColor = 'bg-red-100 text-red-800';
 
-                // Generar etiquetes separades per a múltiples àmbits
-                const scopes = splitScopes(practice.scope);
+                const scopes = getScopesArray(practice.scope);
                 const scopesHTML = scopes.map(s => 
-                    `<span class="text-[10px] font-bold uppercase tracking-wider text-uab-green bg-uab-lightgreen px-2 py-1 rounded inline-block mb-1 mr-1">${s}</span>`
+                    `<span class="text-[10px] font-bold uppercase tracking-wider text-uab-green bg-uab-lightgreen px-2 py-1 rounded inline-flex items-center gap-1 mb-1 mr-1">
+                        <span>${getScopeIcon(s)}</span> ${s}
+                    </span>`
                 ).join('');
 
                 const toolsList = practice.tools ? practice.tools.split(',').map(t => t.trim()) : [];
@@ -395,7 +484,6 @@
                                 ${practice.title || 'Sense Títol'}
                             </h3>
                             
-                            <!-- Ara mantenim el format ric al resum exterior (respectarà divs, br, etc.) tallant-ho visualment amb line-clamp -->
                             <div class="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow rich-content">
                                 ${sanitizeRichHTML(practice.summary) || 'Sense resum disponible.'}
                             </div>
@@ -417,6 +505,12 @@
                 `;
                 grid.insertAdjacentHTML('beforeend', cardHTML);
             });
+
+            if (end < filteredPractices.length) {
+                paginationContainer.classList.remove('hidden');
+            } else {
+                paginationContainer.classList.add('hidden');
+            }
         }
 
         function openModal(id) {
@@ -424,16 +518,23 @@
             if (!practice) return;
             currentModalPractice = practice;
 
+            // Deep link (amb protecció per a entorns restringits/iframes)
+            try {
+                window.history.pushState({modal: true}, '', '?id=' + practice.rowNumber);
+            } catch (e) {
+                console.warn('L\'entorn actual no permet modificar la URL (deep linking desactivat).');
+            }
+
             document.getElementById('passwordBox').classList.add('hidden');
             document.getElementById('editPasswordInput').value = '';
-            document.getElementById('passwordError').classList.add('hidden');
 
             document.getElementById('modalTitle').textContent = practice.title;
             
-            // Renderitzar àmbits separats
-            const scopes = splitScopes(practice.scope);
+            const scopes = getScopesArray(practice.scope);
             document.getElementById('modalScope').innerHTML = scopes.map(s => 
-                `<span class="text-xs uppercase tracking-widest text-uab-accent font-semibold bg-uab-lightgreen/50 px-2 py-1 rounded border border-uab-lightgreen">${s}</span>`
+                `<span class="text-xs uppercase tracking-widest text-uab-darkgreen font-semibold bg-uab-lightgreen px-2 py-1 rounded inline-flex items-center gap-1 border border-uab-lightgreen/50">
+                    <span>${getScopeIcon(s)}</span> ${s}
+                </span>`
             ).join('');
             
             document.getElementById('modalAuthor').textContent = practice.author;
@@ -446,7 +547,7 @@
             
             const repEl = document.getElementById('modalReplicability');
             repEl.textContent = practice.replicability;
-            repEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium';
+            repEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
             if(practice.replicability === 'Alt') repEl.classList.add('bg-green-100', 'text-green-800');
             else if(practice.replicability === 'Mitjà') repEl.classList.add('bg-yellow-100', 'text-yellow-800');
             else if(practice.replicability === 'Baix') repEl.classList.add('bg-red-100', 'text-red-800');
@@ -471,9 +572,7 @@
         function togglePasswordBox() {
             const box = document.getElementById('passwordBox');
             const input = document.getElementById('editPasswordInput');
-            const error = document.getElementById('passwordError');
             box.classList.toggle('hidden');
-            error.classList.add('hidden');
             if (!box.classList.contains('hidden')) input.focus();
         }
 
@@ -485,12 +584,10 @@
 
         async function verifyAndEdit() {
             const input = document.getElementById('editPasswordInput').value.trim();
-            const error = document.getElementById('passwordError');
             const btn = document.getElementById('verifyEditBtn');
             
             if (!input || !currentModalPractice) return;
 
-            error.classList.add('hidden');
             const originalText = btn.innerText;
             btn.innerText = '...';
             btn.disabled = true;
@@ -512,21 +609,15 @@
 
                 if (isValid) {
                     const practiceToEdit = { ...currentModalPractice, editToken: input };
-                    
-                    // Desen a sessionStorage com a via més segura
                     sessionStorage.setItem('uab_edit_practice', JSON.stringify(practiceToEdit));
-                    
-                    // Com a alternativa afegim un token curt a la URL
                     const shortData = btoa(unescape(encodeURIComponent(JSON.stringify({ rowNumber: practiceToEdit.rowNumber }))));
                     window.location.href = `${FORM_PAGE_URL}?editData=${shortData}`;
                 } else {
-                    error.innerText = 'Incorrecta';
-                    error.classList.remove('hidden');
+                    showToast('Contrasenya incorrecta', 'error');
                 }
             } catch (err) {
                 console.error('Error:', err);
-                error.innerText = 'Error servidor';
-                error.classList.remove('hidden');
+                showToast('Error connectant amb el servidor', 'error');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
@@ -537,6 +628,12 @@
             const modal = document.getElementById('detailsModal');
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
+            try {
+                window.history.pushState({}, '', window.location.pathname);
+            } catch (e) {
+                // S'ignora l'error en entorns restringits
+            }
+            currentModalPractice = null;
         }
         
         document.addEventListener('keydown', (e) => {
