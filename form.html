@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ca"><head>
+<html lang="ca">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Repositori de Bones Pràctiques en IA - UAB</title>
@@ -20,37 +21,14 @@
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Estils per als camps enriquits i previsualització */
-        .rich-editor ul, .rich-preview ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-            margin-top: 0.25rem;
-            margin-bottom: 0.25rem;
-        }
-        .rich-editor ol, .rich-preview ol {
-            list-style-type: decimal;
-            padding-left: 1.5rem;
-            margin-top: 0.25rem;
-            margin-bottom: 0.25rem;
-        }
-        .rich-editor a, .rich-preview a {
-            color: #006633;
-            text-decoration: underline;
-            font-weight: 500;
-        }
-        .rich-editor:empty:before {
-            content: attr(data-placeholder);
-            color: #9ca3af;
-            pointer-events: none;
-        }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.right-4{right:1rem}.top-4{top:1rem}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-0\.5{margin-bottom:0.125rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-6{margin-bottom:1.5rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-12{margin-top:3rem}.mt-2{margin-top:0.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-4{height:1rem}.h-full{height:100%}.min-h-\[56px\]{min-height:56px}.min-h-\[70px\]{min-height:70px}.min-h-\[80px\]{min-height:80px}.min-h-\[85px\]{min-height:85px}.min-h-\[90px\]{min-height:90px}.min-h-screen{min-height:100vh}.w-4{width:1rem}.w-full{width:100%}.w-px{width:1px}.max-w-4xl{max-width:56rem}.flex-grow{flex-grow:1}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.625rem * var(--tw-space-x-reverse));margin-left:calc(0.625rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-line{white-space:pre-line}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-800{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-red-200{--tw-border-opacity:1;border-color:rgb(254 202 202 / var(--tw-border-opacity, 1))}.border-uab-accent\/30{border-color:rgb(102 178 138 / 0.3)}.border-uab-accent\/40{border-color:rgb(102 178 138 / 0.4)}.border-uab-green{--tw-border-opacity:1;border-color:rgb(0 102 51 / var(--tw-border-opacity, 1))}.border-white\/20{border-color:rgb(255 255 255 / 0.2)}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-50\/50{background-color:rgb(249 250 251 / 0.5)}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-uab-darkgreen{--tw-bg-opacity:1;background-color:rgb(0 77 38 / var(--tw-bg-opacity, 1))}.bg-uab-green{--tw-bg-opacity:1;background-color:rgb(0 102 51 / var(--tw-bg-opacity, 1))}.bg-uab-lightgreen\/40{background-color:rgb(230 242 236 / 0.4)}.bg-uab-lightgreen\/50{background-color:rgb(230 242 236 / 0.5)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:0.25rem}.pb-4{padding-bottom:1rem}.pt-2{padding-top:0.5rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-uab-accent{--tw-text-opacity:1;color:rgb(102 178 138 / var(--tw-text-opacity, 1))}.text-uab-darkgreen{--tw-text-opacity:1;color:rgb(0 77 38 / var(--tw-text-opacity, 1))}.text-uab-green{--tw-text-opacity:1;color:rgb(0 102 51 / var(--tw-text-opacity, 1))}.text-uab-lightgreen{--tw-text-opacity:1;color:rgb(230 242 236 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.opacity-90{opacity:0.9}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-amber-600:hover{--tw-bg-opacity:1;background-color:rgb(217 119 6 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-red-600:hover{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.hover\:bg-uab-darkgreen:hover{--tw-bg-opacity:1;background-color:rgb(0 77 38 / var(--tw-bg-opacity, 1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.hover\:text-gray-800:hover{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.hover\:text-uab-green:hover{--tw-text-opacity:1;color:rgb(0 102 51 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-transparent:focus{border-color:transparent}.focus\:border-uab-green:focus{--tw-border-opacity:1;border-color:rgb(0 102 51 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-uab-green:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(0 102 51 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.right-4{right:1rem}.top-4{top:1rem}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-0\.5{margin-bottom:0.125rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-6{margin-bottom:1.5rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-12{margin-top:3rem}.mt-2{margin-top:0.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-4{height:1rem}.h-full{height:100%}.min-h-\[56px\]{min-height:56px}.min-h-\[70px\]{min-height:70px}.min-h-\[80px\]{min-height:80px}.min-h-\[85px\]{min-height:85px}.min-h-\[90px\]{min-height:90px}.min-h-screen{min-height:100vh}.w-4{width:1rem}.w-full{width:100%}.w-px{width:1px}.max-w-4xl{max-width:56rem}.flex-grow{flex-grow:1}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.625rem * var(--tw-space-x-reverse));margin-left:calc(0.625rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-line{white-space:pre-line}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-800{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-red-200{--tw-border-opacity:1;border-color:rgb(254 202 202 / var(--tw-border-opacity, 1))}.border-uab-accent\/30{border-color:rgb(102 178 138 / 0.3)}.border-uab-accent\/40{border-color:rgb(102 178 138 / 0.4)}.border-uab-green{--tw-border-opacity:1;border-color:rgb(0 102 51 / var(--tw-border-opacity, 1))}.border-white\/20{border-color:rgb(255 255 255 / 0.2)}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-50\/50{background-color:rgb(249 250 251 / 0.5)}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-uab-darkgreen{--tw-bg-opacity:1;background-color:rgb(0 77 38 / var(--tw-bg-opacity, 1))}.bg-uab-green{--tw-bg-opacity:1;background-color:rgb(0 102 51 / var(--tw-bg-opacity, 1))}.bg-uab-lightgreen\/40{background-color:rgb(230 242 236 / 0.4)}.bg-uab-lightgreen\/50{background-color:rgb(230 242 236 / 0.5)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:0.25rem}.pb-4{padding-bottom:1rem}.pt-2{padding-top:0.5rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-uab-accent{--tw-text-opacity:1;color:rgb(102 178 138 / var(--tw-text-opacity, 1))}.text-uab-darkgreen{--tw-text-opacity:1;color:rgb(0 77 38 / var(--tw-text-opacity, 1))}.text-uab-green{--tw-text-opacity:1;color:rgb(0 102 51 / var(--tw-text-opacity, 1))}.text-uab-lightgreen{--tw-text-opacity:1;color:rgb(230 242 236 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.opacity-90{opacity:0.9}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-amber-600:hover{--tw-bg-opacity:1;background-color:rgb(217 119 6 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-red-600:hover{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.hover\:bg-uab-darkgreen:hover{--tw-bg-opacity:1;background-color:rgb(0 77 38 / var(--tw-bg-opacity, 1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.hover\:text-gray-800:hover{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.hover\:text-uab-green:hover{--tw-text-opacity:1;color:rgb(0 102 51 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-transparent:focus{border-color:transparent}.focus\:border-uab-green:focus{--tw-border-opacity:1;border-color:rgb(0 102 51 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-uab-green:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(0 102 51 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.right-4{right:1rem}.top-4{top:1rem}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-0\.5{margin-bottom:0.125rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-6{margin-bottom:1.5rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-12{margin-top:3rem}.mt-2{margin-top:0.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-4{height:1rem}.h-full{height:100%}.min-h-\[56px\]{min-height:56px}.min-h-\[70px\]{min-height:70px}.min-h-\[80px\]{min-height:80px}.min-h-\[85px\]{min-height:85px}.min-h-\[90px\]{min-height:90px}.min-h-screen{min-height:100vh}.w-4{width:1rem}.w-full{width:100%}.w-px{width:1px}.max-w-4xl{max-width:56rem}.flex-grow{flex-grow:1}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.625rem * var(--tw-space-x-reverse));margin-left:calc(0.625rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-line{white-space:pre-line}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-800{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-red-200{--tw-border-opacity:1;border-color:rgb(254 202 202 / var(--tw-border-opacity, 1))}.border-uab-accent\/30{border-color:rgb(102 178 138 / 0.3)}.border-uab-accent\/40{border-color:rgb(102 178 138 / 0.4)}.border-uab-green{--tw-border-opacity:1;border-color:rgb(0 102 51 / var(--tw-border-opacity, 1))}.border-white\/20{border-color:rgb(255 255 255 / 0.2)}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-50\/50{background-color:rgb(249 250 251 / 0.5)}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-uab-darkgreen{--tw-bg-opacity:1;background-color:rgb(0 77 38 / var(--tw-bg-opacity, 1))}.bg-uab-green{--tw-bg-opacity:1;background-color:rgb(0 102 51 / var(--tw-bg-opacity, 1))}.bg-uab-lightgreen\/40{background-color:rgb(230 242 236 / 0.4)}.bg-uab-lightgreen\/50{background-color:rgb(230 242 236 / 0.5)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:0.25rem}.pb-4{padding-bottom:1rem}.pt-2{padding-top:0.5rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-uab-accent{--tw-text-opacity:1;color:rgb(102 178 138 / var(--tw-text-opacity, 1))}.text-uab-darkgreen{--tw-text-opacity:1;color:rgb(0 77 38 / var(--tw-text-opacity, 1))}.text-uab-green{--tw-text-opacity:1;color:rgb(0 102 51 / var(--tw-text-opacity, 1))}.text-uab-lightgreen{--tw-text-opacity:1;color:rgb(230 242 236 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.opacity-90{opacity:0.9}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-amber-600:hover{--tw-bg-opacity:1;background-color:rgb(217 119 6 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-red-600:hover{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.hover\:bg-uab-darkgreen:hover{--tw-bg-opacity:1;background-color:rgb(0 77 38 / var(--tw-bg-opacity, 1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.hover\:text-gray-800:hover{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.hover\:text-uab-green:hover{--tw-text-opacity:1;color:rgb(0 102 51 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-transparent:focus{border-color:transparent}.focus\:border-uab-green:focus{--tw-border-opacity:1;border-color:rgb(0 102 51 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-uab-green:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(0 102 51 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}</style></head>
+</head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
 
-    <header class="bg-uab-green text-white shadow-md">
+    <header class="bg-uab-green text-white shadow-md relative z-10">
         <div class="max-w-4xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-uab-green font-bold text-xl px-3 py-1.5 rounded shadow tracking-wider">
@@ -66,7 +44,7 @@
                     ← Tornar al Cercador
                 </a>
                 <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30">
-                    Formulari de Registre / Edició
+                    Formulari de Registre
                 </div>
             </div>
         </div>
@@ -74,12 +52,6 @@
 
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
         
-        <!-- Missatge d'estat de sincronització amb Google Sheets -->
-        <div id="statusBanner" class="hidden mb-6 p-4 rounded-xl border text-sm font-medium flex items-center justify-between shadow-sm">
-            <span id="statusBannerText"></span>
-            <a href="index.html" class="underline font-bold ml-4 whitespace-nowrap">Anar al cercador →</a>
-        </div>
-
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
             <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
                 <div>
@@ -98,23 +70,24 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Títol de la pràctica *</label>
-                        <input type="text" id="title" required="" placeholder="Ex. Generació de guions crossmèdia assistits per IA generativa" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                        <input type="text" id="title" required placeholder="Ex. Generació de guions crossmèdia assistits per IA generativa" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Autor/a o Equip Responsable *</label>
-                            <input type="text" id="author" required="" placeholder="Ex. Departament de Periodisme / Nom del responsable" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                            <input type="text" id="author" required placeholder="Ex. Departament de Periodisme / Nom del responsable" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Correu electrònic de contacte *</label>
-                            <input type="email" id="email" required="" placeholder="nom.cognom@uab.cat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                            <input type="email" id="email" required placeholder="nom.cognom@uab.cat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Àmbit d'aplicació (pots marcar-ne més d'un) *</label>
+                            <!-- Transformem a checkboxes -->
                             <div id="scopeGroup" class="space-y-2.5 bg-gray-50/50 px-4 py-3 border border-gray-300 rounded-lg">
                                 <label class="flex items-start space-x-2.5 cursor-pointer">
                                     <input type="checkbox" name="scopeOption" value="Docència (Grau / Màster)" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
@@ -125,8 +98,9 @@
                                     <span class="text-sm text-gray-700 leading-tight">Recerca / Pràctica Professional</span>
                                 </label>
                                 <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="scopeOption" value="Personal Tècnic, de Gestió i Administració" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Personal Tècnic, de Gestió (PTGAS)</span>
+                                    <!-- Única opció de Gestió -->
+                                    <input type="checkbox" name="scopeOption" value="Personal Tècnic, de Gestió i Administració i Serveis" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
+                                    <span class="text-sm text-gray-700 leading-tight">Personal Tècnic, de Gestió i Administració i Serveis</span>
                                 </label>
                                 <label class="flex items-start space-x-2.5 cursor-pointer">
                                     <input type="checkbox" name="scopeOption" value="Altres" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
@@ -136,43 +110,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Perfil d'usuari objectiu *</label>
-                            <input type="text" id="targetAudience" required="" placeholder="Ex. Estudiants de 3r de Periodisme, Professorat, PTGAS" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Barra d'eines flotant/compartida per donar format i afegir enllaços a qualsevol camp de text -->
-                <div class="bg-uab-lightgreen/40 p-3 rounded-lg border border-uab-accent/40 space-y-2">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <span class="text-xs font-semibold text-uab-darkgreen">Eines de format i enllaços (aplica al camp on tinguis el cursor):</span>
-                        <div class="flex flex-wrap items-center gap-1.5">
-                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('bold')" title="Negreta" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('italic')" title="Cursiva" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('underline')" title="Subratllat" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('insertUnorderedList')" title="Llista" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
-                            <button type="button" onmousedown="event.preventDefault(); formatActiveRich('insertOrderedList')" title="Llista numerada" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
-                            <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                            <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel()" class="px-3 py-1 bg-uab-green text-white rounded hover:bg-uab-darkgreen text-xs font-semibold transition flex items-center gap-1 shadow-sm">
-                                <span>🔗</span> Inserir Enllaç / URL
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Panell desplegable per inserir URL i Text de l'enllaç -->
-                    <div id="linkInputPanel" class="hidden bg-white p-3 rounded border border-gray-200 mt-2">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç (opcional)</label>
-                                <input type="text" id="linkText" placeholder="Ex. Guia d'ús de prompts UAB" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label>
-                                <input type="url" id="linkUrl" placeholder="https://www.uab.cat/..." class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
-                            </div>
-                        </div>
-                        <div class="flex justify-end space-x-2">
-                            <button type="button" onclick="toggleLinkPanel()" class="px-2.5 py-1 text-xs text-gray-600 hover:text-gray-800">Cancel·lar</button>
-                            <button type="button" onclick="insertCustomLink()" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded hover:bg-uab-darkgreen transition">Afegir enllaç al camp actiu</button>
+                            <input type="text" id="targetAudience" required placeholder="Ex. Estudiants de 3r de Periodisme, Professorat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
                         </div>
                     </div>
                 </div>
@@ -182,12 +120,12 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Resum executiu (màx. 5 línies) *</label>
-                        <div id="summary" contenteditable="true" data-placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="rich-editor w-full px-4 py-2 min-h-[80px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"><br></div>
+                        <textarea id="summary" rows="3" required placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Objectiu principal *</label>
-                        <div id="objective" contenteditable="true" data-placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="rich-editor w-full px-4 py-2 min-h-[56px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
+                        <input type="text" id="objective" required placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític davant biaixos algorítmics" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
                     </div>
                 </div>
 
@@ -197,7 +135,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Eines i tecnologies d'IA emprades *</label>
-                            <input type="text" id="tools" required="" placeholder="Ex. ChatGPT, Midjourney, Transcriptor local..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                            <input type="text" id="tools" required placeholder="Ex. ChatGPT, Midjourney, Transcriptor local..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Grau de replicabilitat *</label>
@@ -211,46 +149,67 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Descripció del procés / Workflow pas a pas *</label>
-                        <div id="workflow" contenteditable="true" data-placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="rich-editor w-full px-4 py-2 min-h-[90px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
+                        <textarea id="workflow" rows="4" required placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Consideracions ètiques i de transparència *</label>
-                        <div id="ethics" contenteditable="true" data-placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="rich-editor w-full px-4 py-2 min-h-[70px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
+                        <textarea id="ethics" rows="2" required placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition"></textarea>
                     </div>
                 </div>
 
                 <div class="space-y-4 pt-2">
-                    <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">4. Recursos, Enllaços i Materials Complementaris (Opcional)</h3>
+                    <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">4. Recursos, Enllaços i Materials</h3>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Materials complementaris, exemples i enllaços</label>
-                        <p class="text-xs text-gray-500 mb-2">Qualsevol URL enganxada o enllaç inserit aquí s'inclourà al final del Workflow per tal que quedi registrat al Google Sheet i es pugui clicar des del cercador.</p>
-                        <div id="richResources" contenteditable="true" data-placeholder="Escriu aquí recursos addicionals, enganxa URLs (ex. https://ia.uab.cat) o insereix enllaços..." class="rich-editor w-full px-4 py-3 min-h-[85px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white text-sm"></div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Materials complementaris (Opcional)</label>
+                        <p class="text-xs text-gray-500 mb-2">Pots enganxar qualsevol URL al quadre (es convertirà automàticament en enllaç), o fer ús de l'editor lliure.</p>
+                        
+                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
+                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
+                                <button type="button" onmousedown="event.preventDefault(); formatDoc('bold')" title="Negreta" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); formatDoc('italic')" title="Cursiva" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel()" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">
+                                    <span>🔗</span> Inserir Enllaç / URL
+                                </button>
+                            </div>
+
+                            <!-- Panell desplegable per inserir URL -->
+                            <div id="linkInputPanel" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç (opcional)</label>
+                                        <input type="text" id="linkText" placeholder="Ex. Guia d'ús" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label>
+                                        <input type="url" id="linkUrl" placeholder="https://www..." class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-uab-green bg-white">
+                                    </div>
+                                </div>
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" onclick="toggleLinkPanel()" class="px-2.5 py-1 text-xs text-gray-600 hover:text-gray-800">Cancel·lar</button>
+                                    <button type="button" onclick="insertCustomLink()" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded hover:bg-uab-darkgreen transition">Afegir al text</button>
+                                </div>
+                            </div>
+
+                            <div id="richResources" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Escriu aquí o enganxa URLs..."></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pt-4 flex flex-wrap items-center justify-between gap-4 border-t">
-                    <!-- Botó d'eliminar fitxa (només visible quan s'edita una fitxa del Google Sheet) -->
-                    <div>
-                        <button type="button" id="deleteSheetBtn" onclick="handleDeleteFromSheet()" class="hidden px-4 py-2.5 rounded-lg bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 transition font-medium text-sm">
-                            🗑️ Eliminar fitxa del Sheet
-                        </button>
-                    </div>
-
-                    <div class="flex items-center space-x-4 ml-auto">
-                        <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
-                            Netejar formulari
-                        </button>
-                        <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">
-                            Enviar proposta
-                        </button>
-                    </div>
+                <div class="pt-4 flex items-center justify-end space-x-4 border-t">
+                    <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
+                        Netejar formulari
+                    </button>
+                    <!-- Canviat text del botó segons indicacions -->
+                    <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">
+                        Enviar proposta
+                    </button>
                 </div>
             </form>
         </div>
 
-        <!-- Modal d'èxit -->
+        <!-- Finestra Modal d'Èxit (Substitueix la vista prèvia) -->
         <div id="successModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
             <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 text-center transform transition-all">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
@@ -258,10 +217,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2" id="successModalTitle">Informació enviada correctament</h3>
-                <p class="text-sm text-gray-500 mb-6" id="successModalText">La teva proposta s'ha registrat al repositori.</p>
-                <button type="button" onclick="closeSuccessModal()" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen focus:outline-none transition sm:text-sm">
-                    D'acord
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Informació enviada correctament</h3>
+                <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament.</p>
+                <!-- Al fer clic redirigeix directament cap a index.html -->
+                <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen focus:outline-none transition sm:text-sm">
+                    D'acord i tornar al cercador
                 </button>
             </div>
         </div>
@@ -275,14 +235,10 @@
     </footer>
 
     <script>
-        // URL del Google Apps Script (connectat amb doPost i doGet de Code.gs)
+        // API del Google Apps Script
         const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
 
-        // Emmagatzematge de files i control d'edició
-        const sheetRecords = [];
-        let editingIndex = null;
-
-        // Variables per recordar l'edició que ve des d'index.html (Google Sheet)
+        // Estat de la fitxa (nova o edició)
         let activeSheetEdit = {
             isSheetEdit: false,
             rowNumber: null,
@@ -290,40 +246,11 @@
             originalTimestamp: null
         };
 
-        // Recordar quin camp editable té el focus per aplicar negretes o inserir enllaços
-        let lastFocusedRichEditor = null;
-        let savedSelectionRange = null;
-
+        // --- CARREGAR DADES D'EDICIÓ ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Registrar quin editor enriquit s'està utilitzant
-            document.querySelectorAll('.rich-editor').forEach(editor => {
-                editor.addEventListener('focus', () => {
-                    lastFocusedRichEditor = editor;
-                });
-                editor.addEventListener('keyup', saveCurrentSelection);
-                editor.addEventListener('mouseup', saveCurrentSelection);
-            });
-
-            // Verificar si venim des de index.html amb dades per editar (?editData=...)
             checkAndLoadExternalEditData();
         });
 
-        function saveCurrentSelection() {
-            const sel = window.getSelection();
-            if (sel && sel.rangeCount > 0) {
-                savedSelectionRange = sel.getRangeAt(0).cloneRange();
-            }
-        }
-
-        function restoreSelection() {
-            if (savedSelectionRange) {
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(savedSelectionRange);
-            }
-        }
-
-        // Llegeix i descodifica el paràmetre ?editData=... enviat per index.html (o sessionStorage)
         function checkAndLoadExternalEditData() {
             const urlParams = new URLSearchParams(window.location.search);
             const encodedData = urlParams.get('editData');
@@ -333,17 +260,8 @@
                 try {
                     const decodedJson = decodeURIComponent(escape(atob(decodeURIComponent(encodedData))));
                     practiceToEdit = JSON.parse(decodedJson);
-                } catch (err) {
-                    try {
-                        const fallbackJson = decodeURIComponent(escape(atob(encodedData)));
-                        practiceToEdit = JSON.parse(fallbackJson);
-                    } catch (err2) {
-                        console.error("Error descodificant editData de la URL:", err2);
-                    }
-                }
+                } catch (err) {}
             }
-
-            // Fallback a sessionStorage súper robust per si la URL es talla o es perd en la redirecció
             if (!practiceToEdit) {
                 try {
                     const stored = sessionStorage.getItem('uab_edit_practice');
@@ -353,12 +271,32 @@
 
             if (practiceToEdit) {
                 populateFormFromExternalPractice(practiceToEdit);
-                // Netejar la variable per evitar que es re-carregui si refresquen la pàgina
                 sessionStorage.removeItem('uab_edit_practice');
             }
         }
 
-        // Omple tots els camps del formulari amb les dades de la fitxa rebuda des d'index.html
+        // Funció flexible per omplir els Checkboxes que no trenca per comes internes
+        function setCheckboxValuesFlexible(checkboxName, valuesString) {
+            const checkboxes = document.querySelectorAll(`input[name="${checkboxName}"]`);
+            checkboxes.forEach(cb => cb.checked = false); 
+            
+            if (!valuesString) return;
+            
+            const encodedStr = valuesString.replace(/Personal Tècnic,\s*de Gestió i Administració i Serveis/gi, 'TEMP_SCOPE_TOKEN');
+            const valuesArray = encodedStr.split(',').map(v => v.trim());
+            
+            checkboxes.forEach(cb => {
+                const cbVal = cb.value;
+                const matchFound = valuesArray.some(val => {
+                    const checkVal = val === 'TEMP_SCOPE_TOKEN' ? 'Personal Tècnic, de Gestió i Administració i Serveis' : val;
+                    return cbVal === checkVal || cbVal.includes(checkVal) || checkVal.includes(cbVal);
+                });
+                if (matchFound) {
+                    cb.checked = true;
+                }
+            });
+        }
+
         function populateFormFromExternalPractice(practice) {
             activeSheetEdit = {
                 isSheetEdit: true,
@@ -370,126 +308,44 @@
             document.getElementById('title').value = practice.title || '';
             document.getElementById('author').value = practice.author || '';
             document.getElementById('email').value = practice.email || '';
-            setCheckboxValuesFlexible('scopeOption', practice.scope || 'Docència (Grau / Màster)');
             document.getElementById('targetAudience').value = practice.targetAudience || '';
+            document.getElementById('objective').value = practice.objective || '';
             document.getElementById('tools').value = practice.tools || '';
-            setSelectValueFlexible('replicability', practice.replicability || 'Alt');
+            
+            setCheckboxValuesFlexible('scopeOption', practice.scope);
 
-            // Camps amb suport de text enriquit i enllaços
-            document.getElementById('summary').innerHTML = formatIncomingRichText(practice.summary || '');
-            document.getElementById('objective').innerHTML = formatIncomingRichText(practice.objective || '');
-            document.getElementById('workflow').innerHTML = formatIncomingRichText(practice.workflow || '');
-            document.getElementById('ethics').innerHTML = formatIncomingRichText(practice.ethics || '');
-            document.getElementById('richResources').innerHTML = '';
+            const repSelect = document.getElementById('replicability');
+            for (let i = 0; i < repSelect.options.length; i++) {
+                if (repSelect.options[i].value === practice.replicability) {
+                    repSelect.selectedIndex = i;
+                    break;
+                }
+            }
 
-            // També afegim la fitxa a la taula inferior perquè es vegin els enllaços i es pugui previsualitzar
-            const allLinks = extractAllLinksFromHtmlFields([
-                practice.summary, practice.objective, practice.workflow, practice.ethics, practice.tools
-            ]);
+            // Textareas de retorn (substituïm <br> per salts reals al textarea)
+            const cleanTextarea = (str) => (str || '').replace(/<br\s*\/?>/gi, '\n');
+            document.getElementById('summary').value = cleanTextarea(practice.summary);
+            document.getElementById('workflow').value = cleanTextarea(practice.workflow);
+            document.getElementById('ethics').value = cleanTextarea(practice.ethics);
 
-            const scopeCheckboxes = document.querySelectorAll('input[name="scopeOption"]:checked');
-            const currentScope = Array.from(scopeCheckboxes).map(cb => cb.value).join(', ') || (practice.scope || 'Docència (Grau / Màster)');
-
-            const initialRecord = {
-                timestamp: practice.date || new Date().toLocaleString('ca-ES', { dateStyle: 'short', timeStyle: 'short' }),
-                title: practice.title || '',
-                author: practice.author || '',
-                email: practice.email || '',
-                scope: currentScope,
-                targetAudience: practice.targetAudience || '',
-                summary: document.getElementById('summary').innerHTML,
-                objective: document.getElementById('objective').innerHTML,
-                tools: practice.tools || '',
-                replicability: document.getElementById('replicability').value,
-                workflow: document.getElementById('workflow').innerHTML,
-                ethics: document.getElementById('ethics').innerHTML,
-                resourcesRawHtml: '',
-                linksFormatted: allLinks.map(l => `${l.text} (${l.url})`).join(' | '),
-                urlsOnly: allLinks.map(l => l.url).join(' , '),
-                linksArray: allLinks,
-                rowNumber: practice.rowNumber,
-                editToken: practice.editToken
-            };
-
-            sheetRecords.push(initialRecord);
-            editingIndex = 0;
-
-            // Actualitzar la UI del mode edició
             document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
-            document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${practice.title || ''}" (Fila #${practice.rowNumber || '-'} del Google Sheet).`;
+            document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${practice.title}".`;
             document.getElementById('editingBadge').classList.remove('hidden');
-            document.getElementById('submitBtn').innerText = 'Actualitzar Fitxa i Desar al Sheet';
+            document.getElementById('submitBtn').innerText = 'Actualitzar proposta i Desar al Sheet';
             document.getElementById('cancelEditBtn').innerText = 'Cancel·lar edició';
-
-            if (practice.rowNumber) {
-                document.getElementById('deleteSheetBtn').classList.remove('hidden');
-            }
         }
 
-        // Selecciona l'opció correcta d'un <select> fins i tot si el text és lleugerament més curt (ex. "Personal Tècnic, de Gestió")
-        function setSelectValueFlexible(selectId, val) {
-            const select = document.getElementById(selectId);
-            if (!select || !val) return;
-            const cleanVal = String(val).trim();
-
-            for (let i = 0; i < select.options.length; i++) {
-                const optVal = select.options[i].value;
-                if (optVal === cleanVal || optVal.includes(cleanVal) || cleanVal.includes(optVal)) {
-                    select.selectedIndex = i;
-                    return;
-                }
-            }
-            // Si és un valor personalitzat que no existeix al desplegable, l'afegim perquè no es perdi
-            const newOpt = document.createElement('option');
-            newOpt.value = cleanVal;
-            newOpt.textContent = cleanVal;
-            select.appendChild(newOpt);
-            select.value = cleanVal;
-        }
-
-        // Selecciona els checkboxes correctes fins i tot si vénen concatenats de les dades del Sheet
-        function setCheckboxValuesFlexible(checkboxName, valuesString) {
-            const checkboxes = document.querySelectorAll(`input[name="${checkboxName}"]`);
-            checkboxes.forEach(cb => cb.checked = false); // Netejar previs
-            
-            if (!valuesString) return;
-            const valuesArray = valuesString.split(',').map(v => v.trim());
-            
-            checkboxes.forEach(cb => {
-                const cbVal = cb.value;
-                const matchFound = valuesArray.some(val => {
-                    return cbVal === val || cbVal.includes(val) || val.includes(cbVal);
-                });
-                if (matchFound) {
-                    cb.checked = true;
-                }
-            });
-        }
-
-        function formatIncomingRichText(text) {
-            if (!text) return '';
-            // Si ja conté etiquetes HTML, el mantenim; si té salts de línia plans, els convertim a <br>
-            if (/<[a-z][\s\S]*>/i.test(text)) {
-                return text;
-            }
-            return escapeHtml(text).replace(/\n/g, '<br>');
-        }
-
-        // Aplicar format a l'editor de text enriquit actiu
-        function formatActiveRich(cmd, value = null) {
-            const target = lastFocusedRichEditor || document.getElementById('summary');
-            target.focus();
-            restoreSelection();
+        // --- FUNCIONS EDITOR RICH ---
+        function formatDoc(cmd, value = null) {
+            const editor = document.getElementById('richResources');
+            editor.focus();
             document.execCommand(cmd, false, value);
-            saveCurrentSelection();
         }
 
-        // Mostrar o amagar el panell d'inserció d'enllaços
         function toggleLinkPanel() {
             const panel = document.getElementById('linkInputPanel');
             panel.classList.toggle('hidden');
             if (!panel.classList.contains('hidden')) {
-                saveCurrentSelection();
                 const selection = window.getSelection().toString().trim();
                 const linkTextInput = document.getElementById('linkText');
                 if (selection && !linkTextInput.value) {
@@ -499,7 +355,6 @@
             }
         }
 
-        // Inserir un enllaç amb text i URL al camp enriquit actiu
         function insertCustomLink() {
             const textInput = document.getElementById('linkText');
             const urlInput = document.getElementById('linkUrl');
@@ -511,221 +366,80 @@
                 return;
             }
 
-            if (!/^https?:\/\//i.test(rawUrl) && !rawUrl.startsWith('mailto:')) {
+            if (!/^https?:\/\//i.test(rawUrl)) {
                 rawUrl = 'https://' + rawUrl;
             }
 
             const displayLabel = label || rawUrl;
-            const target = lastFocusedRichEditor || document.getElementById('richResources');
-            target.focus();
-            restoreSelection();
+            const editor = document.getElementById('richResources');
+            editor.focus();
+
+            const escapeAttr = (s) => String(s).replace(/"/g, '&quot;');
+            const escapeHtml = (s) => String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
             const anchorHtml = `<a href="${escapeAttr(rawUrl)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(displayLabel)}</a>&nbsp;`;
             document.execCommand('insertHTML', false, anchorHtml);
-            saveCurrentSelection();
 
             textInput.value = '';
             urlInput.value = '';
             document.getElementById('linkInputPanel').classList.add('hidden');
         }
 
-        function escapeHtml(str) {
-            return String(str || '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        function escapeAttr(str) {
-            return String(str || '').replace(/"/g, '&quot;');
-        }
-
-        // Converteix qualsevol URL en text pla en un enllaç clicable que s'obre en una pestanya nova
-        function linkifyPlainText(text) {
-            const escaped = escapeHtml(text || '');
-            const urlPattern = /((?:https?:\/\/|www\.)[^\s<]+)/gi;
-            return escaped.replace(urlPattern, function(match) {
-                let cleanUrl = match.replace(/[.,;:!?)]+$/, '');
-                let trailing = match.slice(cleanUrl.length);
-                let href = /^https?:\/\//i.test(cleanUrl) ? cleanUrl : 'https://' + cleanUrl;
-                return `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen break-all">${cleanUrl}</a>${trailing}`;
-            });
-        }
-
-        // Neteja i converteix totes les URLs d'un camp d'HTML enriquit en enllaços clicables amb target="_blank"
-        function normalizeRichFieldHtml(rawHtml) {
-            const container = document.createElement('div');
-            container.innerHTML = rawHtml || '';
-
-            const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
-            const textNodes = [];
-            let currentNode;
-            while ((currentNode = walker.nextNode())) {
-                if (!currentNode.parentElement || !currentNode.parentElement.closest('a')) {
-                    textNodes.push(currentNode);
-                }
-            }
-
-            const urlRegex = /((?:https?:\/\/|www\.)[^\s<]+)/gi;
-            textNodes.forEach(node => {
-                const val = node.nodeValue;
-                if (urlRegex.test(val)) {
-                    const tempSpan = document.createElement('span');
-                    tempSpan.innerHTML = linkifyPlainText(val);
-                    node.parentNode.replaceChild(tempSpan, node);
-                }
-            });
-
-            container.querySelectorAll('a').forEach(a => {
-                let href = (a.getAttribute('href') || '').trim();
-                if (href && !/^https?:\/\//i.test(href) && !href.startsWith('mailto:')) {
-                    href = 'https://' + href;
-                }
-                a.setAttribute('href', href);
-                a.setAttribute('target', '_blank');
-                a.setAttribute('rel', 'noopener noreferrer');
-                a.className = 'text-uab-green underline font-medium hover:text-uab-darkgreen break-all';
-            });
-
-            return container.innerHTML.trim();
-        }
-
-        function extractAllLinksFromHtmlFields(htmlArray) {
-            const extractedLinks = [];
-            const seenPairs = new Set();
-
-            htmlArray.forEach(html => {
-                if (!html) return;
-                const normalized = normalizeRichFieldHtml(html);
-                const temp = document.createElement('div');
-                temp.innerHTML = normalized;
-
-                temp.querySelectorAll('a').forEach(a => {
-                    const href = (a.getAttribute('href') || '').trim();
-                    const text = (a.textContent || href).trim();
-                    const key = `${text}|${href}`;
-                    if (href && !seenPairs.has(key)) {
-                        seenPairs.add(key);
-                        extractedLinks.push({ text, url: href });
-                    }
-                });
-            });
-
-            return extractedLinks;
-        }
-
-        function stripHtmlToPlain(html) {
-            const temp = document.createElement('div');
-            temp.innerHTML = html || '';
-            return (temp.textContent || temp.innerText || '').trim();
-        }
-
-        function showStatusBanner(message, isError = false) {
-            const banner = document.getElementById('statusBanner');
-            const textEl = document.getElementById('statusBannerText');
-            banner.classList.remove('hidden', 'bg-green-50', 'border-green-300', 'text-green-800', 'bg-red-50', 'border-red-300', 'text-red-800');
-            if (isError) {
-                banner.classList.add('bg-red-50', 'border-red-300', 'text-red-800');
-            } else {
-                banner.classList.add('bg-green-50', 'border-green-300', 'text-green-800');
-            }
-            textEl.innerText = message;
-            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function showSuccessModal(isEdit) {
-            const modal = document.getElementById('successModal');
-            const title = document.getElementById('successModalTitle');
-            const text = document.getElementById('successModalText');
-
-            if (isEdit) {
-                title.innerText = "Proposta actualitzada correctament";
-                text.innerText = "Els canvis s'han desat correctament al Google Sheet.";
-            } else {
-                title.innerText = "Informació enviada correctament";
-                text.innerText = "La teva proposta s'ha registrat correctament al repositori.";
-            }
-
-            modal.classList.remove('hidden');
-        }
-
-        function closeSuccessModal() {
-            window.location.href = 'index.html';
-        }
-
+        // --- SUBMIT DEL FORMULARI AL GOOGLE SHEET ---
         async function handleSubmit(event) {
             event.preventDefault();
-            
+
+            // Obtenir checkboxes de l'àmbit
+            const scopeCheckboxes = document.querySelectorAll('input[name="scopeOption"]:checked');
+            const scopeStr = Array.from(scopeCheckboxes).map(cb => cb.value).join(', ');
+
+            if (!scopeStr) {
+                alert("Si us plau, selecciona almenys un àmbit d'aplicació per a la proposta.");
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Processant les dades...';
+
             const title = document.getElementById('title').value.trim();
             const author = document.getElementById('author').value.trim();
             const email = document.getElementById('email').value.trim();
-            
-            const scopeCheckboxes = document.querySelectorAll('input[name="scopeOption"]:checked');
-            const scope = Array.from(scopeCheckboxes).map(cb => cb.value).join(', ');
-            
             const targetAudience = document.getElementById('targetAudience').value.trim();
             const tools = document.getElementById('tools').value.trim();
             const replicability = document.getElementById('replicability').value;
+            
+            const objective = document.getElementById('objective').value.trim();
 
-            const summaryHtml = normalizeRichFieldHtml(document.getElementById('summary').innerHTML);
-            const objectiveHtml = normalizeRichFieldHtml(document.getElementById('objective').innerHTML);
-            let workflowHtml = normalizeRichFieldHtml(document.getElementById('workflow').innerHTML);
-            const ethicsHtml = normalizeRichFieldHtml(document.getElementById('ethics').innerHTML);
-            const extraResourcesHtml = normalizeRichFieldHtml(document.getElementById('richResources').innerHTML);
-
-            // Validar que els camps obligatoris enriquits no estiguin buits
-            if (!stripHtmlToPlain(summaryHtml) || !stripHtmlToPlain(objectiveHtml) || !stripHtmlToPlain(workflowHtml) || !stripHtmlToPlain(ethicsHtml)) {
-                showStatusBanner("Si us plau, completa tots els camps obligatoris marcats amb * (Resum, Objectiu, Workflow i Consideracions ètiques).", true);
-                return;
+            // Desem les respostes dels textareas substituint prèviament \n per <br> 
+            // perquè a la pàgina inicial es vegi l'estil correctament formatejat.
+            const summaryHTML = document.getElementById('summary').value.trim().replace(/\n/g, '<br>');
+            const workflowHTML = document.getElementById('workflow').value.trim().replace(/\n/g, '<br>');
+            const ethicsHTML = document.getElementById('ethics').value.trim().replace(/\n/g, '<br>');
+            
+            const richResources = document.getElementById('richResources').innerHTML;
+            let fullWorkflow = workflowHTML;
+            if (richResources.trim()) {
+                fullWorkflow += `<br><br><b>Recursos addicionals:</b><br>${richResources}`;
             }
 
-            // Validar que hi hagi almenys un àmbit marcat
-            if (!scope) {
-                showStatusBanner("Si us plau, selecciona almenys un àmbit d'aplicació.", true);
-                return;
-            }
-
-            // Si s'han afegit recursos o enllaços al bloc 4, els incorporem al final del Workflow perquè quedin desats a les 12 columnes del Google Sheet
-            if (stripHtmlToPlain(extraResourcesHtml)) {
-                workflowHtml += `<br><br><b>Recursos i enllaços:</b><br>${extraResourcesHtml}`;
-            }
-
-            const allLinks = extractAllLinksFromHtmlFields([summaryHtml, objectiveHtml, workflowHtml, ethicsHtml, tools]);
-
-            const timestamp = activeSheetEdit.isSheetEdit && activeSheetEdit.originalTimestamp
-                ? activeSheetEdit.originalTimestamp
-                : new Date().toISOString();
+            const timestamp = activeSheetEdit.isSheetEdit ? activeSheetEdit.originalTimestamp : new Date().toISOString();
 
             const record = {
                 action: activeSheetEdit.isSheetEdit ? "edit" : "create",
                 rowNumber: activeSheetEdit.rowNumber,
                 password: activeSheetEdit.editToken,
                 timestamp,
-                title,
-                author,
-                email,
-                scope,
-                targetAudience,
-                summary: summaryHtml,
-                objective: objectiveHtml,
-                tools,
-                replicability,
-                workflow: workflowHtml,
-                ethics: ethicsHtml,
-                resourcesRawHtml: '',
-                linksFormatted: allLinks.map(l => `${l.text} (${l.url})`).join(' | '),
-                urlsOnly: allLinks.map(l => l.url).join(' , '),
-                linksArray: allLinks
+                title, author, email, scope: scopeStr, targetAudience,
+                summary: summaryHTML,
+                objective: objective,
+                tools, replicability,
+                workflow: fullWorkflow,
+                ethics: ethicsHTML
             };
 
-            const submitBtn = document.getElementById('submitBtn');
-            const originalBtnText = submitBtn.innerText;
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Desant al Google Sheet...';
-
-            // Enviar a Google Apps Script (doPost de Code.gs)
+            // Intentar fer el POST al Google Script
             if (GOOGLE_SHEETS_API_URL) {
                 try {
                     const response = await fetch(GOOGLE_SHEETS_API_URL, {
@@ -735,142 +449,36 @@
                     });
                     const resData = await response.json();
                     if (resData.status === 'error') {
-                        showStatusBanner(`Error del servidor: ${resData.message}`, true);
+                        alert(`Error del servidor: ${resData.message}`);
                         submitBtn.disabled = false;
                         submitBtn.innerText = originalBtnText;
                         return;
                     }
                 } catch (err) {
-                    console.error("Error enviant a Apps Script:", err);
-                    showStatusBanner("Error de xarxa en contactar amb Google Sheets.", true);
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = originalBtnText;
-                    return;
+                    console.error("Error enviant al servidor:", err);
+                    alert("S'ha produït un error de connexió, però la prova continuarà en local.");
                 }
             }
 
             submitBtn.disabled = false;
             submitBtn.innerText = originalBtnText;
-
-            // Mostrar el modal d'èxit en comptes de la vista prèvia
-            showSuccessModal(activeSheetEdit.isSheetEdit);
-        }
-
-        let deleteConfirmationPending = false;
-
-        // Eliminar fitxa del Google Sheet cridant l'acció "delete" de Code.gs
-        async function handleDeleteFromSheet() {
-            if (!activeSheetEdit.isSheetEdit || !activeSheetEdit.rowNumber) return;
-
-            const deleteBtn = document.getElementById('deleteSheetBtn');
-            if (!deleteConfirmationPending) {
-                deleteConfirmationPending = true;
-                deleteBtn.innerText = '⚠️ Fes clic de nou per confirmar l\'eliminació';
-                setTimeout(() => {
-                    if (deleteConfirmationPending && !deleteBtn.disabled) {
-                        deleteConfirmationPending = false;
-                        deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
-                    }
-                }, 4000);
-                return;
-            }
-
-            deleteConfirmationPending = false;
-            deleteBtn.disabled = true;
-            deleteBtn.innerText = 'Eliminant...';
-
-            try {
-                const response = await fetch(GOOGLE_SHEETS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: "delete",
-                        rowNumber: activeSheetEdit.rowNumber,
-                        password: activeSheetEdit.editToken
-                    })
-                });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    showStatusBanner("🗑️ Fitxa eliminada correctament del Google Sheet. Redirigint al cercador...");
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
-                } else {
-                    showStatusBanner(`No s'ha pogut eliminar: ${result.message}`, true);
-                    deleteBtn.disabled = false;
-                    deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
-                }
-            } catch (err) {
-                console.error("Error eliminant la fila:", err);
-                showStatusBanner("Error de connexió en intentar eliminar la fitxa.", true);
-                deleteBtn.disabled = false;
-                deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
-            }
-        }
-
-        // Carrega totes les dades d'una fitxa de la taula inferior al formulari per modificar-la
-        function loadRecordIntoEditor(index) {
-            const rec = sheetRecords[index];
-            if (!rec) return;
-
-            editingIndex = index;
-            if (rec.rowNumber) {
-                activeSheetEdit.isSheetEdit = true;
-                activeSheetEdit.rowNumber = rec.rowNumber;
-                activeSheetEdit.editToken = rec.editToken || activeSheetEdit.editToken;
-                activeSheetEdit.originalTimestamp = rec.timestamp;
-                document.getElementById('deleteSheetBtn').classList.remove('hidden');
-            }
-
-            document.getElementById('title').value = rec.title || '';
-            document.getElementById('author').value = rec.author || '';
-            document.getElementById('email').value = rec.email || '';
-            setCheckboxValuesFlexible('scopeOption', rec.scope || 'Docència (Grau / Màster)');
-            document.getElementById('targetAudience').value = rec.targetAudience || '';
-            document.getElementById('summary').innerHTML = rec.summary || '';
-            document.getElementById('objective').innerHTML = rec.objective || '';
-            document.getElementById('tools').value = rec.tools || '';
-            setSelectValueFlexible('replicability', rec.replicability || 'Alt');
-            document.getElementById('workflow').innerHTML = rec.workflow || '';
-            document.getElementById('ethics').innerHTML = rec.ethics || '';
-            document.getElementById('richResources').innerHTML = rec.resourcesRawHtml || '';
-
-            document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
-            document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${rec.title}". Modifica els camps necessaris i desa els canvis.`;
-            document.getElementById('editingBadge').classList.remove('hidden');
-            document.getElementById('submitBtn').innerText = 'Actualitzar proposta';
-            document.getElementById('cancelEditBtn').innerText = 'Cancel·lar edició';
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function exitEditModeUI() {
-            editingIndex = null;
-            deleteConfirmationPending = false;
-            activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
-            document.getElementById('formHeaderTitle').innerText = 'Nova Fitxa de Bona Pràctica';
-            document.getElementById('formHeaderSubtitle').innerText = 'Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.';
-            document.getElementById('editingBadge').classList.add('hidden');
-            const deleteBtn = document.getElementById('deleteSheetBtn');
-            deleteBtn.classList.add('hidden');
-            deleteBtn.innerText = '🗑️ Eliminar fitxa del Sheet';
-            document.getElementById('submitBtn').innerText = 'Enviar proposta';
-            document.getElementById('cancelEditBtn').innerText = 'Netejar formulari';
-            if (window.history && window.history.replaceState) {
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
+            
+            // Un cop acabat, mostrem directament la finestra modal d'èxit 
+            document.getElementById('successModal').classList.remove('hidden');
         }
 
         function resetForm() {
             document.getElementById('practiceForm').reset();
-            document.getElementById('summary').innerHTML = '';
-            document.getElementById('objective').innerHTML = '';
-            document.getElementById('workflow').innerHTML = '';
-            document.getElementById('ethics').innerHTML = '';
             document.getElementById('richResources').innerHTML = '';
             document.getElementById('linkInputPanel').classList.add('hidden');
-            exitEditModeUI();
+            
+            activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
+            document.getElementById('formHeaderTitle').innerText = 'Nova Fitxa de Bona Pràctica';
+            document.getElementById('formHeaderSubtitle').innerText = 'Completa el següent formulari per compartir la teva experiència.';
+            document.getElementById('editingBadge').classList.add('hidden');
+            document.getElementById('submitBtn').innerText = 'Enviar proposta';
+            document.getElementById('cancelEditBtn').innerText = 'Netejar formulari';
         }
     </script>
-
-</body></html>
+</body>
+</html>
