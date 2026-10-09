@@ -25,50 +25,52 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* CSS per mostrar el 'placeholder' en elements div contenteditable buits */
         [contenteditable]:empty::before {
             content: attr(placeholder);
             color: #9ca3af;
             pointer-events: none;
             display: block;
         }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        .rich-editor-content ul { list-style-type: disc; padding-left: 1.5rem; }
+        .rich-editor-content ol { list-style-type: decimal; padding-left: 1.5rem; }
+        .rich-editor-content a { color: #006633; text-decoration: underline; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
 
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
     <header class="bg-uab-green text-white shadow-md relative z-10">
         <div class="max-w-4xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
-                <div class="bg-white text-uab-green font-bold text-xl px-3 py-1.5 rounded shadow tracking-wider">
-                    UAB
-                </div>
+                <div class="bg-white text-uab-green font-bold text-xl px-3 py-1.5 rounded shadow tracking-wider">UAB</div>
                 <div>
                     <h1 class="text-lg font-bold leading-tight">Facultat de Ciències de la Comunicació</h1>
                     <p class="text-xs text-uab-lightgreen opacity-90">Repositori de Bones Pràctiques en l'Ús de la IA</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="index.html" class="text-xs bg-white/10 hover:bg-white hover:text-uab-green px-3 py-1.5 rounded-full border border-white/20 transition">
-                    ← Tornar al Cercador
-                </a>
-                <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30">
-                    Formulari de Registre
-                </div>
+                <a href="index.html" class="text-xs bg-white/10 hover:bg-white hover:text-uab-green px-3 py-1.5 rounded-full border border-white/20 transition">← Tornar al Cercador</a>
+                <div class="text-xs bg-uab-darkgreen px-3 py-1.5 rounded-full border border-uab-accent/30">Formulari de Registre</div>
             </div>
         </div>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
-        
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
             <div class="bg-uab-lightgreen/50 px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
                 <div>
                     <h2 id="formHeaderTitle" class="text-xl font-bold text-uab-darkgreen">Nova Fitxa de Bona Pràctica</h2>
-                    <p id="formHeaderSubtitle" class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip amb la comunitat universitària.</p>
+                    <p id="formHeaderSubtitle" class="text-sm text-gray-600 mt-1">Completa el següent formulari per compartir la teva experiència o la del teu equip.</p>
                 </div>
-                <span id="editingBadge" class="hidden bg-amber-100 text-amber-800 border border-amber-300 text-xs font-semibold px-3 py-1 rounded-full">
-                    ✏️ Mode Edició Actiu
-                </span>
+                <span id="editingBadge" class="hidden bg-amber-100 text-amber-800 border border-amber-300 text-xs font-semibold px-3 py-1 rounded-full">✏️ Mode Edició Actiu</span>
             </div>
 
             <form id="practiceForm" class="p-6 space-y-6" onsubmit="handleSubmit(event)">
@@ -76,72 +78,40 @@
                 <!-- SECCIÓ 1 -->
                 <div class="space-y-4">
                     <h3 class="text-sm font-semibold text-uab-green uppercase tracking-wider border-b pb-1">1. Capçalera i Identificació</h3>
-                    
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Títol de la pràctica *</label>
-                        <input type="text" id="title" required placeholder="Ex. Generació de guions crossmèdia assistits per IA generativa" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                        <input type="text" id="title" required placeholder="Ex. Generació de guions crossmèdia assistits per IA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green outline-none transition">
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Autor/a o Equip Responsable *</label>
-                            <input type="text" id="author" required placeholder="Ex. Departament de Periodisme / Nom del responsable" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                            <input type="text" id="author" required placeholder="Ex. Departament de Periodisme / Nom" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green outline-none transition">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Correu electrònic de contacte *</label>
-                            <input type="email" id="email" required placeholder="nom.cognom@uab.cat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                            <input type="email" id="email" required placeholder="nom.cognom@uab.cat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green outline-none transition">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Àmbit d'aplicació (pots marcar-ne més d'un) *</label>
-                            <div id="scopeGroup" class="space-y-2.5 bg-gray-50/50 px-4 py-3 border border-gray-300 rounded-lg">
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="scopeOption" value="Docència (Grau / Màster)" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Docència (Grau / Màster)</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="scopeOption" value="Recerca / Pràctica Professional" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Recerca / Pràctica Professional</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="scopeOption" value="Gestió / Administració" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Gestió / Administració</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="scopeOption" value="Transferència / Divulgació" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Transferència / Divulgació</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="scopeOption" value="Altres" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Altres</span>
-                                </label>
+                            <div class="space-y-2.5 bg-gray-50/50 px-4 py-3 border border-gray-300 rounded-lg">
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="scopeOption" value="Docència (Grau / Màster)" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Docència (Grau / Màster)</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="scopeOption" value="Recerca / Pràctica Professional" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Recerca / Pràctica Professional</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="scopeOption" value="Gestió / Administració" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Gestió / Administració</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="scopeOption" value="Transferència / Divulgació" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Transferència / Divulgació</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="scopeOption" value="Altres" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Altres</span></label>
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Perfil d'usuari objectiu (pots marcar-ne més d'un) *</label>
-                            <div id="targetGroup" class="space-y-2.5 bg-gray-50/50 px-4 py-3 border border-gray-300 rounded-lg">
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="targetOption" value="Estudiantat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Estudiantat</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="targetOption" value="Professorat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Professorat</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="targetOption" value="Personal de recerca" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Personal de recerca</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="targetOption" value="PTGAS" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">PTGAS</span>
-                                </label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer">
-                                    <input type="checkbox" name="targetOption" value="Públic en general" class="mt-0.5 text-uab-green focus:ring-uab-green rounded border-gray-300 w-4 h-4 cursor-pointer">
-                                    <span class="text-sm text-gray-700 leading-tight">Públic en general</span>
-                                </label>
+                            <div class="space-y-2.5 bg-gray-50/50 px-4 py-3 border border-gray-300 rounded-lg">
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Estudiantat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Estudiantat</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Professorat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Professorat</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Personal de recerca" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Personal de recerca</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="PTGAS" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">PTGAS</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Públic en general" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Públic en general</span></label>
                             </div>
                         </div>
                     </div>
@@ -153,47 +123,47 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Resum executiu *</label>
-                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
-                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                        <div class="border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-uab-green transition bg-white flex flex-col">
+                            <div class="sticky top-0 z-20 bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5 rounded-t-lg shadow-sm">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">• Llista</button>
                                 <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('summary')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('summary')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition">🔗 URL</button>
                             </div>
-                            <div id="linkPanel_summary" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                            <div id="linkPanel_summary" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200 relative z-10">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_summary" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_summary" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                 </div>
                                 <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('summary')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('summary')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
                             </div>
-                            <div id="summary" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..."></div>
+                            <div id="summary" contenteditable="true" class="rich-editor-content w-full px-4 py-3 min-h-[90px] max-h-[300px] overflow-y-auto custom-scrollbar outline-none text-sm text-gray-800 space-y-1 rounded-b-lg" placeholder="Descriu breument quin problema resol aquesta pràctica i com s'implementa..."></div>
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Objectiu principal *</label>
-                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
-                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                        <div class="border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-uab-green transition bg-white flex flex-col">
+                            <div class="sticky top-0 z-20 bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5 rounded-t-lg shadow-sm">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">• Llista</button>
                                 <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('objective')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('objective')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition">🔗 URL</button>
                             </div>
-                            <div id="linkPanel_objective" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                            <div id="linkPanel_objective" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200 relative z-10">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_objective" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_objective" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                 </div>
                                 <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('objective')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('objective')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
                             </div>
-                            <div id="objective" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític..."></div>
+                            <div id="objective" contenteditable="true" class="rich-editor-content w-full px-4 py-3 min-h-[90px] max-h-[300px] overflow-y-auto custom-scrollbar outline-none text-sm text-gray-800 space-y-1 rounded-b-lg" placeholder="Ex. Optimitzar el temps de redacció o fomentar l'esperit crític..."></div>
                         </div>
                     </div>
                 </div>
@@ -205,11 +175,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Eines i tecnologies d'IA emprades *</label>
-                            <input type="text" id="tools" required placeholder="Ex. ChatGPT, Midjourney, Transcriptor local..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition">
+                            <input type="text" id="tools" required placeholder="Ex. ChatGPT, Midjourney..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green outline-none transition">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Grau de replicabilitat *</label>
-                            <select id="replicability" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green focus:border-transparent outline-none transition bg-white">
+                            <select id="replicability" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-uab-green outline-none transition bg-white">
                                 <option value="Alt">Alt (Fàcilment adaptable per a qualsevol)</option>
                                 <option value="Mitjà">Mitjà (Requereix coneixements tècnics bàsics)</option>
                                 <option value="Baix">Baix (Específic o altament complex)</option>
@@ -219,47 +189,47 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Descripció del procés / Workflow pas a pas *</label>
-                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
-                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                        <div class="border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-uab-green transition bg-white flex flex-col">
+                            <div class="sticky top-0 z-20 bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5 rounded-t-lg shadow-sm">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">• Llista</button>
                                 <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('workflow')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('workflow')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition">🔗 URL</button>
                             </div>
-                            <div id="linkPanel_workflow" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                            <div id="linkPanel_workflow" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200 relative z-10">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_workflow" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_workflow" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                 </div>
                                 <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('workflow')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('workflow')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
                             </div>
-                            <div id="workflow" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..."></div>
+                            <div id="workflow" contenteditable="true" class="rich-editor-content w-full px-4 py-3 min-h-[120px] max-h-[300px] overflow-y-auto custom-scrollbar outline-none text-sm text-gray-800 space-y-1 rounded-b-lg" placeholder="1. Plantejament del cas... 2. Execució de l'eina... 3. Validació humana..."></div>
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Consideracions ètiques i de transparència *</label>
-                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
-                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                        <div class="border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-uab-green transition bg-white flex flex-col">
+                            <div class="sticky top-0 z-20 bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5 rounded-t-lg shadow-sm">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">• Llista</button>
                                 <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('ethics')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('ethics')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition">🔗 URL</button>
                             </div>
-                            <div id="linkPanel_ethics" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                            <div id="linkPanel_ethics" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200 relative z-10">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_ethics" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_ethics" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                 </div>
                                 <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('ethics')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('ethics')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
                             </div>
-                            <div id="ethics" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..."></div>
+                            <div id="ethics" contenteditable="true" class="rich-editor-content w-full px-4 py-3 min-h-[90px] max-h-[300px] overflow-y-auto custom-scrollbar outline-none text-sm text-gray-800 space-y-1 rounded-b-lg" placeholder="Com s'ha gestionat la privacitat, la citació obligatòria o la verificació de dades..."></div>
                         </div>
                     </div>
                 </div>
@@ -270,54 +240,44 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Materials complementaris (Opcional)</label>
-                        <p class="text-xs text-gray-500 mb-2">Pots donar format al text, o enganxar qualsevol URL directament (es convertirà en enllaç de forma automàtica).</p>
-                        
-                        <div class="border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-uab-green focus-within:border-transparent transition bg-white">
-                            <div class="bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5">
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700 shadow-sm">B</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700 shadow-sm">I</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700 shadow-sm">U</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">1. Llista</button>
-                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700 shadow-sm">• Llista</button>
+                        <div class="border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-uab-green transition bg-white flex flex-col">
+                            <div class="sticky top-0 z-20 bg-gray-100 px-3 py-2 border-b border-gray-300 flex flex-wrap items-center gap-1.5 rounded-t-lg shadow-sm">
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs font-bold text-gray-700">B</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs italic text-gray-700">I</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs underline text-gray-700">U</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">1. Llista</button>
+                                <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList', false, null)" class="px-2.5 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 text-xs text-gray-700">• Llista</button>
                                 <span class="h-4 w-px bg-gray-300 mx-1"></span>
-                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('richResources')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition flex items-center gap-1 shadow-sm">🔗 URL</button>
+                                <button type="button" onmousedown="event.preventDefault(); toggleLinkPanel('richResources')" class="px-3 py-1 bg-uab-lightgreen text-uab-darkgreen border border-uab-accent/50 rounded hover:bg-uab-accent hover:text-white text-xs font-semibold transition">🔗 URL</button>
                             </div>
-                            <div id="linkPanel_richResources" class="hidden link-panel bg-uab-lightgreen/40 p-3 border-b border-gray-200">
+                            <div id="linkPanel_richResources" class="hidden bg-uab-lightgreen/40 p-3 border-b border-gray-200 relative z-10">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">Text de l'enllaç</label><input type="text" id="linkText_richResources" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                     <div><label class="block text-xs font-medium text-gray-700 mb-0.5">URL de destinació *</label><input type="url" id="linkUrl_richResources" placeholder="https://" class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded"></div>
                                 </div>
                                 <div class="flex justify-end space-x-2"><button type="button" onclick="cancelLink('richResources')" class="px-2.5 py-1 text-xs text-gray-600">Cancel·lar</button><button type="button" onclick="insertCustomLink('richResources')" class="px-3 py-1 bg-uab-green text-white text-xs font-medium rounded">Afegir</button></div>
                             </div>
-                            <div id="richResources" contenteditable="true" class="w-full px-4 py-3 min-h-[90px] outline-none text-sm text-gray-800 space-y-1" placeholder="Escriu aquí o enganxa URLs..."></div>
+                            <div id="richResources" contenteditable="true" class="rich-editor-content w-full px-4 py-3 min-h-[90px] max-h-[300px] overflow-y-auto custom-scrollbar outline-none text-sm text-gray-800 space-y-1 rounded-b-lg" placeholder="Escriu aquí o enganxa URLs..."></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="pt-4 flex items-center justify-end space-x-4 border-t">
-                    <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">
-                        Netejar formulari
-                    </button>
-                    <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">
-                        Enviar proposta
-                    </button>
+                    <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">Netejar formulari</button>
+                    <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">Enviar proposta</button>
                 </div>
             </form>
         </div>
 
-        <!-- Finestra Modal d'Èxit (Redirigeix a l'inici en tancar-se) -->
+        <!-- Modal d'Èxit -->
         <div id="successModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 text-center transform transition-all">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
+                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Informació enviada correctament</h3>
                 <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament al repositori.</p>
-                <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen focus:outline-none transition sm:text-sm">
-                    D'acord i tornar al cercador
-                </button>
+                <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen transition">D'acord i tornar al cercador</button>
             </div>
         </div>
     </main>
@@ -330,125 +290,30 @@
     </footer>
 
     <script>
-        // API del Google Apps Script
         const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
 
-        // Estat de la fitxa (nova o edició)
-        let activeSheetEdit = {
-            isSheetEdit: false,
-            rowNumber: null,
-            editToken: null,
-            originalTimestamp: null
-        };
+        let activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
 
-        // --- CARREGAR DADES D'EDICIÓ ---
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAndLoadExternalEditData();
-        });
-
-        function checkAndLoadExternalEditData() {
-            let practiceToEdit = null;
-
-            // 1. Llegir SEMPRE primer del sessionStorage (conté l'objecte complet)
-            try {
-                const stored = sessionStorage.getItem('uab_edit_practice');
-                if (stored) {
-                    practiceToEdit = JSON.parse(stored);
-                    sessionStorage.removeItem('uab_edit_practice'); // Netejar-ho un cop llegit
-                }
-            } catch (e) {
-                console.error("Error llegint de sessionStorage", e);
-            }
-
-            // 2. Si per algun motiu no hi ha sessionStorage, mirem si ve per URL
-            if (!practiceToEdit || !practiceToEdit.title) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const encodedData = urlParams.get('editData');
-                if (encodedData) {
-                    try {
-                        const decodedJson = decodeURIComponent(escape(atob(decodeURIComponent(encodedData))));
-                        const parsedData = JSON.parse(decodedJson);
-                        // Només ho fem servir si realment té les dades de la fitxa i no només el rowNumber
-                        if (parsedData && parsedData.title) {
-                            practiceToEdit = parsedData;
-                        }
-                    } catch (err) {}
-                }
-            }
-
-            if (practiceToEdit && practiceToEdit.title) {
-                populateFormFromExternalPractice(practiceToEdit);
-            }
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-600' : 'bg-uab-green';
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<span class="flex-grow text-sm font-medium drop-shadow-sm">${message}</span><button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white text-lg leading-none">&times;</button>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full', 'opacity-0'), 10);
+            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        function setCheckboxValuesFlexible(checkboxName, valuesString) {
-            const checkboxes = document.querySelectorAll(`input[name="${checkboxName}"]`);
-            checkboxes.forEach(cb => cb.checked = false); 
-            
-            if (!valuesString) return;
-            const valuesArray = valuesString.split(',').map(v => v.trim());
-            
-            checkboxes.forEach(cb => {
-                const cbVal = cb.value;
-                const matchFound = valuesArray.some(val => cbVal === val || cbVal.includes(val) || val.includes(cbVal));
-                if (matchFound) cb.checked = true;
-            });
-        }
-
-        function populateFormFromExternalPractice(practice) {
-            activeSheetEdit = {
-                isSheetEdit: true,
-                rowNumber: practice.rowNumber || null,
-                editToken: practice.editToken || '',
-                originalTimestamp: practice.date || new Date().toISOString()
-            };
-
-            document.getElementById('title').value = practice.title || '';
-            document.getElementById('author').value = practice.author || '';
-            document.getElementById('email').value = practice.email || '';
-            document.getElementById('tools').value = practice.tools || '';
-            
-            setCheckboxValuesFlexible('scopeOption', practice.scope);
-            setCheckboxValuesFlexible('targetOption', practice.targetAudience);
-
-            const repSelect = document.getElementById('replicability');
-            for (let i = 0; i < repSelect.options.length; i++) {
-                if (repSelect.options[i].value === practice.replicability) {
-                    repSelect.selectedIndex = i;
-                    break;
-                }
-            }
-
-            // Atribuir directament el codi HTML als camps de text enriquit (contenteditable divs)
-            document.getElementById('summary').innerHTML = practice.summary || '';
-            document.getElementById('objective').innerHTML = practice.objective || '';
-            document.getElementById('workflow').innerHTML = practice.workflow || '';
-            document.getElementById('ethics').innerHTML = practice.ethics || '';
-            
-            // Buidem recursos addicionals perquè ja es van integrar al workflow anteriorment
-            document.getElementById('richResources').innerHTML = ''; 
-
-            document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
-            document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${practice.title}".`;
-            document.getElementById('editingBadge').classList.remove('hidden');
-            document.getElementById('submitBtn').innerText = 'Actualitzar proposta i Desar al Sheet';
-            document.getElementById('cancelEditBtn').innerText = 'Cancel·lar edició';
-        }
-
-        // --- FUNCIONS DELS PANELLS D'ENLLAÇOS ---
         function toggleLinkPanel(editorId) {
-            // Amagar tots els altres panells
-            document.querySelectorAll('.link-panel').forEach(p => p.classList.add('hidden'));
-            
+            document.querySelectorAll('div[id^="linkPanel_"]').forEach(p => p.classList.add('hidden'));
             const panel = document.getElementById('linkPanel_' + editorId);
             if (panel) {
                 panel.classList.remove('hidden');
-                // Intentar capturar el text seleccionat
                 const selection = window.getSelection().toString().trim();
                 const textInput = document.getElementById('linkText_' + editorId);
-                if (selection && !textInput.value) {
-                    textInput.value = selection;
-                }
+                if (selection && !textInput.value) textInput.value = selection;
                 document.getElementById('linkUrl_' + editorId).focus();
             }
         }
@@ -462,62 +327,99 @@
             const urlInput = document.getElementById('linkUrl_' + editorId);
             let rawUrl = urlInput.value.trim();
             let label = textInput.value.trim();
-
-            if (!rawUrl) {
-                urlInput.focus();
-                return;
-            }
-
-            if (!/^https?:\/\//i.test(rawUrl)) {
-                rawUrl = 'https://' + rawUrl;
-            }
-
-            const displayLabel = label || rawUrl;
+            if (!rawUrl) { urlInput.focus(); return; }
+            if (!/^https?:\/\//i.test(rawUrl)) rawUrl = 'https://' + rawUrl;
             
-            // Retornar el focus al camp on estàvem
-            const editor = document.getElementById(editorId);
-            editor.focus();
-
-            const escapeAttr = (s) => String(s).replace(/"/g, '&quot;');
-            const escapeHtml = (s) => String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-            const anchorHtml = `<a href="${escapeAttr(rawUrl)}" target="_blank" rel="noopener noreferrer" class="text-uab-green underline font-medium hover:text-uab-darkgreen">${escapeHtml(displayLabel)}</a>&nbsp;`;
-            
-            // Inserir el HTML on hi havia el cursor de text
+            document.getElementById(editorId).focus();
+            const anchorHtml = `<a href="${String(rawUrl).replace(/"/g, '&quot;')}" target="_blank" rel="noopener noreferrer">${String(label || rawUrl).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</a>&nbsp;`;
             document.execCommand('insertHTML', false, anchorHtml);
-
-            textInput.value = '';
-            urlInput.value = '';
+            textInput.value = ''; urlInput.value = '';
             document.getElementById('linkPanel_' + editorId).classList.add('hidden');
         }
 
-        // --- SUBMIT DEL FORMULARI AL GOOGLE SHEET ---
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAndLoadExternalEditData();
+        });
+
+        function checkAndLoadExternalEditData() {
+            let practiceToEdit = null;
+            try {
+                const stored = sessionStorage.getItem('uab_edit_practice');
+                if (stored) {
+                    practiceToEdit = JSON.parse(stored);
+                    sessionStorage.removeItem('uab_edit_practice');
+                }
+            } catch (e) { console.error("Error sessionStorage", e); }
+
+            if (!practiceToEdit || !practiceToEdit.title) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const encodedData = urlParams.get('editData');
+                if (encodedData) {
+                    try {
+                        const decoded = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(encodedData)))));
+                        if (decoded && decoded.title) practiceToEdit = decoded;
+                    } catch (err) {}
+                }
+            }
+
+            if (practiceToEdit && practiceToEdit.title) {
+                populateFormFromExternalPractice(practiceToEdit);
+            }
+        }
+
+        function setCheckboxValuesFlexible(checkboxName, valuesString) {
+            const checkboxes = document.querySelectorAll(`input[name="${checkboxName}"]`);
+            checkboxes.forEach(cb => cb.checked = false); 
+            if (!valuesString) return;
+            const valuesArray = valuesString.split(',').map(v => v.trim());
+            checkboxes.forEach(cb => {
+                const matchFound = valuesArray.some(val => cb.value === val || cb.value.includes(val) || val.includes(cb.value));
+                if (matchFound) cb.checked = true;
+            });
+        }
+
+        function populateFormFromExternalPractice(practice) {
+            activeSheetEdit = {
+                isSheetEdit: true, rowNumber: practice.rowNumber || null,
+                editToken: practice.editToken || '', originalTimestamp: practice.date || new Date().toISOString()
+            };
+
+            document.getElementById('title').value = practice.title || '';
+            document.getElementById('author').value = practice.author || '';
+            document.getElementById('email').value = practice.email || '';
+            document.getElementById('tools').value = practice.tools || '';
+            
+            setCheckboxValuesFlexible('scopeOption', practice.scope);
+            setCheckboxValuesFlexible('targetOption', practice.targetAudience);
+
+            const repSelect = document.getElementById('replicability');
+            for (let i = 0; i < repSelect.options.length; i++) {
+                if (repSelect.options[i].value === practice.replicability) { repSelect.selectedIndex = i; break; }
+            }
+
+            document.getElementById('summary').innerHTML = practice.summary || '';
+            document.getElementById('objective').innerHTML = practice.objective || '';
+            document.getElementById('workflow').innerHTML = practice.workflow || '';
+            document.getElementById('ethics').innerHTML = practice.ethics || '';
+            document.getElementById('richResources').innerHTML = ''; 
+
+            document.getElementById('formHeaderTitle').innerText = 'Modificar Fitxa de Bona Pràctica';
+            document.getElementById('formHeaderSubtitle').innerText = `Estàs editant la fitxa "${practice.title}".`;
+            document.getElementById('editingBadge').classList.remove('hidden');
+            document.getElementById('submitBtn').innerText = 'Actualitzar proposta i Desar al Sheet';
+            document.getElementById('cancelEditBtn').innerText = 'Cancel·lar edició';
+        }
+
         async function handleSubmit(event) {
             event.preventDefault();
 
-            // Obtenir checkboxes de l'àmbit
-            const scopeCheckboxes = document.querySelectorAll('input[name="scopeOption"]:checked');
-            const scopeStr = Array.from(scopeCheckboxes).map(cb => cb.value).join(', ');
+            const scopeStr = Array.from(document.querySelectorAll('input[name="scopeOption"]:checked')).map(cb => cb.value).join(', ');
+            if (!scopeStr) { showToast("Selecciona almenys un àmbit d'aplicació.", "error"); return; }
 
-            if (!scopeStr) {
-                alert("Si us plau, selecciona almenys un àmbit d'aplicació per a la proposta.");
-                return;
-            }
+            const targetAudience = Array.from(document.querySelectorAll('input[name="targetOption"]:checked')).map(cb => cb.value).join(', ');
+            if (!targetAudience) { showToast("Selecciona almenys un perfil d'usuari objectiu.", "error"); return; }
 
-            // Obtenir checkboxes del públic objectiu
-            const targetCheckboxes = document.querySelectorAll('input[name="targetOption"]:checked');
-            const targetAudience = Array.from(targetCheckboxes).map(cb => cb.value).join(', ');
-
-            if (!targetAudience) {
-                alert("Si us plau, selecciona almenys un perfil d'usuari objectiu.");
-                return;
-            }
-
-            // Funció per validar si un quadre de text enriquit està realment buit
-            const isRichTextEmpty = (html) => {
-                const clean = html.replace(/\s/g, '');
-                return clean === '' || clean === '<br>' || clean === '<div><br></div>' || clean === '<p><br></p>';
-            };
+            const isRichTextEmpty = (html) => html.replace(/\s/g, '') === '' || html.replace(/\s/g, '') === '<br>';
 
             const summaryHTML = document.getElementById('summary').innerHTML.trim();
             const objectiveHTML = document.getElementById('objective').innerHTML.trim();
@@ -525,83 +427,56 @@
             const ethicsHTML = document.getElementById('ethics').innerHTML.trim();
             const richResourcesHTML = document.getElementById('richResources').innerHTML.trim();
 
-            if (isRichTextEmpty(summaryHTML)) { alert("El camp 'Resum executiu' és obligatori."); return; }
-            if (isRichTextEmpty(objectiveHTML)) { alert("El camp 'Objectiu principal' és obligatori."); return; }
-            if (isRichTextEmpty(workflowHTML)) { alert("El camp 'Descripció del procés' és obligatori."); return; }
-            if (isRichTextEmpty(ethicsHTML)) { alert("El camp 'Consideracions ètiques' és obligatori."); return; }
+            if (isRichTextEmpty(summaryHTML)) { showToast("El camp 'Resum executiu' és obligatori.", "error"); return; }
+            if (isRichTextEmpty(objectiveHTML)) { showToast("El camp 'Objectiu principal' és obligatori.", "error"); return; }
+            if (isRichTextEmpty(workflowHTML)) { showToast("El camp 'Descripció del procés' és obligatori.", "error"); return; }
+            if (isRichTextEmpty(ethicsHTML)) { showToast("El camp 'Consideracions ètiques' és obligatori.", "error"); return; }
 
             const submitBtn = document.getElementById('submitBtn');
             const originalBtnText = submitBtn.innerText;
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Processant les dades...';
+            submitBtn.disabled = true; submitBtn.innerText = 'Processant les dades...';
 
-            const title = document.getElementById('title').value.trim();
-            const author = document.getElementById('author').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const tools = document.getElementById('tools').value.trim();
-            const replicability = document.getElementById('replicability').value;
-            
-            // Juntar el workflow normal amb els materials complementaris (si n'hi ha) per emmagatzemar al Sheet
             let fullWorkflow = workflowHTML;
-            if (!isRichTextEmpty(richResourcesHTML)) {
-                fullWorkflow += `<br><br><b>Recursos addicionals:</b><br>${richResourcesHTML}`;
-            }
-
-            const timestamp = activeSheetEdit.isSheetEdit ? activeSheetEdit.originalTimestamp : new Date().toISOString();
+            if (!isRichTextEmpty(richResourcesHTML)) fullWorkflow += `<br><br><b>Recursos addicionals:</b><br>${richResourcesHTML}`;
 
             const record = {
                 action: activeSheetEdit.isSheetEdit ? "edit" : "create",
-                rowNumber: activeSheetEdit.rowNumber,
-                password: activeSheetEdit.editToken,
-                timestamp,
-                title, author, email, scope: scopeStr, targetAudience,
-                summary: summaryHTML,
-                objective: objectiveHTML,
-                tools, replicability,
-                workflow: fullWorkflow,
-                ethics: ethicsHTML
+                rowNumber: activeSheetEdit.rowNumber, password: activeSheetEdit.editToken,
+                timestamp: activeSheetEdit.isSheetEdit ? activeSheetEdit.originalTimestamp : new Date().toISOString(),
+                title: document.getElementById('title').value.trim(),
+                author: document.getElementById('author').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                scope: scopeStr, targetAudience,
+                summary: summaryHTML, objective: objectiveHTML,
+                tools: document.getElementById('tools').value.trim(),
+                replicability: document.getElementById('replicability').value,
+                workflow: fullWorkflow, ethics: ethicsHTML
             };
 
-            // Intentar fer el POST al Google Script
             if (GOOGLE_SHEETS_API_URL) {
                 try {
-                    const response = await fetch(GOOGLE_SHEETS_API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(record)
-                    });
+                    const response = await fetch(GOOGLE_SHEETS_API_URL, { method: 'POST', body: JSON.stringify(record) });
                     const resData = await response.json();
                     if (resData.status === 'error') {
-                        alert(`Error del servidor: ${resData.message}`);
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = originalBtnText;
+                        showToast(`Error: ${resData.message}`, "error");
+                        submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
                         return;
                     }
                 } catch (err) {
-                    console.error("Error enviant al servidor:", err);
-                    alert("S'ha produït un error de connexió, però l'acció continuarà.");
+                    showToast("Error de connexió, l'acció pot no haver-se desat.", "error");
+                    submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
+                    return;
                 }
             }
 
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalBtnText;
-            
-            // Un cop acabat, mostrem directament la finestra modal d'èxit 
+            submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
             document.getElementById('successModal').classList.remove('hidden');
         }
 
         function resetForm() {
             document.getElementById('practiceForm').reset();
-            
-            // Netejar manualment els camps de text enriquit
-            document.getElementById('summary').innerHTML = '';
-            document.getElementById('objective').innerHTML = '';
-            document.getElementById('workflow').innerHTML = '';
-            document.getElementById('ethics').innerHTML = '';
-            document.getElementById('richResources').innerHTML = '';
-            
-            // Amagar qualsevol panell d'enllaços actiu
-            document.querySelectorAll('.link-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('[contenteditable="true"]').forEach(el => el.innerHTML = '');
+            document.querySelectorAll('div[id^="linkPanel_"]').forEach(p => p.classList.add('hidden'));
             
             activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
             document.getElementById('formHeaderTitle').innerText = 'Nova Fitxa de Bona Pràctica';
