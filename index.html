@@ -229,7 +229,7 @@
             <!-- Modal Body -->
             <div id="modalBody" class="px-6 py-6 max-h-[75vh] overflow-y-auto custom-scrollbar bg-gray-50">
                 <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100 mb-6 print-avoid-break">
-                    <span id="modalScope" class="inline-block text-xs uppercase tracking-widest text-uab-accent font-semibold mb-2"></span>
+                    <div id="modalScope" class="flex flex-wrap gap-2 mb-3"></div>
                     <h2 id="modalTitle" class="text-2xl font-bold text-gray-900 mb-4"></h2>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm border-t border-b border-gray-100 py-4 mb-4">
@@ -318,7 +318,7 @@
         // --- CONFIGURACIÓ DE L'API I SEGURETAT ---
         const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
         
-        // Utilitzem ruta relativa perquè funcioni tant en local com a GitHub Pages (https://xaviuab.github.io/propostes_ia/form.html)
+        // Utilitzem ruta relativa perquè funcioni tant en local com a GitHub Pages sense trencar la sessió
         const FORM_PAGE_URL = 'form.html';
 
         // --- ESTAT GLOBAL ---
@@ -503,6 +503,13 @@
                 if (practice.replicability === 'Mitjà') repColor = 'bg-yellow-100 text-yellow-800';
                 if (practice.replicability === 'Baix') repColor = 'bg-red-100 text-red-800';
 
+                const scopes = practice.scope ? practice.scope.split(',').map(s => s.trim()) : ['N/A'];
+                const scopesHTML = scopes.map(s => `
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-uab-green bg-uab-lightgreen px-2 py-1 rounded">
+                        ${s}
+                    </span>
+                `).join('');
+
                 const toolsList = practice.tools ? practice.tools.split(',').map(t => t.trim()) : [];
                 const toolsHTML = toolsList.slice(0, 3).map(t => `<span class="inline-block bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded border border-gray-200 truncate max-w-[100px]">${t}</span>`).join('');
                 const extraTools = toolsList.length > 3 ? `<span class="inline-block bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded border border-gray-200">+${toolsList.length - 3}</span>` : '';
@@ -511,10 +518,10 @@
                     <div class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-200 overflow-hidden flex flex-col h-full transition-shadow duration-300">
                         <div class="p-5 flex-grow flex flex-col">
                             <div class="flex justify-between items-start mb-3 gap-2">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-uab-green bg-uab-lightgreen px-2 py-1 rounded inline-block">
-                                    ${practice.scope || 'N/A'}
-                                </span>
-                                <span class="text-[10px] px-2 py-1 rounded font-medium ${repColor} whitespace-nowrap">
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${scopesHTML}
+                                </div>
+                                <span class="text-[10px] px-2 py-1 rounded font-medium ${repColor} whitespace-nowrap mt-0.5">
                                     Rep: ${practice.replicability || 'N/A'}
                                 </span>
                             </div>
@@ -567,6 +574,13 @@
             emailEl.href = `mailto:${practice.email}`;
             
             document.getElementById('modalTarget').textContent = practice.targetAudience;
+
+            const scopes = practice.scope ? practice.scope.split(',').map(s => s.trim()) : ['N/A'];
+            document.getElementById('modalScope').innerHTML = scopes.map(s => `
+                <span class="inline-block text-[11px] uppercase tracking-widest text-uab-accent font-bold bg-uab-lightgreen/50 border border-uab-accent/30 px-2.5 py-1 rounded-md">
+                    ${s}
+                </span>
+            `).join('');
             
             // Replicabilitat color
             const repEl = document.getElementById('modalReplicability');
