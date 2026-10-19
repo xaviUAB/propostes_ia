@@ -227,6 +227,21 @@
         </div>
     </div>
 
+    <!-- NOU: Modal de confirmació d'Aprovació -->
+    <div id="confirmApproveModal" class="fixed inset-0 z-[60] hidden bg-gray-900 bg-opacity-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full mx-4 p-6 text-center transform transition-all">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-100 mb-4">
+                <svg class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Aprovar i Publicar?</h3>
+            <p class="text-sm text-gray-500 mb-6">Aquesta acció farà que la fitxa passi a ser pública i tothom la pugui veure al cercador. N'estàs segur/a?</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeApproveModal()" class="flex-1 rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition">Cancel·lar</button>
+                <button onclick="executeApprove()" class="flex-1 rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-sm font-medium text-white hover:bg-uab-darkgreen transition">Sí, aprovar</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-gray-900 text-gray-400 py-6 mt-12 border-t border-gray-800">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-1">
             <p class="text-sm font-medium text-gray-300">Un desenvolupament de Xavier Ribes</p>
@@ -235,7 +250,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec'; 
+        const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbyRfESO2prbyydCDQZqo-LFG0Fm_IWBoMqTzr0xyj0Ndc6-c8W31wm9ATnS578a_tUchA/exec'; 
         const FORM_PAGE_URL = 'form.html';
 
         let allPractices = [];
@@ -243,6 +258,7 @@
         let pendingPractices = [];
         let currentModalPractice = null;
         let adminToken = null;
+        let rowToApprovePending = null; // Variable per guardar temporalment la fila a aprovar
 
         let currentPage = 1;
         const ITEMS_PER_PAGE = 12;
@@ -414,21 +430,39 @@
             });
         }
 
-        async function approvePractice(rowNumber) {
-            if (!confirm("Vols aprovar i publicar aquesta fitxa de manera permanent?")) return;
+        function approvePractice(rowNumber) {
+            rowToApprovePending = rowNumber;
+            const modal = document.getElementById('confirmApproveModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeApproveModal() {
+            document.getElementById('confirmApproveModal').classList.add('hidden');
+            rowToApprovePending = null;
+        }
+
+        async function executeApprove() {
+            if (!rowToApprovePending) return;
+            
+            closeApproveModal(); // Tanquem el modal visualment
+            showToast("Processant l'aprovació...", "success");
+
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: "approve", rowNumber: rowNumber, password: adminToken })
+                    body: JSON.stringify({ action: "approve", rowNumber: rowToApprovePending, password: adminToken })
                 });
                 const resData = await response.json();
                 if (resData.status === 'success') {
-                    showToast("Fitxa aprovada correctament!");
+                    showToast("Fitxa aprovada correctament! 🎉");
                     fetchData(adminToken); // Recarrega el panell admin
                 } else {
                     showToast(resData.message, "error");
                 }
-            } catch (err) { showToast("Error de connexió", "error"); }
+            } catch (err) { 
+                showToast("Error de connexió al servidor", "error"); 
+            }
+            rowToApprovePending = null;
         }
 
         function filterData() {
