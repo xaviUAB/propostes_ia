@@ -44,7 +44,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
 
-    <!-- Toast Notifications Container -->
+    <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <header class="bg-uab-green text-white shadow-md relative z-10">
@@ -110,7 +110,7 @@
                                 <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Estudiantat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Estudiantat</span></label>
                                 <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Professorat" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Professorat</span></label>
                                 <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Personal de recerca" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Personal de recerca</span></label>
-                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="PTGAS" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">PTGAS</span></label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Personal Tècnic, de Gestió i Administració i Serveis" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Personal Tècnic, de Gestió i Administració i Serveis</span></label>
                                 <label class="flex items-start space-x-2.5 cursor-pointer"><input type="checkbox" name="targetOption" value="Públic en general" class="mt-0.5 text-uab-green focus:ring-uab-green rounded"><span class="text-sm text-gray-700">Públic en general</span></label>
                             </div>
                         </div>
@@ -276,7 +276,7 @@
                     <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Informació enviada correctament</h3>
-                <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament. <strong>Actualment està pendent de revisió</strong> i serà visible al repositori un cop sigui aprovada per l'equip administrador.</p>
+                <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament. <strong>Actualment està pendent de revisió per l'administrador/a.</strong> Serà visible al repositori un cop s'aprovi.</p>
                 <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen transition">D'acord i tornar al cercador</button>
             </div>
         </div>
@@ -290,7 +290,7 @@
     </footer>
 
     <script>
-        const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbzn8QHNBxsTM5bdsGq8FO0rTrwR77aujloO4SFLyyt9We9AKx5iY7Ngl1eFUsV2HvzVgg/exec';
+        const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbyRfESO2prbyydCDQZqo-LFG0Fm_IWBoMqTzr0xyj0Ndc6-c8W31wm9ATnS578a_tUchA/exec';
 
         let activeSheetEdit = { isSheetEdit: false, rowNumber: null, editToken: null, originalTimestamp: null };
 
