@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca">a
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -532,13 +532,14 @@
 
         async function executeApprove() {
             if (!rowToApprovePending) return;
-            closeApproveModal();
+            const targetRow = rowToApprovePending; // DESEM LA DADA ABANS DE TANCAR
+            closeApproveModal(); // Això esborra rowToApprovePending
             showToast("Processant l'aprovació...", "success");
 
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: "approve", rowNumber: rowToApprovePending, password: adminToken })
+                    body: JSON.stringify({ action: "approve", rowNumber: targetRow, password: adminToken })
                 });
                 const resData = await response.json();
                 if (resData.status === 'success') {
@@ -548,7 +549,6 @@
                     showToast(resData.message, "error");
                 }
             } catch (err) { showToast("Error de connexió al servidor", "error"); }
-            rowToApprovePending = null;
         }
 
         function deletePractice(rowNumber) {
@@ -563,12 +563,14 @@
 
         async function executeDelete() {
             if (!rowToDeletePending) return;
-            closeDeleteModal();
+            const targetRow = rowToDeletePending; // DESEM LA DADA ABANS DE TANCAR
+            closeDeleteModal(); // Això esborra rowToDeletePending
             showToast("Esborrant fitxa...", "success");
+            
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: "delete", rowNumber: rowToDeletePending, password: adminToken })
+                    body: JSON.stringify({ action: "delete", rowNumber: targetRow, password: adminToken })
                 });
                 const resData = await response.json();
                 if (resData.status === 'success') {
@@ -578,7 +580,6 @@
                     showToast(resData.message, "error");
                 }
             } catch (err) { showToast("Error de connexió", "error"); }
-            rowToDeletePending = null;
         }
 
         function openAmendmentModal(rowNumber, email, title) {
@@ -600,7 +601,8 @@
                 return;
             }
             
-            closeAmendmentModal();
+            const targetData = { ...amendmentDataPending }; // DESEM LES DADES ABANS DE TANCAR
+            closeAmendmentModal(); // Això esborra amendmentDataPending
             showToast("Enviant correu a l'autor...", "success");
 
             try {
@@ -609,8 +611,8 @@
                     body: JSON.stringify({ 
                         action: "request_amendment", 
                         password: adminToken,
-                        authorEmail: amendmentDataPending.email,
-                        title: amendmentDataPending.title,
+                        authorEmail: targetData.email,
+                        title: targetData.title,
                         adminMessage: message
                     })
                 });
@@ -621,7 +623,6 @@
                     showToast(resData.message, "error");
                 }
             } catch (err) { showToast("Error de connexió al servidor", "error"); }
-            amendmentDataPending = null;
         }
 
         function filterData() {
