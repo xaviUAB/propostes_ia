@@ -695,13 +695,13 @@
 
                 grid.insertAdjacentHTML('beforeend', `
                     <div class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-200 overflow-hidden flex flex-col h-full transition-shadow duration-300">
-                        <div class="p-5 flex-grow flex flex-col">
-                            <div class="flex justify-between items-start mb-3 gap-2">
+                        <div class="p-5 flex-grow flex flex-col h-full">
+                            <h3 class="text-lg font-bold text-gray-900 leading-tight mb-3" title="${practice.title}">${practice.title || 'Sense Títol'}</h3>
+                            <div class="flex justify-between items-start mb-3 gap-2 border-b border-gray-100 pb-3">
                                 <div class="flex-grow">${scopesHTML}</div>
                                 <span class="text-[10px] px-2 py-1 rounded font-medium ${repColor} whitespace-nowrap">Rep: ${practice.replicability || 'N/A'}</span>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-900 leading-tight mb-3 line-clamp-2" title="${practice.title}">${practice.title || 'Sense Títol'}</h3>
-                            <div class="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow rich-content">${sanitizeRichHTML(practice.summary)}</div>
+                            <div class="text-sm text-gray-600 mb-4 flex-grow overflow-y-auto custom-scrollbar max-h-[200px] pr-2 rich-content">${sanitizeRichHTML(practice.summary)}</div>
                             <div class="mt-auto border-t border-gray-100 pt-3">
                                 <div class="flex items-center text-xs text-gray-500 mb-3">
                                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
