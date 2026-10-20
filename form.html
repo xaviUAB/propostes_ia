@@ -44,7 +44,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
 
-    <!-- Toast Notifications -->
     <div id="toastContainer" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <header class="bg-uab-green text-white shadow-md relative z-10">
@@ -262,6 +261,7 @@
                     </div>
                 </div>
 
+                <!-- Botons d'acció del formulari -->
                 <div class="pt-4 flex items-center justify-end space-x-4 border-t">
                     <button type="button" id="cancelEditBtn" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium text-sm">Netejar formulari</button>
                     <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-lg bg-uab-green hover:bg-uab-darkgreen text-white transition font-medium text-sm shadow-md">Enviar proposta</button>
@@ -269,15 +269,10 @@
             </form>
         </div>
 
-        <!-- Modal d'Èxit -->
+        <!-- Modal d'Èxit (Creació o Edició) -->
         <div id="successModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Informació enviada correctament</h3>
-                <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament. <strong>Actualment està pendent de revisió per l'administrador/a.</strong> Serà visible al repositori un cop s'aprovi.</p>
-                <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen transition">D'acord i tornar al cercador</button>
+            <div id="successModalContent" class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 text-center">
+                <!-- S'injectarà contingut diferent depenent si s'ha creat o editat -->
             </div>
         </div>
     </main>
@@ -471,16 +466,26 @@
 
             submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
             
+            const modalContent = document.getElementById('successModalContent');
             if (activeSheetEdit.isSheetEdit) {
-                document.getElementById('successModal').innerHTML = `
-                    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 text-center">
-                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-                            <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                        </div>
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Canvis desats correctament</h3>
-                        <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha actualitzat amb èxit i els canvis ja són actius al repositori.</p>
-                        <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 transition">D'acord i tornar al cercador</button>
+                // Missatge d'Edició
+                modalContent.innerHTML = `
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                     </div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Canvis desats correctament</h3>
+                    <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha actualitzat amb èxit i ha estat enviada de nou a l'administració per a la seva revisió final.</p>
+                    <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 transition">D'acord i tornar al cercador</button>
+                `;
+            } else {
+                // Missatge de Creació
+                modalContent.innerHTML = `
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Informació enviada correctament</h3>
+                    <p class="text-sm text-gray-500 mb-6">La teva proposta s'ha registrat correctament. <strong>Actualment està pendent de revisió per l'administrador/a.</strong> Serà visible al repositori un cop s'aprovi.</p>
+                    <button type="button" onclick="window.location.href='index.html'" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-uab-green text-base font-medium text-white hover:bg-uab-darkgreen transition">D'acord i tornar al cercador</button>
                 `;
             }
             
