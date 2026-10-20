@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="ca">a
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -495,8 +495,8 @@
             }
 
             pendingPractices.forEach(practice => {
-                const safeEmail = practice.email ? practice.email.replace(/'/g, "\\'") : '';
-                const safeTitle = practice.title ? practice.title.replace(/'/g, "\\'") : '';
+                const safeEmail = practice.email ? String(practice.email).replace(/'/g, "\\'") : '';
+                const safeTitle = practice.title ? String(practice.title).replace(/'/g, "\\'") : '';
                 const safeDate = practice.date ? String(practice.date).split('T')[0] : '';
 
                 grid.insertAdjacentHTML('beforeend', `
