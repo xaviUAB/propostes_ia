@@ -303,6 +303,7 @@
         let pendingPractices = [];
         let currentModalPractice = null;
         let adminToken = null;
+        
         let rowToApprovePending = null; 
         let rowToDeletePending = null;
         let amendmentDataPending = null;
@@ -378,8 +379,9 @@
 
         async function fetchData(adminPwd = null) {
             try {
-                let url = GOOGLE_SHEETS_API_URL;
-                if (adminPwd) url += `?adminPassword=${encodeURIComponent(adminPwd)}`;
+                // Afegim el 'nocache' per evitar targetes fantasma esborrades que romanen a la llista
+                let url = `${GOOGLE_SHEETS_API_URL}?nocache=${new Date().getTime()}`;
+                if (adminPwd) url += `&adminPassword=${encodeURIComponent(adminPwd)}`;
 
                 const response = await fetch(url);
                 const rawData = await response.json();
@@ -442,37 +444,40 @@
         async function submitAdminLogin() {
             const pwd = document.getElementById('adminPasswordInput').value.trim();
             if (!pwd) return;
-            
-            const btn = document.getElementById('adminLoginBtn');
-            const originalText = btn.innerText;
-            btn.innerText = 'Verificant...';
-            btn.disabled = true;
 
+            // 1. Obertura immediata i forçosa del Panell (tancant finestres i vistes públiques)
+            closeAdminLoginModal();
+            document.getElementById('publicView').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            
+            // 2. Mostrar indicador de càrrega intern mentre verifica
+            const grid = document.getElementById('adminGrid');
+            grid.innerHTML = `
+                <div class="col-span-full py-12 flex flex-col items-center justify-center text-amber-700">
+                    <svg class="animate-spin h-10 w-10 text-amber-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="font-medium">Validant contrasenya i descarregant fitxes pendents...</p>
+                </div>
+            `;
+
+            // 3. Processament de la sol·licitud al backend
             try {
                 const verifyUrl = `${GOOGLE_SHEETS_API_URL}?action=verifyPassword&password=${encodeURIComponent(pwd)}`;
                 const verifyResponse = await fetch(verifyUrl);
                 const verifyData = await verifyResponse.json();
 
                 if (verifyData.valid) {
-                    showToast("Credencials correctes. Carregant dades...", "success");
                     adminToken = pwd;
-                    
-                    const fetchSuccess = await fetchData(pwd);
-                    if (fetchSuccess) {
-                        closeAdminLoginModal();
-                        document.getElementById('publicView').classList.add('hidden');
-                        document.getElementById('adminPanel').classList.remove('hidden');
-                    }
+                    await fetchData(pwd); // Això sobreescriurà l'adminGrid
                 } else {
                     showToast("Contrasenya incorrecta", "error");
-                    document.getElementById('adminPasswordInput').value = '';
-                    document.getElementById('adminPasswordInput').focus();
+                    closeAdminPanel(); // Si falla, tornem a expulsar-lo a la vista normal
                 }
             } catch (error) {
                 showToast("Error connectant amb el servidor", "error");
-            } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
+                closeAdminPanel();
             }
         }
 
@@ -495,6 +500,7 @@
             }
 
             pendingPractices.forEach(practice => {
+                // Convertim explícitament a String per evitar errors d'execució en cas de números
                 const safeEmail = practice.email ? String(practice.email).replace(/'/g, "\\'") : '';
                 const safeTitle = practice.title ? String(practice.title).replace(/'/g, "\\'") : '';
                 const safeDate = practice.date ? String(practice.date).split('T')[0] : '';
@@ -521,8 +527,7 @@
 
         function approvePractice(rowNumber) {
             rowToApprovePending = rowNumber;
-            const modal = document.getElementById('confirmApproveModal');
-            modal.classList.remove('hidden');
+            document.getElementById('confirmApproveModal').classList.remove('hidden');
         }
 
         function closeApproveModal() {
@@ -532,8 +537,8 @@
 
         async function executeApprove() {
             if (!rowToApprovePending) return;
-            const targetRow = rowToApprovePending; // DESEM LA DADA ABANS DE TANCAR
-            closeApproveModal(); // Això esborra rowToApprovePending
+            const targetRow = rowToApprovePending; // Còpia de seguretat de la variable
+            closeApproveModal(); 
             showToast("Processant l'aprovació...", "success");
 
             try {
@@ -563,8 +568,8 @@
 
         async function executeDelete() {
             if (!rowToDeletePending) return;
-            const targetRow = rowToDeletePending; // DESEM LA DADA ABANS DE TANCAR
-            closeDeleteModal(); // Això esborra rowToDeletePending
+            const targetRow = rowToDeletePending; // Còpia de seguretat
+            closeDeleteModal(); 
             showToast("Esborrant fitxa...", "success");
             
             try {
@@ -601,9 +606,18 @@
                 return;
             }
             
-            const targetData = { ...amendmentDataPending }; // DESEM LES DADES ABANS DE TANCAR
-            closeAmendmentModal(); // Això esborra amendmentDataPending
+            const targetData = { ...amendmentDataPending }; // Còpia de seguretat
+            closeAmendmentModal(); 
             showToast("Enviant correu a l'autor...", "success");
+
+            // Generem l'enllaç d'edició directe a partir de les dades de la fitxa actual
+            const practice = pendingPractices.find(p => p.rowNumber === targetData.rowNumber);
+            const editPayload = { ...practice, editToken: adminToken };
+            const encodedPayload = btoa(unescape(encodeURIComponent(JSON.stringify(editPayload))));
+            
+            let path = window.location.pathname;
+            let baseUrl = window.location.origin + path.substring(0, path.lastIndexOf('/'));
+            const directEditLink = `${baseUrl}/${FORM_PAGE_URL}?editData=${encodeURIComponent(encodedPayload)}`;
 
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL, {
@@ -613,7 +627,8 @@
                         password: adminToken,
                         authorEmail: targetData.email,
                         title: targetData.title,
-                        adminMessage: message
+                        adminMessage: message,
+                        editLink: directEditLink
                     })
                 });
                 const resData = await response.json();
